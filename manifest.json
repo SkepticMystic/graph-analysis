@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.1",
-	"minAppVersion": "0.9.12",
-	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md/about",
+	"id": "graph-analysis",
+	"name": "Graph Analysis",
+	"version": "0.0.1",
+	"minAppVersion": "0.12.10",
+	"description": "Analyse your Obsidian graph.",
+	"author": "SkepticMystic",
+	"authorUrl": "https://github.com/SkepticMystic/graph-analysis",
 	"isDesktopOnly": false
 }
