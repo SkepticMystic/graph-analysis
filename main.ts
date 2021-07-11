@@ -1,7 +1,7 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import * as graphlib from 'graphlib';
 import { Graph } from 'graphlib';
-import { adamicAdarSimilarity } from 'Algorithms/Similarity';
+import { adamicAdarSimilarity, similaritiesForAll } from 'Algorithms/Similarity';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -20,7 +20,7 @@ export default class MyPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.addRibbonIcon('dice', 'Console Log Closeness', () => {
-			console.log(adamicAdarSimilarity(this.initGraph(), 'Logic/Truth Values.md', 'Logic/Introduction to Logic.md'));
+			console.log(similaritiesForAll(adamicAdarSimilarity, this.initGraph(), this.app.vault.getMarkdownFiles()));
 		});
 
 		this.addCommand({
