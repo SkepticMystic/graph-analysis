@@ -1,6 +1,7 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import * as graphlib from 'graphlib';
 import { Graph } from 'graphlib';
+import { adamicAdarSimilarity } from 'Algorithms/Similarity';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -19,7 +20,7 @@ export default class MyPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.addRibbonIcon('dice', 'Console Log Closeness', () => {
-			console.log(this.calcCloseness());
+			console.log(adamicAdarSimilarity(this.initGraph(), 'Logic/Truth Values.md', 'Logic/Introduction to Logic.md'));
 		});
 
 		this.addCommand({
@@ -62,31 +63,7 @@ export default class MyPlugin extends Plugin {
 		return g
 	}
 
-	calcCloseness() {
-		const g = this.initGraph();
 
-		const allPaths = graphlib.alg.dijkstraAll(g);
-
-		const nodeCloseness: Record<string, number> = {};
-
-		for (const source in allPaths) {
-			const distances = [];
-
-			for (const node in allPaths[source]) {
-				const dist = allPaths[source][node].distance;
-				if (dist < Infinity) {
-					distances.push(dist);
-				}
-			}
-			
-			if (distances.length > 0) {
-				nodeCloseness[source] = (g.nodes().length - 1) / this.sum(distances);
-			} else {
-				nodeCloseness[source] = 0
-			}
-		}
-		return nodeCloseness;
-	}
 
 	onunload() {
 		console.log('unloading plugin');
