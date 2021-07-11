@@ -1,6 +1,6 @@
 {
   "name": "graph-analysis",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Analyse your Obsidian graph",
   "main": "main.js",
   "scripts": {
@@ -20,5 +20,8 @@
     "rollup": "^2.32.1",
     "tslib": "^2.2.0",
     "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "graphlib": "^2.1.8"
   }
 }
