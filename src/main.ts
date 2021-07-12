@@ -22,6 +22,13 @@ export default class GraphAnalysisPlugin extends Plugin {
 			console.log(similaritiesForAll(adamicAdarSimilarity, initGraph(this.app)));
 		});
 
+		this.registerView(
+			VIEW_TYPE_GRAPH_ANALYSIS,
+			(leaf: WorkspaceLeaf) => (this.view = new AnalysisView(leaf, this))
+		);
+
+		this.initView(VIEW_TYPE_GRAPH_ANALYSIS);
+
 		this.addCommand({
 			id: "show-graph-analysis-view",
 			name: "Open Graph Analysis View",
@@ -41,11 +48,6 @@ export default class GraphAnalysisPlugin extends Plugin {
 		this.registerCodeMirror((cm: CodeMirror.Editor) => {
 			console.log('codemirror', cm);
 		});
-
-		this.registerView(
-			VIEW_TYPE_GRAPH_ANALYSIS,
-			(leaf: WorkspaceLeaf) => (this.view = new AnalysisView(leaf, this))
-		);
 	}
 
 	sum = (arr: number[]) => arr.reduce((a, b) => a + b);

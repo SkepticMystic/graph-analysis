@@ -5,3 +5,5 @@ export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
 }
 
 export const VIEW_TYPE_GRAPH_ANALYSIS = 'graph-analysis';
+
+export const ANALYSIS_TYPES = ['Closeness', 'Similarity']
