@@ -82,3 +82,7 @@ export async function openOrSwitch(
 export function roundNumber(num: number, dec: number = DECIMALS): number {
     return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
 }
+
+export function currAlg<T>(types: { subtype: string, alg: T }[], value: string) {
+    return types.filter(subtype => subtype.subtype === value)[0].alg
+}

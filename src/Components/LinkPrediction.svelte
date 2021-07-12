@@ -4,30 +4,27 @@ import type { App } from "obsidian";
 import * as LP from "src/Algorithms/LinkPrediction";
 import type AnalysisView from "src/AnalysisView";
 import type { GraphAnalysisSettings } from "src/Interfaces";
-import { debug,hoverPreview,openOrSwitch } from "src/Utility";
-
-
-
-
+import { currAlg, debug,hoverPreview,openOrSwitch } from "src/Utility";
 
 export let app: App;
 export let g: Graph;
 export let settings: GraphAnalysisSettings;
 export let view: AnalysisView;
 
-const currFile = app.workspace.getActiveFile()
+let currFile = app.workspace.getActiveFile()
+app.workspace.on('active-leaf-change', () => {
+    currFile = app.workspace.getActiveFile()
+})
 
 let value = "Adamic Adar";
-$: alg = LP.LINK_PREDICTION_TYPES.filter(subtype => subtype.subtype === value)[0].alg
+$: alg = currAlg(LP.LINK_PREDICTION_TYPES, value)
 
-$: predictionArr = LP.linkPredictionsForAll(alg, g);
+$: predictionArr = LP.linkPredictionsForAll(alg, g, currFile.path.split('.md', 1)[0]);
 $: sortedPredictions = predictionArr.sort((a, b) => a.prediction > b.prediction ? -1 : 1)
 
 debug(settings, {predictionArr})
     
 let noInfinity = false;
-
-
     
 </script>
 
@@ -47,7 +44,6 @@ let noInfinity = false;
     <thead>
         <tr>
             <th scope="col">Note 1</th>
-            <th scope="col">Note 2</th>
             <th scope="col">Prediction</th>
         </tr>
     </thead>
@@ -58,11 +54,6 @@ let noInfinity = false;
                     on:click={(e) => openOrSwitch(app, node.a, currFile, e)}
                     on:mouseover={(e) => hoverPreview(e, view)}
                 >{node.a}
-                </td>
-                <td class="internal-link"
-                    on:click={(e) => openOrSwitch(app, node.b, currFile, e)}
-                    on:mouseover={(e) => hoverPreview(e, view)}
-                >{node.b}
                 </td>
                 <td>{node.prediction}</td>
             </tr>

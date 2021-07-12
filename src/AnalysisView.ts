@@ -1,4 +1,5 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
+import { JaccardSimilarity } from "src/Algorithms/Similarity";
 import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
 import type GraphAnalysisPlugin from "src/main";
 import { initGraph } from "src/Utility";
@@ -83,12 +84,11 @@ export default class AnalysisView extends ItemView {
                     break
             };
         }
-
+        console.log(JaccardSimilarity(g, "brain", "mind"))
         drawComponent('Centrality', componentDiv)
 
         selector.addEventListener('change', () => {
             drawComponent(selector.value, componentDiv)
         })
-
     }
 }

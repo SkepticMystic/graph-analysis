@@ -4,7 +4,7 @@
     import * as Central from "src/Algorithms/Centrality";
     import type AnalysisView from "src/AnalysisView";
     import type { CentralityObj,GraphAnalysisSettings } from "src/Interfaces";
-    import { hoverPreview,openOrSwitch } from "src/Utility";
+    import { debug, hoverPreview,openOrSwitch } from "src/Utility";
 
 
     
@@ -18,7 +18,7 @@
     const centralArr: CentralityObj[] = Central.closenessCentrality(g)
     const sortedCentral = centralArr.sort((a, b) => a.centrality > b.centrality ? -1 : 1)
     
-    console.log({sortedCentral});
+    debug(settings, {sortedCentral})
     
     let noInfinity = false;
         

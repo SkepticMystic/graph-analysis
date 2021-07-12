@@ -1,12 +1,8 @@
 import { Plugin, WorkspaceLeaf } from 'obsidian';
-import { adamicAdarLinkPrediction, linkPredictionsForAll } from 'src/Algorithms/LinkPrediction';
 import AnalysisView from 'src/AnalysisView';
 import { DEFAULT_SETTINGS, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
 import type { GraphAnalysisSettings } from 'src/Interfaces';
 import { SampleSettingTab } from 'src/Settings';
-import { initGraph } from 'src/Utility';
-
-
 
 
 export default class GraphAnalysisPlugin extends Plugin {
@@ -14,7 +10,7 @@ export default class GraphAnalysisPlugin extends Plugin {
 	view: AnalysisView
 
 	async onload() {
-		console.log('loading plugin');
+		console.log('loading graph analysis plugin');
 
 		await this.loadSettings();
 
@@ -22,8 +18,9 @@ export default class GraphAnalysisPlugin extends Plugin {
 			VIEW_TYPE_GRAPH_ANALYSIS,
 			(leaf: WorkspaceLeaf) => (this.view = new AnalysisView(leaf, this))
 		);
-
-		this.initView(VIEW_TYPE_GRAPH_ANALYSIS);
+		this.app.workspace.onLayoutReady(() => {
+			this.initView(VIEW_TYPE_GRAPH_ANALYSIS);
+		})
 
 		this.addCommand({
 			id: "show-graph-analysis-view",
@@ -43,7 +40,11 @@ export default class GraphAnalysisPlugin extends Plugin {
 	}
 
 	onunload() {
-		console.log('unloading plugin');
+		console.log('unloading graph analysis plugin');
+		const openLeaves = this.app.workspace.getLeavesOfType(
+			VIEW_TYPE_GRAPH_ANALYSIS
+		);
+		openLeaves.forEach((leaf) => leaf.detach());
 	}
 
 	initView = async (type: string): Promise<void> => {

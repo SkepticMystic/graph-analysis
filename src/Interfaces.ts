@@ -21,7 +21,7 @@ export interface SimilarityObj {
     similarity: number
 }
 
-export type SimilarityAlg = (g: Graph) => SimilarityObj[];
+export type SimilarityAlg = (g: Graph, currNode: string) => SimilarityObj[];
 
 export interface GraphAnalysisSettings {
     mySetting: string;
