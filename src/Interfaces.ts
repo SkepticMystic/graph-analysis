@@ -3,3 +3,7 @@ export interface Similarity {
     node2: string,
     similarity: number
 };
+
+export interface GraphAnalysisSettings {
+    mySetting: string;
+}
