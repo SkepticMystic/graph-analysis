@@ -10,22 +10,37 @@ export class SampleSettingTab extends PluginSettingTab {
     }
 
     display(): void {
+        const plugin = this.plugin
         let { containerEl } = this;
 
         containerEl.empty();
 
-        containerEl.createEl('h2', { text: 'Settings for my awesome plugin.' });
+        containerEl.createEl("h3", { text: "Debugging Options" });
 
         new Setting(containerEl)
-            .setName('Setting #1')
-            .setDesc('It\'s a secret')
-            .addText(text => text
-                .setPlaceholder('Enter your secret')
-                .setValue('')
-                .onChange(async (value) => {
-                    console.log('Secret: ' + value);
-                    this.plugin.settings.mySetting = value;
-                    await this.plugin.saveSettings();
-                }));
+            .setName("Debug Mode")
+            .setDesc(
+                "Toggling this on will enable a few console logs to appear when using the graph analysis view."
+            )
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(plugin.settings.debugMode)
+                    .onChange(async (value) => {
+                        plugin.settings.debugMode = value;
+                        await plugin.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Super Debug Mode")
+            .setDesc("Toggling this on will enable ALOT of console logs")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(plugin.settings.superDebugMode)
+                    .onChange(async (value) => {
+                        plugin.settings.superDebugMode = value;
+                        await plugin.saveSettings();
+                    })
+            );
     }
 }

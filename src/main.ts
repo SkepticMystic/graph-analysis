@@ -50,10 +50,6 @@ export default class GraphAnalysisPlugin extends Plugin {
 		});
 	}
 
-	sum = (arr: number[]) => arr.reduce((a, b) => a + b);
-
-
-
 	onunload() {
 		console.log('unloading plugin');
 	}

@@ -4,6 +4,13 @@ export interface Similarity {
     similarity: number
 };
 
+export interface Centrality {
+    node: string,
+    centrality: number
+}
+
 export interface GraphAnalysisSettings {
     mySetting: string;
+    debugMode: boolean;
+    superDebugMode: boolean;
 }

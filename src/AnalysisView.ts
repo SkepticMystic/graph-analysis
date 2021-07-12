@@ -3,6 +3,7 @@ import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
 import type GraphAnalysisPlugin from "src/main";
 import { initGraph } from "src/Utility";
 import Similarity from "./Similarity.svelte";
+import Centrality from "./Centrality.svelte";
 
 export default class AnalysisView extends ItemView {
     private plugin: GraphAnalysisPlugin;
@@ -39,24 +40,28 @@ export default class AnalysisView extends ItemView {
         const g = initGraph(this.plugin.app);
         const componentInfo = {
             target: this.contentEl,
-            props: { g }
+            props: { g, settings: this.plugin.settings }
         }
         const contentEl = this.contentEl
         contentEl.empty();
 
-        contentEl.createDiv({ text: 'Choose an analysis type' })
-        const selector = contentEl.createEl('select');
+        const analysisTypeSpan = contentEl.createSpan({ text: 'Choose an analysis type: ' })
+        const selector = analysisTypeSpan.createEl('select');
         ANALYSIS_TYPES.forEach(type => {
             selector.createEl('option', { value: type, text: type });
-
         })
 
+        new Centrality(componentInfo)
+
         selector.addEventListener('change', () => {
+            contentEl.empty()
             switch (selector.value) {
                 case 'Closeness':
-                    new Closeness(componentInfo)
+                    contentEl.empty()
+                    new Centrality(componentInfo)
                     break
                 case 'Similarity':
+                    contentEl.empty()
                     new Similarity(componentInfo)
                     break
             }
