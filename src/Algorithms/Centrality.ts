@@ -20,7 +20,6 @@ export function closenessCentrality(g: Graph) {
 		}
 
 		if (distances.length > 0) {
-			console.log({ distances })
 			const closeness = (g.nodes().length - 1) / sum(distances);
 			nodeCloseness.push({ node: source, centrality: closeness });
 		} else {

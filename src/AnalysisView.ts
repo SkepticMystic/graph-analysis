@@ -4,10 +4,12 @@ import type GraphAnalysisPlugin from "src/main";
 import { initGraph } from "src/Utility";
 import Similarity from "./Similarity.svelte";
 import Centrality from "./Centrality.svelte";
+import type { GraphAnalysisSettings } from "src/Interfaces";
 
 export default class AnalysisView extends ItemView {
     private plugin: GraphAnalysisPlugin;
     // private view: Analysis;
+    private noInfinity: boolean = false;
 
     constructor(leaf: WorkspaceLeaf, plugin: GraphAnalysisPlugin) {
         super(leaf);
@@ -37,34 +39,51 @@ export default class AnalysisView extends ItemView {
     }
 
     async draw(): Promise<void> {
-        const g = initGraph(this.plugin.app);
-        const componentInfo = {
-            target: this.contentEl,
-            props: { g, settings: this.plugin.settings }
-        }
+        const plugin = this.plugin;
+        const app = this.app
+        const settings = this.plugin.settings
         const contentEl = this.contentEl
         contentEl.empty();
 
-        const analysisTypeSpan = contentEl.createSpan({ text: 'Choose an analysis type: ' })
-        const selector = analysisTypeSpan.createEl('select');
+        const g = initGraph(this.plugin.app);
+
+
+        const settingsSpan = contentEl.createSpan({ text: 'Choose an analysis type: ' })
+        const selector = settingsSpan.createEl('select');
         ANALYSIS_TYPES.forEach(type => {
             selector.createEl('option', { value: type, text: type });
         })
 
-        new Centrality(componentInfo)
+        const componentDiv = contentEl.createDiv();
 
-        selector.addEventListener('change', () => {
-            contentEl.empty()
-            switch (selector.value) {
+        const drawComponent = (
+            type: string,
+            componentDiv: HTMLDivElement) => {
+            componentDiv.empty();
+            const componentInfo = {
+                target: componentDiv,
+                props: {
+                    app,
+                    g,
+                    settings,
+                    view: this
+                }
+            };
+            switch (type) {
                 case 'Closeness':
-                    contentEl.empty()
                     new Centrality(componentInfo)
                     break
                 case 'Similarity':
-                    contentEl.empty()
                     new Similarity(componentInfo)
                     break
-            }
+            };
+        }
+
+        drawComponent('Closeness', componentDiv)
+
+        selector.addEventListener('change', () => {
+            drawComponent(selector.value, componentDiv)
         })
+
     }
 }

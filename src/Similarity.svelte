@@ -1,22 +1,37 @@
 <script lang='ts'>
 import type { Graph } from "graphlib";
+import type { App } from "obsidian";
 import * as Sim from "src/Algorithms/Similarity";
+import type AnalysisView from "src/AnalysisView";
 import type { GraphAnalysisSettings } from "src/Interfaces";
-import { debug } from "src/Utility";
+import { debug,hoverPreview,openOrSwitch } from "src/Utility";
 
 
 
+
+export let app: App;
 export let g: Graph;
-export let settings: GraphAnalysisSettings
+export let settings: GraphAnalysisSettings;
+export let view: AnalysisView;
+
+const currFile = app.workspace.getActiveFile()
 
 const simArr = Sim.similaritiesForAll(Sim.adamicAdarSimilarity, g);
 const sortedSim = simArr.sort((a, b) => a.similarity > b.similarity ? -1 : 1)
 
 debug(settings, {simArr})
     
+let noInfinity = false;
+
+
+    
 </script>
 
-<table class="graph-analysis-table">
+<span>Exclude Infinity: <input type="checkbox" on:change={() => noInfinity = !noInfinity}></span>
+
+
+
+<table class="graph-analysis-table markdown-preview-view">
     <thead>
         <tr>
             <th scope="col">Note 1</th>
@@ -25,10 +40,18 @@ debug(settings, {simArr})
         </tr>
     </thead>
     {#each sortedSim as node}
-        {#if node !== undefined}
+        {#if node !== undefined && !(noInfinity && node.similarity === Infinity)}
             <tr>
-                <td>{node.node1}</td>
-                <td>{node.node2}</td>
+                <td class="internal-link"
+                    on:click={(e) => openOrSwitch(app, node.node1, currFile, e)}
+                    on:mouseover={(e) => hoverPreview(e, view)}
+                >{node.node1}
+                </td>
+                <td class="internal-link"
+                    on:click={(e) => openOrSwitch(app, node.node2, currFile, e)}
+                    on:mouseover={(e) => hoverPreview(e, view)}
+                >{node.node2}
+                </td>
                 <td>{node.similarity}</td>
             </tr>
         {/if}
