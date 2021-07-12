@@ -1,7 +1,18 @@
 table.graph-analysis-table, table.graph-analysis-table tr, table.graph-analysis-table td {
-    border: 1px solid black;
+    border: 1px solid var(--background-modifier-border);
 }
 
 table.graph-analysis-table td {
     padding: 2px;
 }
+
+
+  td.internal-link {
+    color: var(--text-accent);
+    text-decoration-line: none !important;
+  }
+  
+  td.internal-link:hover {
+    color: var(--text-accent-hover, var(--text-accent));
+  }
+  
