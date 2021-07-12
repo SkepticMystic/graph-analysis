@@ -1,0 +1,51 @@
+import type { Graph } from "graphlib";
+import type { LinkPredictionAlg, LinkPredictionObj } from "src/Interfaces";
+import { nodeIntersection, roundNumber, sum } from "src/Utility";
+
+
+
+const adamicAdarLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: string): number => {
+    const [Na, Nb] = [g.neighbors(a) as string[], g.neighbors(b) as string[]];
+    const Nab = nodeIntersection(Na, Nb);
+
+    if (Nab.length) {
+        const neighbours: number[] = Nab.map(node => (g.successors(node) as string[]).length)
+        return roundNumber(sum(neighbours.map(neighbour => 1 / Math.log(neighbour))))
+    } else {
+        return 0
+    }
+}
+
+export { adamicAdarLinkPrediction };
+
+export const commonNeighboursLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: string): number => {
+    const [Na, Nb] = [g.neighbors(a) as string[], g.neighbors(b) as string[]];
+    const Nab = nodeIntersection(Na, Nb)
+    return Nab.length
+}
+
+export const linkPredictionsForAll = (
+    type: LinkPredictionAlg,
+    g: Graph): LinkPredictionObj[] => {
+    const predictions: LinkPredictionObj[] = []
+    const paths = g.nodes();
+
+    for (let i = 0; i < paths.length; i++) {
+        for (let j = 0; j < i; j++) {
+            const a = paths[i];
+            const b = paths[j];
+
+            const prediction = type(g, a, b)
+            predictions[i] = { a, b, prediction }
+        }
+    }
+    return predictions
+}
+
+export const LINK_PREDICTION_TYPES: {
+    subtype: string,
+    alg: LinkPredictionAlg
+}[] = [
+        { subtype: 'Adamic Adar', alg: adamicAdarLinkPrediction },
+        { subtype: 'Common Neighbours', alg: commonNeighboursLinkPrediction }
+    ]

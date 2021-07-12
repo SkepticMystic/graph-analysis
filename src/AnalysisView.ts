@@ -2,14 +2,13 @@ import { ItemView, WorkspaceLeaf } from "obsidian";
 import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
 import type GraphAnalysisPlugin from "src/main";
 import { initGraph } from "src/Utility";
-import Similarity from "./Similarity.svelte";
-import Centrality from "./Centrality.svelte";
-import type { GraphAnalysisSettings } from "src/Interfaces";
+import Centrality from "./Components/Centrality.svelte";
+import LinkPrediction from "./Components/LinkPrediction.svelte";
+import Similarity from "./Components/Similarity.svelte";
 
 export default class AnalysisView extends ItemView {
     private plugin: GraphAnalysisPlugin;
     // private view: Analysis;
-    private noInfinity: boolean = false;
 
     constructor(leaf: WorkspaceLeaf, plugin: GraphAnalysisPlugin) {
         super(leaf);
@@ -75,6 +74,9 @@ export default class AnalysisView extends ItemView {
             switch (type) {
                 case 'Centrality':
                     new Centrality(componentInfo)
+                    break
+                case 'Link Prediction':
+                    new LinkPrediction(componentInfo)
                     break
                 case 'Similarity':
                     new Similarity(componentInfo)

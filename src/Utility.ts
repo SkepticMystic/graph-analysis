@@ -1,5 +1,6 @@
 import { Graph } from "graphlib";
 import type { App, ItemView, TFile, WorkspaceLeaf } from "obsidian";
+import { DECIMALS } from 'src/Constants';
 import type { GraphAnalysisSettings } from "src/Interfaces";
 
 export function nodeIntersection(nodes1: string[], nodes2: string[]) {
@@ -23,7 +24,6 @@ export function initGraph(app: App): Graph {
             g.setEdge(sourceNoMD, destNoMD);
         }
     }
-    console.log({ g })
     return g
 }
 
@@ -61,7 +61,6 @@ export async function openOrSwitch(
     const destFile = app.metadataCache.getFirstLinkpathDest(dest, currFile.path);
 
     const openLeaves: WorkspaceLeaf[] = [];
-    // For all open leaves, if the leave's basename is equal to the link destination, rather activate that leaf instead of opening it in two panes
     workspace.iterateAllLeaves((leaf) => {
         if (leaf.view?.file?.basename === dest) {
             openLeaves.push(leaf);
@@ -69,7 +68,6 @@ export async function openOrSwitch(
     });
 
     if (openLeaves.length > 0) {
-        console.log(openLeaves[0])
         workspace.setActiveLeaf(openLeaves[0]);
     } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -79,4 +77,8 @@ export async function openOrSwitch(
             : workspace.getUnpinnedLeaf();
         await leaf.openFile(destFile, { active: true, mode });
     }
+}
+
+export function roundNumber(num: number, dec: number = DECIMALS): number {
+    return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
 }

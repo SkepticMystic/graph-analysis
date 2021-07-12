@@ -1,11 +1,13 @@
 <script lang='ts'>
 import type { Graph } from "graphlib";
 import type { App } from "obsidian";
-import { SIMILARITY_TYPES } from "src/Constants";
-import * as Sim from "src/Algorithms/Similarity";
+import * as LP from "src/Algorithms/LinkPrediction";
 import type AnalysisView from "src/AnalysisView";
 import type { GraphAnalysisSettings } from "src/Interfaces";
 import { debug,hoverPreview,openOrSwitch } from "src/Utility";
+
+
+
 
 
 export let app: App;
@@ -16,12 +18,12 @@ export let view: AnalysisView;
 const currFile = app.workspace.getActiveFile()
 
 let value = "Adamic Adar";
-$: alg = SIMILARITY_TYPES.filter(subtype => subtype.subtype === value)[0].alg
+$: alg = LP.LINK_PREDICTION_TYPES.filter(subtype => subtype.subtype === value)[0].alg
 
-$: simArr = Sim.similaritiesForAll(alg, g);
-$: sortedSim = simArr.sort((a, b) => a.similarity > b.similarity ? -1 : 1)
+$: predictionArr = LP.linkPredictionsForAll(alg, g);
+$: sortedPredictions = predictionArr.sort((a, b) => a.prediction > b.prediction ? -1 : 1)
 
-debug(settings, {simArr})
+debug(settings, {predictionArr})
     
 let noInfinity = false;
 
@@ -30,9 +32,9 @@ let noInfinity = false;
 </script>
 
 <div>
-    <span>Similarity Algorithm: 
+    <span>Link Prediction Algorithm: 
         <select bind:value>
-            {#each SIMILARITY_TYPES as subtype}
+            {#each LP.LINK_PREDICTION_TYPES as subtype}
                 <option value={subtype.subtype}>{subtype.subtype}</option>
             {/each}
         </select>
@@ -46,23 +48,23 @@ let noInfinity = false;
         <tr>
             <th scope="col">Note 1</th>
             <th scope="col">Note 2</th>
-            <th scope="col">Similarity</th>
+            <th scope="col">Prediction</th>
         </tr>
     </thead>
-    {#each sortedSim as node}
-        {#if node !== undefined && !(noInfinity && node.similarity === Infinity)}
+    {#each sortedPredictions as node}
+        {#if node !== undefined && !(noInfinity && node.prediction === Infinity)}
             <tr>
                 <td class="internal-link"
-                    on:click={(e) => openOrSwitch(app, node.node1, currFile, e)}
+                    on:click={(e) => openOrSwitch(app, node.a, currFile, e)}
                     on:mouseover={(e) => hoverPreview(e, view)}
-                >{node.node1}
+                >{node.a}
                 </td>
                 <td class="internal-link"
-                    on:click={(e) => openOrSwitch(app, node.node2, currFile, e)}
+                    on:click={(e) => openOrSwitch(app, node.b, currFile, e)}
                     on:mouseover={(e) => hoverPreview(e, view)}
-                >{node.node2}
+                >{node.b}
                 </td>
-                <td>{node.similarity}</td>
+                <td>{node.prediction}</td>
             </tr>
         {/if}
     {/each}

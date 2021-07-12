@@ -21,10 +21,15 @@ export const closenessCentrality: CentralityAlg = (g: Graph) => {
 
 		if (distances.length > 0) {
 			const closeness = (g.nodes().length - 1) / sum(distances);
-			nodeCloseness.push({ node: source, centrality: closeness });
+			nodeCloseness.push({ a: source, centrality: closeness });
 		} else {
-			nodeCloseness.push({ node: source, centrality: 0 });
+			nodeCloseness.push({ a: source, centrality: 0 });
 		}
 	}
 	return nodeCloseness;
 }
+
+export const CENTRALITY_TYPES: {
+	subtype: string,
+	alg: CentralityAlg
+}[] = [{ subtype: 'Closeness', alg: closenessCentrality }]

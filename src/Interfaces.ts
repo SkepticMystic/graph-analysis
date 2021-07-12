@@ -1,19 +1,27 @@
 import type { Graph } from "graphlib";
 
-export interface SimilarityObj {
-    node1: string,
-    node2: string,
-    similarity: number
+export interface LinkPredictionObj {
+    a: string,
+    b: string,
+    prediction: number
 };
 
-export type SimilarityAlg = (g: Graph, node1: string, node2: string) => number;
+export type LinkPredictionAlg = (g: Graph, a: string, b: string) => number;
 
 export interface CentralityObj {
-    node: string,
+    a: string,
     centrality: number
 }
 
 export type CentralityAlg = (g: Graph) => CentralityObj[];
+
+export interface SimilarityObj {
+    a: string,
+    b: string,
+    similarity: number
+}
+
+export type SimilarityAlg = (g: Graph) => SimilarityObj[];
 
 export interface GraphAnalysisSettings {
     mySetting: string;

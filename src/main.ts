@@ -1,5 +1,5 @@
 import { Plugin, WorkspaceLeaf } from 'obsidian';
-import { adamicAdarSimilarity, similaritiesForAll } from 'src/Algorithms/Similarity';
+import { adamicAdarLinkPrediction, linkPredictionsForAll } from 'src/Algorithms/LinkPrediction';
 import AnalysisView from 'src/AnalysisView';
 import { DEFAULT_SETTINGS, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
 import type { GraphAnalysisSettings } from 'src/Interfaces';
@@ -17,10 +17,6 @@ export default class GraphAnalysisPlugin extends Plugin {
 		console.log('loading plugin');
 
 		await this.loadSettings();
-
-		this.addRibbonIcon('dice', 'Console Log Closeness', () => {
-			console.log(similaritiesForAll(adamicAdarSimilarity, initGraph(this.app)));
-		});
 
 		this.registerView(
 			VIEW_TYPE_GRAPH_ANALYSIS,
