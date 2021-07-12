@@ -1,8 +1,7 @@
-import { Graph } from "graphlib";
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
 import type GraphAnalysisPlugin from "src/main";
-import { initGraph } from "src/main"
+import { initGraph } from "src/Utility";
 import Analysis from "./Analysis.svelte";
 
 export default class AnalysisView extends ItemView {
@@ -28,7 +27,7 @@ export default class AnalysisView extends ItemView {
 
     // icon = TRAIL_ICON;
 
-    async onOpen(): Promise<void> { 
+    async onOpen(): Promise<void> {
         await this.draw()
     }
 
@@ -37,12 +36,12 @@ export default class AnalysisView extends ItemView {
     }
 
     async draw(): Promise<void> {
-        const g = initGraph()
+        const g = initGraph(this.plugin.app);
 
         this.contentEl.empty();
         this.view = new Analysis({
             target: this.contentEl,
-            props: {}
+            props: { g }
         })
     }
 }

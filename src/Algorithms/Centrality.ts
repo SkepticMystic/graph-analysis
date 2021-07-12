@@ -1,5 +1,5 @@
-import { Graph } from "graphlib";
 import * as graphlib from "graphlib";
+import type { Graph } from "graphlib";
 
 export function closenessCentrality(g: Graph) {
 	const allPaths = graphlib.alg.dijkstraAll(g);
