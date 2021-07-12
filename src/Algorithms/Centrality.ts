@@ -1,10 +1,10 @@
 import type { Graph } from "graphlib";
 import * as graphlib from "graphlib";
 import { sum } from "src/Utility";
-import type { Centrality } from "src/Interfaces";
+import type { CentralityAlg, CentralityObj } from "src/Interfaces";
 
-export function closenessCentrality(g: Graph) {
-	const nodeCloseness: Centrality[] = [];
+export const closenessCentrality: CentralityAlg = (g: Graph) => {
+	const nodeCloseness: CentralityObj[] = [];
 	const allPaths = graphlib.alg.dijkstraAll(g);
 
 	for (const source in allPaths) {

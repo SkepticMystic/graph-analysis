@@ -1,12 +1,11 @@
 <script lang='ts'>
 import type { Graph } from "graphlib";
 import type { App } from "obsidian";
+import { SIMILARITY_TYPES } from "src/Constants";
 import * as Sim from "src/Algorithms/Similarity";
 import type AnalysisView from "src/AnalysisView";
 import type { GraphAnalysisSettings } from "src/Interfaces";
 import { debug,hoverPreview,openOrSwitch } from "src/Utility";
-
-
 
 
 export let app: App;
@@ -16,8 +15,11 @@ export let view: AnalysisView;
 
 const currFile = app.workspace.getActiveFile()
 
-const simArr = Sim.similaritiesForAll(Sim.adamicAdarSimilarity, g);
-const sortedSim = simArr.sort((a, b) => a.similarity > b.similarity ? -1 : 1)
+let value = "Adamic Adar";
+$: alg = SIMILARITY_TYPES.filter(subtype => subtype.subtype === value)[0].alg
+
+$: simArr = Sim.similaritiesForAll(alg, g);
+$: sortedSim = simArr.sort((a, b) => a.similarity > b.similarity ? -1 : 1)
 
 debug(settings, {simArr})
     
@@ -27,8 +29,16 @@ let noInfinity = false;
     
 </script>
 
-<span>Exclude Infinity: <input type="checkbox" on:change={() => noInfinity = !noInfinity}></span>
-
+<div>
+    <span>Similarity Algorithm: 
+        <select bind:value>
+            {#each SIMILARITY_TYPES as subtype}
+                <option value={subtype.subtype}>{subtype.subtype}</option>
+            {/each}
+        </select>
+    </span>
+    <span>Exclude Infinity: <input type="checkbox" on:change={() => noInfinity = !noInfinity}></span>
+</div>
 
 
 <table class="graph-analysis-table markdown-preview-view">

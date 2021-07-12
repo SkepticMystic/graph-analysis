@@ -44,10 +44,6 @@ export default class GraphAnalysisPlugin extends Plugin {
 		});
 
 		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		this.registerCodeMirror((cm: CodeMirror.Editor) => {
-			console.log('codemirror', cm);
-		});
 	}
 
 	onunload() {

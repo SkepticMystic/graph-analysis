@@ -59,6 +59,9 @@ export default class AnalysisView extends ItemView {
         const drawComponent = (
             type: string,
             componentDiv: HTMLDivElement) => {
+
+            if (!ANALYSIS_TYPES.includes(type)) { throw new Error(`${type} is not one of the analysis types`) }
+
             componentDiv.empty();
             const componentInfo = {
                 target: componentDiv,
@@ -70,7 +73,7 @@ export default class AnalysisView extends ItemView {
                 }
             };
             switch (type) {
-                case 'Closeness':
+                case 'Centrality':
                     new Centrality(componentInfo)
                     break
                 case 'Similarity':
@@ -79,7 +82,7 @@ export default class AnalysisView extends ItemView {
             };
         }
 
-        drawComponent('Closeness', componentDiv)
+        drawComponent('Centrality', componentDiv)
 
         selector.addEventListener('change', () => {
             drawComponent(selector.value, componentDiv)
