@@ -4,7 +4,7 @@
     import * as Central from "src/Algorithms/Centrality";
     import type AnalysisView from "src/AnalysisView";
     import type { CentralityObj,GraphAnalysisSettings } from "src/Interfaces";
-    import { debug, hoverPreview,openOrSwitch } from "src/Utility";
+    import { debug, dropPath, hoverPreview,openOrSwitch } from "src/Utility";
 
 
     
@@ -26,7 +26,6 @@
 
     <span>Exclude Infinity: <input type="checkbox" on:change={() => noInfinity = !noInfinity}></span>
 
-
     <table class="graph-analysis-table markdown-preview-view">
         <thead>
             <tr>
@@ -42,7 +41,7 @@
                         on:click={(e) => openOrSwitch(app, node.a, currFile, e)}
                         on:mouseover={(e) => hoverPreview(e, view)}
                         >
-                            {node.a}
+                            {dropPath(node.a)}
                         </td>
                         <td>{node.centrality}</td>
                     </tr>

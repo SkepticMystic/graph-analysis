@@ -86,3 +86,8 @@ export function roundNumber(num: number, dec: number = DECIMALS): number {
 export function currAlg<T>(types: { subtype: string, alg: T }[], value: string) {
     return types.filter(subtype => subtype.subtype === value)[0].alg
 }
+
+export const dropPath = (path: string) => {
+    return path.split('/').last();
+    // return last.replace(/\.[^/.]+$/, "")
+}

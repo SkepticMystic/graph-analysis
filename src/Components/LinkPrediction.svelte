@@ -4,7 +4,7 @@ import type { App } from "obsidian";
 import * as LP from "src/Algorithms/LinkPrediction";
 import type AnalysisView from "src/AnalysisView";
 import type { GraphAnalysisSettings } from "src/Interfaces";
-import { currAlg, debug,hoverPreview,openOrSwitch } from "src/Utility";
+import { currAlg, debug,dropPath,hoverPreview,openOrSwitch } from "src/Utility";
 
 export let app: App;
 export let g: Graph;
@@ -53,7 +53,8 @@ let noInfinity = false;
                 <td class="internal-link"
                     on:click={(e) => openOrSwitch(app, node.a, currFile, e)}
                     on:mouseover={(e) => hoverPreview(e, view)}
-                >{node.a}
+                >
+                    {dropPath(node.a)}
                 </td>
                 <td>{node.prediction}</td>
             </tr>
