@@ -1,4 +1,5 @@
 import { Graph } from "graphlib";
+import * as graphlib from "graphlib";
 import type { App } from "obsidian";
 
 export function nodeIntersection(nodes1: string[], nodes2: string[]) {
@@ -22,4 +23,11 @@ export function initGraph(app: App): Graph {
 
 export function currAlg<T>(types: { subtype: string, alg: T }[], value: string) {
     return types.filter(subtype => subtype.subtype === value)[0].alg
+}
+
+export function eccentricity(g: Graph, a: string) {
+    const paths = graphlib.alg.dijkstra(g, a);
+    const pathsArr: [string, graphlib.Path][] = Object.entries(paths)
+    const sortedPaths = pathsArr.sort((p, q) => p[1].distance > q[1].distance ? 1 : -1);
+    return sortedPaths
 }

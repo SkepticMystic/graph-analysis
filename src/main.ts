@@ -21,7 +21,7 @@ export default class GraphAnalysisPlugin extends Plugin {
 					(leaf: WorkspaceLeaf) => (this.view = new AnalysisView(leaf, this))
 				);
 				this.initView(VIEW_TYPE_GRAPH_ANALYSIS);
-			}, 4000)
+			}, 5000)
 		})
 
 		this.addCommand({

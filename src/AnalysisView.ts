@@ -1,6 +1,6 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
-import { initGraph } from "src/GeneralGraphFn";
+import { eccentricity, initGraph } from "src/GeneralGraphFn";
 import type GraphAnalysisPlugin from "src/main";
 import Centrality from "./Components/Centrality.svelte";
 import LinkPrediction from "./Components/LinkPrediction.svelte";
@@ -84,6 +84,7 @@ export default class AnalysisView extends ItemView {
             };
         }
 
+        // console.log(eccentricity(g, 'mind'))
         drawComponent('Centrality', componentDiv)
 
         selector.addEventListener('change', () => {
