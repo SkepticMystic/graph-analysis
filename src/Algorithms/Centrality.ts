@@ -3,30 +3,28 @@ import * as graphlib from "graphlib";
 import { roundNumber, sum } from "src/Utility";
 import type { CentralityAlg, CentralityObj } from "src/Interfaces";
 
-export const closenessCentrality: CentralityAlg = (g: Graph) => {
-	const nodeCloseness: CentralityObj[] = [];
-	const allPaths = graphlib.alg.dijkstraAll(g);
+export const closenessCentrality: CentralityAlg = (g: Graph, a: string): CentralityObj => {
+	const paths = graphlib.alg.dijkstra(g, a);
 
-	for (const source in allPaths) {
-		const distances = [];
-
-		for (const node in allPaths[source]) {
-			const dist = allPaths[source][node].distance;
-			// console.log({ node, dist })
-
-			if (dist < Infinity) {
-				distances.push(dist);
-			}
-		}
-
-		if (distances.length > 0) {
-			const closeness = roundNumber((g.nodes().length - 1) / sum(distances));
-			nodeCloseness.push({ a: source, centrality: closeness });
-		} else {
-			nodeCloseness.push({ a: source, centrality: 0 });
+	const distances = [];
+	for (const target in paths) {
+		const dist = paths[target].distance;
+		if (dist < Infinity) {
+			distances.push(dist);
 		}
 	}
-	return nodeCloseness;
+
+	if (distances.length > 0) {
+		const closeness = roundNumber((g.nodes().length - 1) / sum(distances));
+		return { a, centrality: closeness };
+	} else {
+		return { a, centrality: 0 };
+	}
+}
+
+export function centrailyForAll(alg: CentralityAlg, g: Graph) {
+	const nodes = g.nodes();
+	return nodes.map(node => alg(g, node))
 }
 
 export const CENTRALITY_TYPES: {

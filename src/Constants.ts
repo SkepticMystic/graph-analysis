@@ -1,7 +1,8 @@
 import type { GraphAnalysisSettings } from "src/Interfaces";
 
 export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
-    mySetting: 'default',
+    noInfinity: false,
+    noZero: false,
     debugMode: false,
     superDebugMode: false,
 }

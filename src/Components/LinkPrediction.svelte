@@ -26,7 +26,10 @@ $: sortedPredictions = predictionArr.sort((a, b) => a.prediction > b.prediction 
 
 debug(settings, {predictionArr})
     
-let noInfinity = false;
+    const [noInfinityDefault, noZeroDefault] = [settings.noInfinity, settings.noZero];
+
+    let noInfinity = noInfinityDefault;
+    let noZero = noZeroDefault; 
     
 </script>
 
@@ -38,7 +41,18 @@ let noInfinity = false;
             {/each}
         </select>
     </span>
-    <span>Exclude Infinity: <input type="checkbox" on:change={() => noInfinity = !noInfinity}></span>
+
+    <span>Exclude Infinity: 
+        <input type="checkbox" 
+            checked={noInfinity} 
+            on:change={() => noInfinity = !noInfinity}>
+    </span>
+
+    <span>Exclude Zero: 
+        <input type="checkbox" 
+            checked={noZero} 
+            on:change={() => noZero = !noZero}>
+    </span>
 </div>
 
 
@@ -50,7 +64,7 @@ let noInfinity = false;
         </tr>
     </thead>
     {#each sortedPredictions as node}
-        {#if node !== undefined && !(noInfinity && node.prediction === Infinity)}
+        {#if node !== undefined && !(noInfinity && node.prediction === Infinity) && !(noZero && node.prediction === 0)}
             <tr>
                 <td class="internal-link"
                     on:click={(e) => openOrSwitch(app, node.a, currFile, e)}

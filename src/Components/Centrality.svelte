@@ -3,28 +3,56 @@
     import type { App } from "obsidian";
     import * as Central from "src/Algorithms/Centrality";
     import type AnalysisView from "src/AnalysisView";
-    import type { CentralityObj,GraphAnalysisSettings } from "src/Interfaces";
-    import { debug, dropPath, hoverPreview,openOrSwitch } from "src/Utility";
-
-
+    import { currAlg } from "src/GeneralGraphFn";
+    import type { GraphAnalysisSettings } from "src/Interfaces";
+    import { debug,dropPath,hoverPreview,openOrSwitch } from "src/Utility";
     
     export let g: Graph;
     export let settings: GraphAnalysisSettings;
     export let app: App;
     export let view: AnalysisView;
     
-    const currFile = app.workspace.getActiveFile()
+    let currFile = app.workspace.getActiveFile()
+    app.workspace.on('active-leaf-change', () => {
+        currFile = app.workspace.getActiveFile()
+    })
 
-    const centralArr: CentralityObj[] = Central.closenessCentrality(g)
-    const sortedCentral = centralArr.sort((a, b) => a.centrality > b.centrality ? -1 : 1)
+    let value = "Closeness";
+    $: alg = currAlg(Central.CENTRALITY_TYPES, value)
     
-    debug(settings, {sortedCentral})
+    $: centralityArr = Central.centrailyForAll(alg, g);
+    $: sortedCentrals = centralityArr.sort((a, b) => a.centrality > b.centrality ? -1 : 1)
     
-    let noInfinity = false;
+    debug(settings, {sortedCentrals})
+    
+    const [noInfinityDefault, noZeroDefault] = [settings.noInfinity, settings.noZero];
+
+    let noInfinity = noInfinityDefault;
+    let noZero = noZeroDefault; 
         
 </script>
 
-    <span>Exclude Infinity: <input type="checkbox" on:change={() => noInfinity = !noInfinity}></span>
+<div>
+    <span>Centrality Algorithm: 
+        <select bind:value>
+            {#each Central.CENTRALITY_TYPES as subtype}
+                <option value={subtype.subtype}>{subtype.subtype}</option>
+            {/each}
+        </select>
+    </span>
+
+    <span>Exclude Infinity: 
+        <input type="checkbox" 
+            checked={noInfinity} 
+            on:change={() => noInfinity = !noInfinity}>
+    </span>
+
+    <span>Exclude Zero: 
+        <input type="checkbox" 
+            checked={noZero} 
+            on:change={() => noZero = !noZero}>
+    </span>
+</div>
 
     <table class="graph-analysis-table markdown-preview-view">
         <thead>
@@ -33,8 +61,8 @@
                 <th scope="col">Centrality</th>
             </tr>
         </thead>
-        {#each sortedCentral as node}
-                {#if node !== undefined && !(noInfinity && node.centrality === Infinity)}
+        {#each sortedCentrals as node}
+                {#if node !== undefined && !(noInfinity && node.centrality === Infinity) && !(noZero && node.centrality === 0)}
                     <tr>
                         <td
                         class="internal-link"

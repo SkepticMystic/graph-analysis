@@ -30,9 +30,12 @@
     
     debug(settings, {similarityArr})
         
-    let noInfinity = false;
-    
-    
+
+    const [noInfinityDefault, noZeroDefault] = [settings.noInfinity, settings.noZero];
+    console.log({noInfinityDefault, noZeroDefault})
+
+    let noInfinity = noInfinityDefault;
+    let noZero = noZeroDefault;    
         
     </script>
     
@@ -44,7 +47,18 @@
                 {/each}
             </select>
         </span>
-        <span>Exclude Infinity: <input type="checkbox" on:change={() => noInfinity = !noInfinity}></span>
+
+        <span>Exclude Infinity: 
+            <input type="checkbox" 
+            checked={noInfinity} 
+            on:change={() => noInfinity = !noInfinity}>
+        </span>
+
+        <span>Exclude Zero: 
+            <input type="checkbox" 
+            checked={noZero} 
+            on:change={() => noZero = !noZero}>
+        </span>
     </div>
     
     
@@ -56,7 +70,7 @@
             </tr>
         </thead>
         {#each sortedSimilarities as node}
-            {#if node !== undefined && !(noInfinity && node.similarity === Infinity)}
+            {#if node !== undefined && !(noInfinity && node.similarity === Infinity) && !(noZero && node.similarity === 0)}
                 <tr>
                     <td class="internal-link"
                         on:click={(e) => openOrSwitch(app, node.a, currFile, e)}

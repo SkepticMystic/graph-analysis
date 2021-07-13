@@ -13,7 +13,7 @@ export interface CentralityObj {
     centrality: number
 }
 
-export type CentralityAlg = (g: Graph) => CentralityObj[];
+export type CentralityAlg = (g: Graph, a: string) => CentralityObj;
 
 export interface SimilarityObj {
     a: string,
@@ -24,7 +24,8 @@ export interface SimilarityObj {
 export type SimilarityAlg = (g: Graph, currNode: string) => SimilarityObj[];
 
 export interface GraphAnalysisSettings {
-    mySetting: string;
+    noInfinity: boolean;
+    noZero: boolean;
     debugMode: boolean;
     superDebugMode: boolean;
 }

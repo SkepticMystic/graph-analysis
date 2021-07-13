@@ -15,6 +15,33 @@ export class SampleSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
+        containerEl.createEl("h3", { text: "Analysis Defaults" });
+
+        new Setting(containerEl)
+            .setName("Exclude Infinity")
+            .setDesc("Whether to exclude Infinite values by default")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(plugin.settings.noInfinity)
+                    .onChange(async (value) => {
+                        plugin.settings.noInfinity = value;
+                        await plugin.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Exclude Zero")
+            .setDesc("Whether to exclude Zero by default")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(plugin.settings.noZero)
+                    .onChange(async (value) => {
+                        plugin.settings.noZero = value;
+                        await plugin.saveSettings();
+                    })
+            );
+
+
         containerEl.createEl("h3", { text: "Debugging Options" });
 
         new Setting(containerEl)

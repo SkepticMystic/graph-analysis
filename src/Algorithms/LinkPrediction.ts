@@ -11,7 +11,7 @@ const adamicAdarLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: str
         const neighbours: number[] = Nab.map(node => (g.successors(node) as string[]).length)
         return roundNumber(sum(neighbours.map(neighbour => 1 / Math.log(neighbour))))
     } else {
-        return 0
+        return Infinity
     }
 }
 
