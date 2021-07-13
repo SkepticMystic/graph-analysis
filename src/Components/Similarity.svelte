@@ -74,7 +74,7 @@
         {#each sortedSimilarities as node}
             {#if node !== undefined && !(noInfinity && node.similarity === Infinity) && !(noZero && node.similarity === 0)}
                 <tr>
-                    <td class="internal-link {linkedQ(app, currFile.path, node.a + '.md') ? NOT_LINKED : LINKED}"
+                    <td class="internal-link {linkedQ(app, currFile.path, node.a + '.md') ? LINKED : NOT_LINKED}"
                         on:click={(e) => openOrSwitch(app, node.a, currFile, e)}
                         on:mouseover={(e) => hoverPreview(e, view)}
                     >

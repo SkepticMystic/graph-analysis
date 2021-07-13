@@ -85,7 +85,7 @@ export default class AnalysisView extends ItemView {
         }
 
         // console.log(eccentricity(g, 'mind'))
-        drawComponent('Centrality', componentDiv)
+        drawComponent('Similarity', componentDiv)
 
         selector.addEventListener('change', () => {
             drawComponent(selector.value, componentDiv)
