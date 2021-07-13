@@ -14,12 +14,14 @@ export default class GraphAnalysisPlugin extends Plugin {
 
 		await this.loadSettings();
 
-		this.registerView(
-			VIEW_TYPE_GRAPH_ANALYSIS,
-			(leaf: WorkspaceLeaf) => (this.view = new AnalysisView(leaf, this))
-		);
 		this.app.workspace.onLayoutReady(() => {
-			this.initView(VIEW_TYPE_GRAPH_ANALYSIS);
+			setTimeout(() => {
+				this.registerView(
+					VIEW_TYPE_GRAPH_ANALYSIS,
+					(leaf: WorkspaceLeaf) => (this.view = new AnalysisView(leaf, this))
+				);
+				this.initView(VIEW_TYPE_GRAPH_ANALYSIS);
+			}, 4000)
 		})
 
 		this.addCommand({

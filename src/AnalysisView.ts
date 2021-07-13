@@ -84,7 +84,7 @@ export default class AnalysisView extends ItemView {
                     break
             };
         }
-        console.log(JaccardSimilarity(g, "brain", "mind"))
+        
         drawComponent('Centrality', componentDiv)
 
         selector.addEventListener('change', () => {

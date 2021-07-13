@@ -1,6 +1,6 @@
 import type { Graph } from "graphlib";
 import * as graphlib from "graphlib";
-import { sum } from "src/Utility";
+import { roundNumber, sum } from "src/Utility";
 import type { CentralityAlg, CentralityObj } from "src/Interfaces";
 
 export const closenessCentrality: CentralityAlg = (g: Graph) => {
@@ -20,7 +20,7 @@ export const closenessCentrality: CentralityAlg = (g: Graph) => {
 		}
 
 		if (distances.length > 0) {
-			const closeness = (g.nodes().length - 1) / sum(distances);
+			const closeness = roundNumber((g.nodes().length - 1) / sum(distances));
 			nodeCloseness.push({ a: source, centrality: closeness });
 		} else {
 			nodeCloseness.push({ a: source, centrality: 0 });
