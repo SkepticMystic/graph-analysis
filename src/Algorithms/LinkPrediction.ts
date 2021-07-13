@@ -1,6 +1,7 @@
 import type { Graph } from "graphlib";
+import { nodeIntersection } from "src/GeneralGraphFn";
 import type { LinkPredictionAlg, LinkPredictionObj } from "src/Interfaces";
-import { nodeIntersection, roundNumber, sum } from "src/Utility";
+import { roundNumber, sum } from "src/Utility";
 
 const adamicAdarLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: string): number => {
     const [Na, Nb] = [g.neighbors(a) as string[], g.neighbors(b) as string[]];
@@ -30,10 +31,10 @@ export const linkPredictionsForAll = (
     const paths = g.nodes();
 
     for (let i = 0; i < paths.length; i++) {
-            const a = paths[i];
+        const a = paths[i];
 
-            const prediction = type(g, a, currNode)
-            predictions[i] = { a, b: currNode, prediction }
+        const prediction = type(g, a, currNode)
+        predictions[i] = { a, b: currNode, prediction }
     }
     return predictions
 }

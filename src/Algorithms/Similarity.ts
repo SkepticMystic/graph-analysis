@@ -1,6 +1,7 @@
 import type { Graph } from "graphlib";
+import { nodeIntersection } from "src/GeneralGraphFn";
 import type { SimilarityAlg, SimilarityObj } from "src/Interfaces";
-import { nodeIntersection, roundNumber } from "src/Utility";
+import { roundNumber } from "src/Utility";
 
 export function JaccardSimilarity(g: Graph, a: string, b: string) {
     const [Na, Nb] = [

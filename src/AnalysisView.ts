@@ -1,8 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
-import { JaccardSimilarity } from "src/Algorithms/Similarity";
 import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
+import { initGraph } from "src/GeneralGraphFn";
 import type GraphAnalysisPlugin from "src/main";
-import { initGraph } from "src/Utility";
 import Centrality from "./Components/Centrality.svelte";
 import LinkPrediction from "./Components/LinkPrediction.svelte";
 import Similarity from "./Components/Similarity.svelte";
@@ -84,7 +83,7 @@ export default class AnalysisView extends ItemView {
                     break
             };
         }
-        
+
         drawComponent('Centrality', componentDiv)
 
         selector.addEventListener('change', () => {

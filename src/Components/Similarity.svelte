@@ -3,8 +3,10 @@
     import type { App } from "obsidian";
     import * as Sim from "src/Algorithms/Similarity";
     import type AnalysisView from "src/AnalysisView";
+    import { currAlg } from "src/GeneralGraphFn";
     import type { GraphAnalysisSettings } from "src/Interfaces";
-    import { currAlg,debug,dropPath,hoverPreview,openOrSwitch } from "src/Utility";
+    import { debug,dropPath,hoverPreview,openOrSwitch } from "src/Utility";
+
 
     
     export let app: App;
