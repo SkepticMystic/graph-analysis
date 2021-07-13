@@ -3,9 +3,11 @@
     import type { App } from "obsidian";
     import * as Sim from "src/Algorithms/Similarity";
     import type AnalysisView from "src/AnalysisView";
+    import { LINKED,NOT_LINKED } from "src/Constants";
     import { currAlg } from "src/GeneralGraphFn";
     import type { GraphAnalysisSettings } from "src/Interfaces";
-    import { debug,dropPath,hoverPreview,openOrSwitch } from "src/Utility";
+    import { debug,dropPath,hoverPreview,linkedQ,openOrSwitch } from "src/Utility";
+
 
 
     
@@ -72,7 +74,7 @@
         {#each sortedSimilarities as node}
             {#if node !== undefined && !(noInfinity && node.similarity === Infinity) && !(noZero && node.similarity === 0)}
                 <tr>
-                    <td class="internal-link"
+                    <td class="internal-link {linkedQ(app, currFile.path, node.a + '.md') ? NOT_LINKED : LINKED}"
                         on:click={(e) => openOrSwitch(app, node.a, currFile, e)}
                         on:mouseover={(e) => hoverPreview(e, view)}
                     >

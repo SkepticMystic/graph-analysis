@@ -7,12 +7,19 @@ table.graph-analysis-table td {
 }
 
 
-  td.internal-link {
-    color: var(--text-accent);
-    text-decoration-line: none !important;
-  }
-  
-  td.internal-link:hover {
-    color: var(--text-accent-hover, var(--text-accent));
-  }
-  
+td.internal-link {
+  color: var(--text-accent);
+  text-decoration-line: none !important;
+}
+
+td.internal-link:hover {
+  color: var(--text-accent-hover, var(--text-accent));
+}
+
+td.analysis-linked {
+  /* background-color: grey; */
+}
+
+td.analysis-not-linked {
+  /* background-color: yellow; */
+}

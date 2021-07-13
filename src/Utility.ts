@@ -67,3 +67,7 @@ export const dropPath = (path: string) => {
     return path.split('/').last();
     // return last.replace(/\.[^/.]+$/, "")
 }
+
+export function linkedQ(app: App, from: string, to: string) {
+    return app.metadataCache.resolvedLinks[from]?.hasOwnProperty(to);
+}
