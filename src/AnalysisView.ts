@@ -62,13 +62,17 @@ export default class AnalysisView extends ItemView {
             if (!ANALYSIS_TYPES.includes(type)) { throw new Error(`${type} is not one of the analysis types`) }
 
             componentDiv.empty();
+
+            const { resolvedLinks } = this.app.metadataCache
+
             const componentInfo = {
                 target: componentDiv,
                 props: {
                     app,
                     g,
                     settings,
-                    view: this
+                    view: this,
+                    resolvedLinks
                 }
             };
             switch (type) {
@@ -83,8 +87,8 @@ export default class AnalysisView extends ItemView {
                     break
             };
         }
-
-        // console.log(eccentricity(g, 'mind'))
+        // Default Analysis Type
+        selector.value = 'Similarity'
         drawComponent('Similarity', componentDiv)
 
         selector.addEventListener('change', () => {

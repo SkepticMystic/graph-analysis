@@ -3,10 +3,10 @@ import type { Graph } from "graphlib";
 import type { App } from "obsidian";
 import * as LP from "src/Algorithms/LinkPrediction";
 import type AnalysisView from "src/AnalysisView";
-import { LINKED,NOT_LINKED } from "src/Constants";
+import { LINKED,NOT_LINKED,TD_MEASURE,TD_NODE } from "src/Constants";
 import { currAlg } from "src/GeneralGraphFn";
-import type { GraphAnalysisSettings } from "src/Interfaces";
-import { debug,dropPath,hoverPreview,linkedQ,openOrSwitch } from "src/Utility";
+import type { GraphAnalysisSettings,ResolvedLinks } from "src/Interfaces";
+import { debug,dropPath,hoverPreview,openOrSwitch } from "src/Utility";
 
 
 
@@ -14,24 +14,23 @@ export let app: App;
 export let g: Graph;
 export let settings: GraphAnalysisSettings;
 export let view: AnalysisView;
+export let resolvedLinks: ResolvedLinks;
 
 let currFile = app.workspace.getActiveFile()
 app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
 })
+$: currNode = currFile.path.split('.md', 1)[0];
 
 let value = "Adamic Adar";
 $: alg = currAlg(LP.LINK_PREDICTION_TYPES, value)
 
-$: predictionArr = LP.linkPredictionsForAll(alg, g, currFile.path.split('.md', 1)[0]);
-$: sortedPredictions = predictionArr.sort((a, b) => a.prediction > b.prediction ? -1 : 1)
+$: predictionArr = LP.linkPredictionsForAll(alg, g, currNode, resolvedLinks);
+$: sortedPredictions = predictionArr.sort((a, b) => a.measure > b.measure ? -1 : 1)
 
 debug(settings, {predictionArr})
-    
-    const [noInfinityDefault, noZeroDefault] = [settings.noInfinity, settings.noZero];
 
-    let noInfinity = noInfinityDefault;
-    let noZero = noZeroDefault; 
+let [noInfinity, noZero] = [settings.noInfinity, settings.noZero];
     
 </script>
 
@@ -61,20 +60,25 @@ debug(settings, {predictionArr})
 <table class="graph-analysis-table markdown-preview-view">
     <thead>
         <tr>
-            <th scope="col">Note 1</th>
+            <th scope="col">Note</th>
             <th scope="col">Prediction</th>
         </tr>
     </thead>
     {#each sortedPredictions as node}
-        {#if node !== undefined && !(noInfinity && node.prediction === Infinity) && !(noZero && node.prediction === 0)}
-            <tr>
-                <td class="internal-link {linkedQ(app, currFile.path, node.a + '.md') ? LINKED : NOT_LINKED}"
-                    on:click={(e) => openOrSwitch(app, node.a, currFile, e)}
+        {#if node !== undefined 
+            && !(noInfinity && node.measure === Infinity) 
+            && !(noZero && node.measure === 0)}
+            <tr class={node.linked ? LINKED : NOT_LINKED}>
+                <td 
+                    class="internal-link {TD_NODE}"
+                    on:click={(e) => openOrSwitch(app, node.to, currFile, e)}
                     on:mouseover={(e) => hoverPreview(e, view)}
                 >
-                    {dropPath(node.a)}
+                    {dropPath(node.to)}
                 </td>
-                <td>{node.prediction}</td>
+                <td
+                    class="internal-link {TD_MEASURE}"
+                >{node.measure}</td>
             </tr>
         {/if}
     {/each}

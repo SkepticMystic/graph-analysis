@@ -1,9 +1,10 @@
 import type { Graph } from "graphlib";
+import type { App } from "obsidian";
 import { nodeIntersection } from "src/GeneralGraphFn";
-import type { LinkPredictionAlg, LinkPredictionObj } from "src/Interfaces";
-import { roundNumber, sum } from "src/Utility";
+import type { AnalysisForAll, AnalysisObj, LinkPredictionAlg, ResolvedLinks } from "src/Interfaces";
+import { linkedQ, roundNumber, sum } from "src/Utility";
 
-const adamicAdarLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: string): number => {
+export const adamicAdarLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: string): number => {
     const [Na, Nb] = [g.neighbors(a) as string[], g.neighbors(b) as string[]];
     const Nab = nodeIntersection(Na, Nb);
 
@@ -15,7 +16,7 @@ const adamicAdarLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: str
     }
 }
 
-export { adamicAdarLinkPrediction };
+// export { adamicAdarLinkPrediction };
 
 export const commonNeighboursLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: string): number => {
     const [Na, Nb] = [g.neighbors(a) as string[], g.neighbors(b) as string[]];
@@ -23,20 +24,26 @@ export const commonNeighboursLinkPrediction: LinkPredictionAlg = (g: Graph, a: s
     return Nab.length
 }
 
-export const linkPredictionsForAll = (
-    type: LinkPredictionAlg,
+export const linkPredictionsForAll: AnalysisForAll = (
+    alg: LinkPredictionAlg,
     g: Graph,
-    currNode: string): LinkPredictionObj[] => {
-    const predictions: LinkPredictionObj[] = []
+    currNode: string,
+    resolvedLinks: ResolvedLinks) => {
+    const predictionsArr: AnalysisObj[] = []
     const paths = g.nodes();
 
     for (let i = 0; i < paths.length; i++) {
         const a = paths[i];
 
-        const prediction = type(g, a, currNode)
-        predictions[i] = { a, b: currNode, prediction }
+        const prediction = alg(g, a, currNode)
+        predictionsArr[i] = {
+            from: currNode,
+            to: a,
+            measure: prediction,
+            linked: linkedQ(resolvedLinks, currNode, a)
+        }
     }
-    return predictions
+    return predictionsArr
 }
 
 export const LINK_PREDICTION_TYPES: {

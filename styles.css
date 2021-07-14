@@ -16,10 +16,16 @@ td.internal-link:hover {
   color: var(--text-accent-hover, var(--text-accent));
 }
 
-td.analysis-linked {
-  /* background-color: grey; */
+tr.analysis-linked{
+  /* display:none */
+}
+tr.analysis-not-linked{
+  /* background-color: yellow */
 }
 
-td.analysis-not-linked {
-  /* background-color: yellow; */
+td.analysis-measure{
+  /* display:none */
+}
+td.analysis-node{
+  /* background-color: yellow */
 }

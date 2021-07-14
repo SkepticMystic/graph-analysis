@@ -1,6 +1,6 @@
 import type { App, ItemView, TFile, WorkspaceLeaf } from "obsidian";
 import { DECIMALS } from 'src/Constants';
-import type { GraphAnalysisSettings } from "src/Interfaces";
+import type { GraphAnalysisSettings, ResolvedLinks } from "src/Interfaces";
 
 export const sum = (arr: number[]) => {
     if (arr.length === 0) { return 0 }
@@ -68,6 +68,8 @@ export const dropPath = (path: string) => {
     // return last.replace(/\.[^/.]+$/, "")
 }
 
-export function linkedQ(app: App, from: string, to: string) {
-    return app.metadataCache.resolvedLinks[from]?.hasOwnProperty(to);
+export function linkedQ(resolvedLinks: ResolvedLinks, from: string, to: string) {
+    if (!from.endsWith('.md')) { from += '.md' }
+    if (!to.endsWith('.md')) { to += '.md' }
+    return resolvedLinks[from]?.hasOwnProperty(to);
 }

@@ -22,7 +22,7 @@ export function initGraph(app: App): Graph {
 }
 
 export function currAlg<T>(types: { subtype: string, alg: T }[], value: string) {
-    return types.filter(subtype => subtype.subtype === value)[0].alg
+    return types.filter(type => type.subtype === value)[0].alg
 }
 
 export function eccentricity(g: Graph, a: string) {

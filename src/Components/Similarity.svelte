@@ -2,42 +2,36 @@
     import type { Graph } from "graphlib";
     import type { App } from "obsidian";
     import * as Sim from "src/Algorithms/Similarity";
+    import { similarityForAll } from "src/Algorithms/Similarity";
     import type AnalysisView from "src/AnalysisView";
-    import { LINKED,NOT_LINKED } from "src/Constants";
+    import { LINKED,NOT_LINKED,TD_MEASURE,TD_NODE } from "src/Constants";
     import { currAlg } from "src/GeneralGraphFn";
-    import type { GraphAnalysisSettings } from "src/Interfaces";
-    import { debug,dropPath,hoverPreview,linkedQ,openOrSwitch } from "src/Utility";
+    import type { GraphAnalysisSettings,ResolvedLinks } from "src/Interfaces";
+    import { debug,dropPath,hoverPreview,openOrSwitch } from "src/Utility";
 
 
 
-    
     export let app: App;
     export let g: Graph;
     export let settings: GraphAnalysisSettings;
     export let view: AnalysisView;
+    export let resolvedLinks: ResolvedLinks
     
     let currFile = app.workspace.getActiveFile();
-    let currNode = currFile.path.split('.md', 1)[0];
     app.workspace.on('active-leaf-change', () => {
         currFile = app.workspace.getActiveFile();
-        currNode = currFile.path.split('.md', 1)[0];
     })
+    $: currNode = currFile.path.split('.md', 1)[0];
     
-    let value = "Node Similarity";
-    
+    let value = "Jaccard Similarity";
     $: alg = currAlg(Sim.SIMILARITY_TYPES, value)
     
-    $: similarityArr = alg(g, currNode);
-    $: sortedSimilarities = similarityArr.sort((a, b) => a.similarity > b.similarity ? -1 : 1)
+    $: similarityArr = similarityForAll(alg, g, currNode, resolvedLinks);
+    $: sortedSimilarities = similarityArr.sort((a, b) => a.measure > b.measure ? -1 : 1)
     
     debug(settings, {similarityArr})
-        
 
-    const [noInfinityDefault, noZeroDefault] = [settings.noInfinity, settings.noZero];
-    console.log({noInfinityDefault, noZeroDefault})
-
-    let noInfinity = noInfinityDefault;
-    let noZero = noZeroDefault;    
+    let [noInfinity, noZero] = [settings.noInfinity, settings.noZero];  
         
     </script>
     
@@ -72,15 +66,18 @@
             </tr>
         </thead>
         {#each sortedSimilarities as node}
-            {#if node !== undefined && !(noInfinity && node.similarity === Infinity) && !(noZero && node.similarity === 0)}
-                <tr>
-                    <td class="internal-link {linkedQ(app, currFile.path, node.a + '.md') ? LINKED : NOT_LINKED}"
-                        on:click={(e) => openOrSwitch(app, node.a, currFile, e)}
+            {#if node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
+                <tr class={node.linked ? LINKED : NOT_LINKED}>
+                    <td 
+                        class="internal-link {TD_NODE}"
+                        on:click={(e) => openOrSwitch(app, node.to, currFile, e)}
                         on:mouseover={(e) => hoverPreview(e, view)}
                     >
-                        {dropPath(node.a)}
+                        {dropPath(node.to)}
                     </td>
-                    <td>{node.similarity}</td>
+                    <td
+                        class={TD_MEASURE}
+                    >{node.measure}</td>
                 </tr>
             {/if}
         {/each}

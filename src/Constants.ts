@@ -16,4 +16,7 @@ export const ANALYSIS_TYPES = ['Centrality', 'Link Prediction', 'Similarity']
 export const LINKED = 'analysis-linked';
 export const NOT_LINKED = 'analysis-not-linked';
 
+export const TD_MEASURE = 'analysis-measure';
+export const TD_NODE = 'analysis-node';
+
 
