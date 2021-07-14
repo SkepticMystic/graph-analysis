@@ -14,7 +14,6 @@
     export let settings: GraphAnalysisSettings;
     export let app: App;
     export let view: AnalysisView;
-    export let resolvedLinks: ResolvedLinks;
 
     let currFile = app.workspace.getActiveFile()
     app.workspace.on('active-leaf-change', () => {
@@ -26,7 +25,7 @@
     let value = "Closeness";
     $: alg = currAlg(Central.CENTRALITY_TYPES, value)
     
-    $: centralityArr = Central.centralityForAll(alg, g, currNode, resolvedLinks);
+    $: centralityArr = Central.centralityForAll(alg, g, currNode);
     $: sortedCentrals = centralityArr.sort((a, b) => a.measure > b.measure ? -1 : 1)
     
     debug(settings, {sortedCentrals})
@@ -77,7 +76,7 @@
                             {dropPath(node.to)}
                         </td>
                         <td
-                        class="internal-link {TD_MEASURE}"
+                        class="{TD_MEASURE}"
                         >{node.measure}</td>
                     </tr>
                 {/if}

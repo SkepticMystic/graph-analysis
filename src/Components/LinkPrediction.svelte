@@ -14,7 +14,6 @@ export let app: App;
 export let g: Graph;
 export let settings: GraphAnalysisSettings;
 export let view: AnalysisView;
-export let resolvedLinks: ResolvedLinks;
 
 let currFile = app.workspace.getActiveFile()
 app.workspace.on('active-leaf-change', () => {
@@ -25,7 +24,7 @@ $: currNode = currFile.path.split('.md', 1)[0];
 let value = "Adamic Adar";
 $: alg = currAlg(LP.LINK_PREDICTION_TYPES, value)
 
-$: predictionArr = LP.linkPredictionsForAll(alg, g, currNode, resolvedLinks);
+$: predictionArr = LP.linkPredictionsForAll(alg, g, currNode);
 $: sortedPredictions = predictionArr.sort((a, b) => a.measure > b.measure ? -1 : 1)
 
 debug(settings, {predictionArr})
@@ -77,8 +76,10 @@ let [noInfinity, noZero] = [settings.noInfinity, settings.noZero];
                     {dropPath(node.to)}
                 </td>
                 <td
-                    class="internal-link {TD_MEASURE}"
-                >{node.measure}</td>
+                    class="{TD_MEASURE}"
+                >
+                    {node.measure}
+                </td>
             </tr>
         {/if}
     {/each}

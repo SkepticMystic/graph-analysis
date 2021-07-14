@@ -25,8 +25,7 @@ export const closenessCentrality: CentralityAlg = (g: Graph, a: string) => {
 export const centralityForAll: AnalysisForAll = (
 	alg: CentralityAlg,
 	g: Graph,
-	currNode: string,
-	resolvedLinks: ResolvedLinks) => {
+	currNode: string) => {
 
 	const nodes = g.nodes();
 	const centralityArr: AnalysisObj[] = [];
@@ -34,7 +33,7 @@ export const centralityForAll: AnalysisForAll = (
 		from: currNode,
 		to: node,
 		measure: alg(g, node),
-		linked: linkedQ(resolvedLinks, currNode, node)
+		linked: g.hasEdge(currNode, node)
 	}));
 	return centralityArr
 }

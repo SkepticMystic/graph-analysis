@@ -33,5 +33,4 @@ export interface GraphAnalysisSettings {
 export type AnalysisForAll = (
     alg: LinkPredictionAlg | CentralityAlg | SimilarityAlg,
     g: Graph,
-    currNode: string,
-    resolvedLinks: ResolvedLinks) => AnalysisObj[]
+    currNode: string) => AnalysisObj[]

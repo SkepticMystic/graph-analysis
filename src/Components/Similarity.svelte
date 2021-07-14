@@ -15,7 +15,6 @@
     export let g: Graph;
     export let settings: GraphAnalysisSettings;
     export let view: AnalysisView;
-    export let resolvedLinks: ResolvedLinks
     
     let currFile = app.workspace.getActiveFile();
     app.workspace.on('active-leaf-change', () => {
@@ -26,9 +25,9 @@
     let value = "Jaccard Similarity";
     $: alg = currAlg(Sim.SIMILARITY_TYPES, value)
     
-    $: similarityArr = similarityForAll(alg, g, currNode, resolvedLinks);
+    $: similarityArr = similarityForAll(alg, g, currNode);
     $: sortedSimilarities = similarityArr.sort((a, b) => a.measure > b.measure ? -1 : 1)
-    
+    console.log(sortedSimilarities)
     debug(settings, {similarityArr})
 
     let [noInfinity, noZero] = [settings.noInfinity, settings.noZero];  

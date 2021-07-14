@@ -71,8 +71,7 @@ export default class AnalysisView extends ItemView {
                     app,
                     g,
                     settings,
-                    view: this,
-                    resolvedLinks
+                    view: this
                 }
             };
             switch (type) {

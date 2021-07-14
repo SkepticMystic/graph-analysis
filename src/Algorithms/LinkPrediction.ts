@@ -27,20 +27,19 @@ export const commonNeighboursLinkPrediction: LinkPredictionAlg = (g: Graph, a: s
 export const linkPredictionsForAll: AnalysisForAll = (
     alg: LinkPredictionAlg,
     g: Graph,
-    currNode: string,
-    resolvedLinks: ResolvedLinks) => {
+    currNode: string) => {
     const predictionsArr: AnalysisObj[] = []
     const paths = g.nodes();
 
     for (let i = 0; i < paths.length; i++) {
-        const a = paths[i];
+        const node = paths[i];
 
-        const prediction = alg(g, a, currNode)
+        const prediction = alg(g, node, currNode)
         predictionsArr[i] = {
             from: currNode,
-            to: a,
+            to: node,
             measure: prediction,
-            linked: linkedQ(resolvedLinks, currNode, a)
+            linked: g.hasEdge(currNode, node)
         }
     }
     return predictionsArr

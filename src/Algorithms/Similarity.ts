@@ -15,19 +15,17 @@ export const JaccardSimilarity: SimilarityAlg = (g: Graph, a: string, b: string)
 export const similarityForAll: AnalysisForAll = (
     alg: SimilarityAlg,
     g: Graph,
-    currNode: string,
-    resolvedLinks: ResolvedLinks) => {
+    currNode: string) => {
 
     const similarityArr: AnalysisObj[] = [];
     const nodes = g.nodes();
     nodes.forEach(node => {
         const similarity = roundNumber(alg(g, node, currNode));
-        const linked = linkedQ(resolvedLinks, currNode, node);
         similarityArr.push({
             from: currNode,
             to: node,
             measure: similarity,
-            linked
+            linked: g.hasEdge(currNode, node)
         })
     })
     return similarityArr;
