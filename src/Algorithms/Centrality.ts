@@ -1,7 +1,7 @@
 import type { Graph } from "graphlib";
 import * as graphlib from "graphlib";
-import type { AnalysisForAll, AnalysisObj, CentralityAlg, ResolvedLinks } from "src/Interfaces";
-import { linkedQ, roundNumber, sum } from "src/Utility";
+import type { AnalysisForAll, AnalysisObj, CentralityAlg } from "src/Interfaces";
+import { roundNumber, sum } from "src/Utility";
 
 export const closenessCentrality: CentralityAlg = (g: Graph, a: string) => {
 	const paths = graphlib.alg.dijkstra(g, a);

@@ -1,8 +1,7 @@
 import type { Graph } from "graphlib";
-import type { App } from "obsidian";
 import { nodeIntersection } from "src/GeneralGraphFn";
-import type { AnalysisForAll, AnalysisObj, LinkPredictionAlg, ResolvedLinks } from "src/Interfaces";
-import { linkedQ, roundNumber, sum } from "src/Utility";
+import type { AnalysisForAll, AnalysisObj, LinkPredictionAlg } from "src/Interfaces";
+import { roundNumber, sum } from "src/Utility";
 
 export const adamicAdarLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: string): number => {
     const [Na, Nb] = [g.neighbors(a) as string[], g.neighbors(b) as string[]];
