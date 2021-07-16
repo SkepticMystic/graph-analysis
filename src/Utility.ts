@@ -73,3 +73,5 @@ export function linkedQ(resolvedLinks: ResolvedLinks, from: string, to: string) 
     if (!to.endsWith('.md')) { to += '.md' }
     return resolvedLinks[from]?.hasOwnProperty(to);
 }
+
+export const nxnArray = (n: number): undefined[][] => [...Array(n)].map(e => Array(n))

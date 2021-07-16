@@ -1,7 +1,8 @@
 import type { Graph } from "graphlib";
 import { nodeIntersection } from "src/GeneralGraphFn";
-import type { AnalysisForAll, AnalysisObj, ResolvedLinks, SimilarityAlg } from "src/Interfaces";
-import { linkedQ, roundNumber } from "src/Utility";
+import type { AnalysisForAll, AnalysisObj, SimilarityAlg } from "src/Interfaces";
+import type MyGraph from "src/MyGraph";
+import { roundNumber } from "src/Utility";
 
 export const JaccardSimilarity: SimilarityAlg = (g: Graph, a: string, b: string) => {
     const [Na, Nb] = [
@@ -14,7 +15,7 @@ export const JaccardSimilarity: SimilarityAlg = (g: Graph, a: string, b: string)
 
 export const similarityForAll: AnalysisForAll = (
     alg: SimilarityAlg,
-    g: Graph,
+    g: MyGraph,
     currNode: string) => {
 
     const similarityArr: AnalysisObj[] = [];

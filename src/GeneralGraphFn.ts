@@ -9,10 +9,11 @@ export function nodeIntersection(nodes1: string[], nodes2: string[]) {
 export function initGraph(app: App): Graph {
     const { resolvedLinks } = app.metadataCache
     const g = new Graph();
-
+    let i = 0;
     for (const source in resolvedLinks) {
         const sourceNoMD = source.split('.md', 1)[0]
-        g.setNode(sourceNoMD);
+        g.setNode(sourceNoMD, i);
+        i++;
         for (const dest in resolvedLinks[source]) {
             const destNoMD = dest.split('.md')[0]
             g.setEdge(sourceNoMD, destNoMD);

@@ -1,4 +1,5 @@
 import type { Graph } from "graphlib";
+import type MyGraph from "src/MyGraph";
 
 export interface ResolvedLinks {
     [from: string]: {
@@ -6,22 +7,14 @@ export interface ResolvedLinks {
     }
 }
 
-export interface AnalysisObj {
-    from: string,
-    to: string,
-    measure: number,
-    linked: boolean
+export type Analyses = "Centrality" | "Similarity" | "Link Prediction"
+
+export type Subtypes = 'Adamic Adar' | 'Common Neighbours' | 'Jaccard' | 'Closeness'
+export type GraphData = {
+    [matrix in Subtypes]: number[][];
 };
 
-export interface AnalysisAlg {
-
-}
-
-export type LinkPredictionAlg = (g: Graph, a: string, b: string) => number;
-
-export type CentralityAlg = (g: Graph, a: string) => number;
-
-export type SimilarityAlg = (g: Graph, a: string, b: string) => number;
+export type AnalysisAlg = (a: string, b?: string) => number;
 
 export interface GraphAnalysisSettings {
     noInfinity: boolean;
@@ -31,6 +24,6 @@ export interface GraphAnalysisSettings {
 }
 
 export type AnalysisForAll = (
-    alg: LinkPredictionAlg | CentralityAlg | SimilarityAlg,
+    alg: AnalysisAlg,
     g: Graph,
-    currNode: string) => AnalysisObj[]
+    currNode: string) => MyGraph
