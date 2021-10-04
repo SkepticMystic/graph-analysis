@@ -1,6 +1,5 @@
 import * as graphlib from "graphlib";
 import { Graph } from "graphlib";
-import { adamicAdarLinkPrediction, commonNeighboursLinkPrediction } from "src/Algorithms/LinkPrediction";
 import { nodeIntersection } from "src/GeneralGraphFn";
 import type { AnalysisAlg, GraphData, ResolvedLinks, Subtypes } from "src/Interfaces";
 import { nxnArray, roundNumber, sum } from "src/Utility";
@@ -20,6 +19,7 @@ export default class MyGraph extends Graph {
             this.setNode(sourceNoMD, i);
             i++;
             for (const dest in this.resolvedLinks[source]) {
+                if (dest.split('.').last() !== '.md') { continue }
                 const destNoMD = dest.split('.md')[0]
                 this.setEdge(sourceNoMD, destNoMD);
             }
@@ -27,7 +27,7 @@ export default class MyGraph extends Graph {
         return this
     }
 
-
+    // Separate caches for each measure
     data: GraphData = {
         'Adamic Adar': [],
         'Common Neighbours': [],
@@ -52,10 +52,7 @@ export default class MyGraph extends Graph {
                     this.neighbors(b) as string[]
                 ];
                 const Nab = nodeIntersection(Na, Nb);
-                const jaccard = (Nab.length / (Na.length + Nb.length - Nab.length));
-
-                this.updateData("Jaccard", jaccard, a, b)
-                return jaccard
+                return (Nab.length / (Na.length + Nb.length - Nab.length));
             },
 
 
@@ -66,18 +63,14 @@ export default class MyGraph extends Graph {
                 ];
                 const Nab = nodeIntersection(Na, Nb);
 
-                let adamicAdar;
                 if (Nab.length) {
                     const neighbours: number[] = Nab.map(node => (this.successors(node) as string[]).length)
-                    adamicAdar = roundNumber(sum(
+                    return roundNumber(sum(
                         neighbours.map(neighbour => 1 / Math.log(neighbour))
                     ))
                 } else {
-                    adamicAdar = Infinity
+                    return Infinity
                 }
-
-                this.updateData('Adamic Adar', adamicAdar, a, b);
-                return adamicAdar
             },
 
             'Common Neighbours': (a: string, b: string): number => {
@@ -85,10 +78,7 @@ export default class MyGraph extends Graph {
                     this.neighbors(a) as string[],
                     this.neighbors(b) as string[]
                 ];
-                const noNab = nodeIntersection(Na, Nb).length
-
-                this.updateData('Common Neighbours', noNab, a, b)
-                return noNab
+                return nodeIntersection(Na, Nb).length
             },
 
 
@@ -109,47 +99,47 @@ export default class MyGraph extends Graph {
                 } else {
                     closeness = 0;
                 }
-                // Closeness is 1d, so only fill in one row, with the column `a`
-                this.updateData('Closeness', closeness, 1, a)
+                // Closeness is 1d, so only fill in one row, with the column `a
                 return closeness
             },
         }
 
-    updateData(subtype: Subtypes, value: number, from: string | number, to: string | number) {
-        let i;
-        let j;
-        if (typeof from === 'string') {
-            i = this.node(from)
-        } else {
-            i = from
-        }
-        if (typeof to === 'string') {
-            j = this.node(to)
-        } else {
-            j = to
-        }
+    getData(subtype: Subtypes, from: string | null, to: string) {
+        const i = !from ? 0 : this.node(from)
+        const j = this.node(to)
+
         console.log({ i, j })
-        if (this.data[subtype][i][j]) { return this.data }
-        this.data[subtype][i][j] = value;
-        return this.data
+
+        // Check for symmetric measures
+        if (this.data[subtype][i][j]) { return this.data[subtype][i][j] }
+
+        let measure: number
+        if (to) {
+            measure = this.algs[subtype](from, to)
+        } else {
+            measure = this.algs[subtype](from)
+        }
+        this.data[subtype][i][j] = measure;
+
+        return measure
     }
 
-    getData(subtype: Subtypes, from: string | number, to: string | number): number | undefined {
-        let i;
-        let j;
-        if (typeof from === 'string') {
-            i = this.node(from)
-        } else {
-            i = from
-        }
-        if (typeof to === 'string') {
-            j = this.node(to)
-        } else {
-            j = to
-        }
+    // getData(subtype: Subtypes, from: string | number, to: string | number): number | undefined {
+    //     let i;
+    //     let j;
+    //     if (typeof from === 'string') {
+    //         i = this.node(from)
+    //     } else {
+    //         i = from
+    //     }
+    //     if (typeof to === 'string') {
+    //         j = this.node(to)
+    //     } else {
+    //         j = to
+    //     }
 
-        return this.data[subtype][i][j]
-    }
+    //     return this.data[subtype][i][j]
+    // }
 
     updateEdgeLabel(from: string, to: string, key: string, newValue: any) {
         const newLabel = this.edge(from, to);

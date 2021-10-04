@@ -7,6 +7,8 @@ export interface ResolvedLinks {
     }
 }
 
+
+
 export type Analyses = "Centrality" | "Similarity" | "Link Prediction"
 
 export type Subtypes = 'Adamic Adar' | 'Common Neighbours' | 'Jaccard' | 'Closeness'

@@ -50,9 +50,11 @@ export default class GraphAnalysisPlugin extends Plugin {
 
 		this.registerEvent(this.app.workspace.on('active-leaf-change', () => {
 			const currNode = this.app.workspace.getActiveFile().path.split('.md', 1)[0]
-			console.log(g.algs['Common Neighbours'](currNode, currNode))
+			console.log(g.getData('Closeness', currNode, currNode))
 			console.log(g.data)
 		}))
+
+		
 	}
 
 	onunload() {
