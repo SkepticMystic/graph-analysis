@@ -7,16 +7,22 @@ export interface ResolvedLinks {
     }
 }
 
+export type Analyses =
+    // "Centrality" | 
+    "Similarity" | 
+    "Link Prediction"
 
+export type Subtypes =
+    'Adamic Adar'
+    | 'Common Neighbours'
+    | 'Jaccard'
+// | 'Closeness'
 
-export type Analyses = "Centrality" | "Similarity" | "Link Prediction"
-
-export type Subtypes = 'Adamic Adar' | 'Common Neighbours' | 'Jaccard' | 'Closeness'
 export type GraphData = {
     [matrix in Subtypes]: number[][];
 };
 
-export type AnalysisAlg = (a: string, b?: string) => number;
+export type AnalysisAlg = (a: string) => number[];
 
 export interface GraphAnalysisSettings {
     noInfinity: boolean;
@@ -28,4 +34,5 @@ export interface GraphAnalysisSettings {
 export type AnalysisForAll = (
     alg: AnalysisAlg,
     g: Graph,
-    currNode: string) => MyGraph
+    currNode: string
+) => MyGraph

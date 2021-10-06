@@ -1,88 +1,108 @@
-<script lang='ts'>
-    import type { Graph } from "graphlib";
-    import type { App } from "obsidian";
-    import * as Central from "src/Algorithms/Centrality";
-    import type AnalysisView from "src/AnalysisView";
-    import { LINKED,NOT_LINKED,TD_MEASURE,TD_NODE } from "src/Constants";
-    import { currAlg } from "src/GeneralGraphFn";
-    import type { GraphAnalysisSettings, ResolvedLinks } from "src/Interfaces";
-    import { debug,dropPath,hoverPreview,linkedQ,openOrSwitch } from "src/Utility";
+<script lang="ts">
+  import type { App, TFile } from 'obsidian'
+  import * as Central from 'src/Algorithms/Centrality'
+  import type AnalysisView from 'src/AnalysisView'
+  import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
+  import type { GraphAnalysisSettings, Subtypes } from 'src/Interfaces'
+  import type GraphAnalysisPlugin from 'src/main'
+  import {
+    debug,
+    dropPath,
+    hoverPreview,
+    linkedQ,
+    openOrSwitch,
+  } from 'src/Utility'
+  import { onMount } from 'svelte'
 
+  export let plugin: GraphAnalysisPlugin
+  export let settings: GraphAnalysisSettings
+  export let app: App
+  export let view: AnalysisView
 
-    
-    export let g: Graph;
-    export let settings: GraphAnalysisSettings;
-    export let app: App;
-    export let view: AnalysisView;
+  app.workspace.on('active-leaf-change', () => {
+    currFile = app.workspace.getActiveFile()
+  })
 
-    let currFile = app.workspace.getActiveFile()
-    app.workspace.on('active-leaf-change', () => {
-        currFile = app.workspace.getActiveFile()
-    })
-    $: currNode = currFile.path.split('.md', 1)[0];
+  let value: Subtypes = 'Closeness'
+  $: resolvedLinks = app.metadataCache.resolvedLinks
+  let { noInfinity, noZero } = settings
 
+  $: currFile = app.workspace.getActiveFile()
 
-    let value = "Closeness";
-    $: alg = currAlg(Central.CENTRALITY_TYPES, value)
-    
-    $: centralityArr = Central.centralityForAll(alg, g, currNode);
-    $: sortedCentrals = centralityArr.sort((a, b) => a.measure > b.measure ? -1 : 1)
-    
-    debug(settings, {sortedCentrals})
+  $: currNode = currFile.path.split('.md', 1)[0]
+  let measures = plugin.g.getData(value, currNode)
+  $: centralityArr = plugin.g.nodes().map((to, i) => {
+    return {
+      measure: measures[i],
+      linked: linkedQ(resolvedLinks, currNode, to),
+      to,
+    }
+  })
 
-    let [noInfinity, noZero] = [settings.noInfinity, settings.noZero]; 
-        
+  $: sortedCentrals = centralityArr.sort((a, b) =>
+    a.measure > b.measure ? -1 : 1
+  )
+
+  onMount(() => {
+    currFile = app.workspace.getActiveFile()
+    debug(settings, { sortedCentrals })
+  })
 </script>
 
 <div>
-    <span>Centrality Algorithm: 
-        <select bind:value>
-            {#each Central.CENTRALITY_TYPES as subtype}
-                <option value={subtype.subtype}>{subtype.subtype}</option>
-            {/each}
-        </select>
-    </span>
+  <span
+    >Centrality Algorithm:
+    <select bind:value>
+      {#each Central.CENTRALITY_TYPES as subtype}
+        <option value={subtype.subtype}>{subtype.subtype}</option>
+      {/each}
+    </select>
+  </span>
 
-    <span>Exclude Infinity: 
-        <input type="checkbox" 
-            checked={noInfinity} 
-            on:change={() => noInfinity = !noInfinity}>
-    </span>
+  <span
+    >Exclude Infinity:
+    <input
+      type="checkbox"
+      checked={noInfinity}
+      on:change={() => (noInfinity = !noInfinity)}
+    />
+  </span>
 
-    <span>Exclude Zero: 
-        <input type="checkbox" 
-            checked={noZero} 
-            on:change={() => noZero = !noZero}>
-    </span>
+  <span
+    >Exclude Zero:
+    <input
+      type="checkbox"
+      checked={noZero}
+      on:change={() => (noZero = !noZero)}
+    />
+  </span>
 </div>
 
-    <table class="graph-analysis-table markdown-preview-view">
-        <thead>
-            <tr>
-                <th scope="col">Note</th>
-                <th scope="col">Centrality</th>
-            </tr>
-        </thead>
-        {#each sortedCentrals as node}
-                {#if node !== undefined 
-                    && !(noInfinity && node.measure === Infinity) 
-                    && !(noZero && node.measure === 0)}
-                    <tr class={node.linked ? LINKED : NOT_LINKED}>
-                        <td
-                        class="internal-link {TD_NODE}"
-                        on:click={(e) => openOrSwitch(app, node.to, currFile, e)}
-                        on:mouseover={(e) => hoverPreview(e, view)}
-                        >
-                            {dropPath(node.to)}
-                        </td>
-                        <td
-                        class="{TD_MEASURE}"
-                        >{node.measure}</td>
-                    </tr>
-                {/if}
-        {/each}
-    </table>
-    
-    <style>
-    
-    </style>
+<table class="graph-analysis-table markdown-preview-view">
+  <thead>
+    <tr>
+      <th scope="col">Note</th>
+      <th scope="col">Centrality</th>
+    </tr>
+  </thead>
+  {#each sortedCentrals as node}
+    {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
+      <tr class={node.linked ? LINKED : NOT_LINKED}>
+        <td
+          class="internal-link {TD_NODE}"
+          on:click={(e) => openOrSwitch(app, node.to, currFile, e)}
+          on:mouseover={(e) => hoverPreview(e, view)}
+        >
+          {dropPath(node.to)}
+        </td>
+        <td class={TD_MEASURE}>{node.measure}</td>
+      </tr>
+    {/if}
+  {:else}
+    <!-- this block renders when photos.length === 0 -->
+    <p>loading...</p>
+  {/each}
+</table>
+
+<style>
+</style>

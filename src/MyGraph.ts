@@ -1,5 +1,6 @@
 import * as graphlib from "graphlib";
 import { Graph } from "graphlib";
+import { DECIMALS } from "src/Constants";
 import { nodeIntersection } from "src/GeneralGraphFn";
 import type { AnalysisAlg, GraphData, ResolvedLinks, Subtypes } from "src/Interfaces";
 import { nxnArray, roundNumber, sum } from "src/Utility";
@@ -12,16 +13,20 @@ export default class MyGraph extends Graph {
         this.resolvedLinks = resolvedLinks;
     }
 
-    initGraph(): Graph {
+    initGraph(): MyGraph {
         let i = 0;
         for (const source in this.resolvedLinks) {
-            const sourceNoMD = source.split('.md', 1)[0]
-            this.setNode(sourceNoMD, i);
-            i++;
-            for (const dest in this.resolvedLinks[source]) {
-                if (dest.split('.').last() !== '.md') { continue }
-                const destNoMD = dest.split('.md')[0]
-                this.setEdge(sourceNoMD, destNoMD);
+            if (source.split('.').last() === 'md') {
+                const sourceNoMD = source.split('.md', 1)[0]
+                this.setNode(sourceNoMD, i);
+
+                i++;
+                for (const dest in this.resolvedLinks[source]) {
+                    if (dest.split('.').last() === 'md') {
+                        const destNoMD = dest.split('.md')[0]
+                        this.setEdge(sourceNoMD, destNoMD);
+                    }
+                }
             }
         }
         return this
@@ -32,7 +37,7 @@ export default class MyGraph extends Graph {
         'Adamic Adar': [],
         'Common Neighbours': [],
         'Jaccard': [],
-        'Closeness': []
+        // 'Closeness': []
     };
 
     initData(): void {
@@ -43,103 +48,97 @@ export default class MyGraph extends Graph {
         })
     }
 
+    neighTest() {
+        return this.neighbors('transactionalism')
+    }
+
     algs: {
         [subtype in Subtypes]: AnalysisAlg
     } = {
-            "Jaccard": (a: string, b: string) => {
-                const [Na, Nb] = [
-                    this.neighbors(a) as string[],
-                    this.neighbors(b) as string[]
-                ];
-                const Nab = nodeIntersection(Na, Nb);
-                return (Nab.length / (Na.length + Nb.length - Nab.length));
+            "Jaccard": (a: string) => {
+                const Na = this.neighbors(a) as string[]
+                const results: number[] = []
+
+                this.nodes().forEach(to => {
+                    const Nb = (this.neighbors(to) as string[]) ?? []
+                    const Nab = nodeIntersection(Na, Nb);
+                    results.push(
+                        roundNumber(
+                            Nab.length / (Na.length + Nb.length - Nab.length)
+                            , DECIMALS)
+                    );
+
+                })
+                return results
             },
 
 
-            'Adamic Adar': (a: string, b: string): number => {
-                const [Na, Nb] = [
-                    this.neighbors(a) as string[],
-                    this.neighbors(b) as string[]
-                ];
-                const Nab = nodeIntersection(Na, Nb);
+            'Adamic Adar': (a: string): number[] => {
+                const Na = this.neighbors(a) as string[]
+                const results: number[] = []
 
-                if (Nab.length) {
-                    const neighbours: number[] = Nab.map(node => (this.successors(node) as string[]).length)
-                    return roundNumber(sum(
-                        neighbours.map(neighbour => 1 / Math.log(neighbour))
-                    ))
-                } else {
-                    return Infinity
-                }
-            },
+                this.nodes().forEach(to => {
+                    const Nb = this.neighbors(to) as string[]
+                    const Nab = nodeIntersection(Na, Nb);
 
-            'Common Neighbours': (a: string, b: string): number => {
-                const [Na, Nb] = [
-                    this.neighbors(a) as string[],
-                    this.neighbors(b) as string[]
-                ];
-                return nodeIntersection(Na, Nb).length
-            },
-
-
-            'Closeness': (a: string) => {
-                const paths = graphlib.alg.dijkstra(this, a);
-
-                const distances = [];
-                for (const target in paths) {
-                    const dist = paths[target].distance;
-                    if (dist < Infinity) {
-                        distances.push(dist);
+                    if (Nab.length) {
+                        const neighbours: number[] = Nab.map(node => (this.successors(node) as string[]).length)
+                        results.push(
+                            roundNumber(sum(
+                                neighbours.map(neighbour => 1 / Math.log(neighbour))
+                            )))
+                    } else {
+                        results.push(Infinity)
                     }
-                }
-
-                let closeness;
-                if (distances.length > 0) {
-                    closeness = roundNumber((this.nodes().length - 1) / sum(distances));
-                } else {
-                    closeness = 0;
-                }
-                // Closeness is 1d, so only fill in one row, with the column `a
-                return closeness
+                })
+                return results
             },
+
+            'Common Neighbours': (a: string): number[] => {
+                const Na = this.neighbors(a) as string[]
+                const results: number[] = []
+
+                for (let to in this.nodes()) {
+                    const Nb = this.neighbors(to) as string[]
+                    results.push(nodeIntersection(Na, Nb).length)
+                }
+                return results
+            },
+
+
+            // 'Closeness': (a: string) => {
+            //     const paths = graphlib.alg.dijkstra(this, a);
+            //     const results: number[] = []
+            //     const nNodes = this.nodes().length
+
+            //     const distances = [];
+            //     for (const to in paths) {
+            //         const dist = paths[to].distance;
+            //         if (dist < Infinity) {
+            //             distances.push(dist);
+            //         }
+            //     }
+
+            //     if (distances.length > 0) {
+            //         closeness = roundNumber((nNodes - 1) / sum(distances));
+            //     } else {
+            //         closeness = 0;
+            //     }
+            //     return results
+            // },
         }
 
-    getData(subtype: Subtypes, from: string | null, to: string) {
-        const i = !from ? 0 : this.node(from)
-        const j = this.node(to)
-
-        console.log({ i, j })
+    getData(subtype: Subtypes, from: string): number[] {
+        const i = this.node(from)
 
         // Check for symmetric measures
-        if (this.data[subtype][i][j]) { return this.data[subtype][i][j] }
-
-        let measure: number
-        if (to) {
-            measure = this.algs[subtype](from, to)
+        if (this.data[subtype]?.[i]?.[0] !== undefined) {
+            return this.data[subtype][i]
         } else {
-            measure = this.algs[subtype](from)
+            this.data[subtype][i] = this.algs[subtype](from)
+            return this.data[subtype][i]
         }
-        this.data[subtype][i][j] = measure;
-
-        return measure
     }
-
-    // getData(subtype: Subtypes, from: string | number, to: string | number): number | undefined {
-    //     let i;
-    //     let j;
-    //     if (typeof from === 'string') {
-    //         i = this.node(from)
-    //     } else {
-    //         i = from
-    //     }
-    //     if (typeof to === 'string') {
-    //         j = this.node(to)
-    //     } else {
-    //         j = to
-    //     }
-
-    //     return this.data[subtype][i][j]
-    // }
 
     updateEdgeLabel(from: string, to: string, key: string, newValue: any) {
         const newLabel = this.edge(from, to);

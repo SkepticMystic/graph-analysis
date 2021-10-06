@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
-import { eccentricity, initGraph } from "src/GeneralGraphFn";
 import type GraphAnalysisPlugin from "src/main";
+import type MyGraph from "src/MyGraph";
 import Centrality from "./Components/Centrality.svelte";
 import LinkPrediction from "./Components/LinkPrediction.svelte";
 import Similarity from "./Components/Similarity.svelte";
@@ -38,16 +38,12 @@ export default class AnalysisView extends ItemView {
     }
 
     async draw(): Promise<void> {
-        const plugin = this.plugin;
         const app = this.app
-        const settings = this.plugin.settings
+        const { settings } = this.plugin
         const contentEl = this.contentEl
         contentEl.empty();
 
-        const g = initGraph(this.plugin.app);
-
-
-        const settingsSpan = contentEl.createSpan({ text: 'Choose an analysis type: ' })
+        const settingsSpan = contentEl.createSpan({ text: 'Analysis type: ' })
         const selector = settingsSpan.createEl('select');
         ANALYSIS_TYPES.forEach(type => {
             selector.createEl('option', { value: type, text: type });
@@ -58,18 +54,16 @@ export default class AnalysisView extends ItemView {
         const drawComponent = (
             type: string,
             componentDiv: HTMLDivElement) => {
-
-            if (!ANALYSIS_TYPES.includes(type)) { throw new Error(`${type} is not one of the analysis types`) }
-
+            if (!ANALYSIS_TYPES.includes(type)) {
+                throw new Error(`${type} is not one of the analysis types`)
+            }
             componentDiv.empty();
-
-            const { resolvedLinks } = this.app.metadataCache
 
             const componentInfo = {
                 target: componentDiv,
                 props: {
                     app,
-                    g,
+                    plugin: this.plugin,
                     settings,
                     view: this
                 }
