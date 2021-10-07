@@ -45,9 +45,9 @@ export const linkPredictionsForAll: AnalysisForAll = (
 }
 
 export const LINK_PREDICTION_TYPES: {
-    subtype: string,
-    alg: LinkPredictionAlg
+    subtype: string
 }[] = [
-        { subtype: 'Adamic Adar', alg: adamicAdarLinkPrediction },
-        { subtype: 'Common Neighbours', alg: commonNeighboursLinkPrediction }
+        { subtype: 'Adamic Adar' },
+        { subtype: 'Common Neighbours' },
+        { subtype: 'testSubtype' }
     ]

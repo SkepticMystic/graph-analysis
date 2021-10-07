@@ -13,6 +13,8 @@ export default class MyGraph extends Graph {
         this.resolvedLinks = resolvedLinks;
     }
 
+    nodeMapping: { [name: string]: number } = {}
+
     initGraph(): MyGraph {
         let i = 0;
         for (const source in this.resolvedLinks) {
@@ -37,13 +39,15 @@ export default class MyGraph extends Graph {
         'Adamic Adar': [],
         'Common Neighbours': [],
         'Jaccard': [],
+        'testSubtype': [],
+        'Co-Citations': [],
         // 'Closeness': []
     };
 
     initData(): void {
         const n = this.nodes().length;
-        const nxnMatrix: undefined[][] = nxnArray(n);
         Object.keys(this.data).forEach((key: Subtypes) => {
+            const nxnMatrix: undefined[][] = nxnArray(n);
             this.data[key] = nxnMatrix
         })
     }
@@ -98,12 +102,39 @@ export default class MyGraph extends Graph {
                 const Na = this.neighbors(a) as string[]
                 const results: number[] = []
 
-                for (let to in this.nodes()) {
-                    const Nb = this.neighbors(to) as string[]
+                this.nodes().forEach(to => {
+                    const Nb = (this.neighbors(to) ?? []) as string[]
                     results.push(nodeIntersection(Na, Nb).length)
-                }
+                })
                 return results
             },
+
+            'Co-Citations': (a: string) => {
+                const results: number[] = new Array(this.nodes().length).fill(0)
+                const pres = (this.predecessors(a) as string[]);
+                pres.forEach(pre => {
+                    const succs = (this.successors(pre) as string[])
+                    succs.forEach(succ => {
+
+                        
+                        const i = this.node(succ)
+                        // Get TFile for pre
+                        // Get links from cache
+                        // Get distance
+                        // Duplicate links: Only take high score
+                        // Weight the results
+
+                        results[i]++
+                        results[i]
+                    });
+                })
+                const currI = this.node(a)
+                results[currI] = 0
+                console.log({ coResults: results })
+                return results
+            },
+
+            'testSubtype': (a: string) => new Array(this.nodes().length).fill(1.2)
 
 
             // 'Closeness': (a: string) => {
@@ -130,7 +161,7 @@ export default class MyGraph extends Graph {
 
     getData(subtype: Subtypes, from: string): number[] {
         const i = this.node(from)
-
+        if (i === undefined) { return new Array(this.nodes().length) }
         // Check for symmetric measures
         if (this.data[subtype]?.[i]?.[0] !== undefined) {
             return this.data[subtype][i]

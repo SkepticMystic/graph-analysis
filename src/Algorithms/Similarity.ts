@@ -33,8 +33,8 @@ export const similarityForAll: AnalysisForAll = (
 }
 
 export const SIMILARITY_TYPES: {
-    subtype: string,
-    alg: SimilarityAlg
+    subtype: string
 }[] = [
-        { subtype: 'Jaccard Similarity', alg: JaccardSimilarity }
+        { subtype: 'Jaccard Similarity'},
+        { subtype: 'Co-Citations'},
     ]

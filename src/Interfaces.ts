@@ -9,13 +9,15 @@ export interface ResolvedLinks {
 
 export type Analyses =
     // "Centrality" | 
-    "Similarity" | 
+    "Similarity" |
     "Link Prediction"
 
 export type Subtypes =
     'Adamic Adar'
     | 'Common Neighbours'
     | 'Jaccard'
+    | 'Co-Citations'
+    | 'testSubtype'
 // | 'Closeness'
 
 export type GraphData = {

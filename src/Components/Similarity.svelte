@@ -25,11 +25,12 @@
     currFile = app.workspace.getActiveFile()
   })
 
-  $: resolvedLinks = app.metadataCache.resolvedLinks
-  let value: Subtypes = 'Jaccard'
-  $: measures = plugin.g.getData(value, currNode)
+  let resolvedLinks = app.metadataCache.resolvedLinks
+  $: subtype = 'Jaccard'
+  $: measures = plugin.g.getData(subtype, currNode)
 
-  $: similarityArr = plugin.g.nodes().map((to, i) => {
+  $: similarityArr = plugin.g.nodes().map((to) => {
+    const i = plugin.g.node(to)
     return {
       measure: measures[i],
       linked: linkedQ(resolvedLinks, currNode, to),
@@ -43,6 +44,7 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
+    let subtype = 'Jaccard'
     debug(settings, { similarityArr })
   })
 
@@ -53,7 +55,7 @@
 <div>
   <span
     >Similarity Algorithm:
-    <select bind:value>
+    <select bind:value={subtype}>
       {#each Sim.SIMILARITY_TYPES as subtype}
         <option value={subtype.subtype}>{subtype.subtype}</option>
       {/each}

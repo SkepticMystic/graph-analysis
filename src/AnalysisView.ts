@@ -82,7 +82,7 @@ export default class AnalysisView extends ItemView {
         }
         // Default Analysis Type
         selector.value = 'Similarity'
-        drawComponent('Similarity', componentDiv)
+        drawComponent(selector.value, componentDiv)
 
         selector.addEventListener('change', () => {
             drawComponent(selector.value, componentDiv)

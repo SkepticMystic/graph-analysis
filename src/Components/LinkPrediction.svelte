@@ -20,6 +20,7 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
+  let subtype = 'Adamic Adar'
   // let currFile = app.workspace.getActiveFile()
   // app.workspace.on('active-leaf-change', () => {
   //   currFile = app.workspace.getActiveFile()
@@ -44,10 +45,11 @@
     currFile = app.workspace.getActiveFile()
   })
 
-  $: resolvedLinks = app.metadataCache.resolvedLinks
-  let value = 'Adamic Adar'
-  $: measures = plugin.g.getData(value, currNode)
-  $: predictionArr = plugin.g.nodes().map((to, i) => {
+  let { resolvedLinks } = app.metadataCache
+  // $: subtype = 'Adamic Adar'
+  $: measures = plugin.g.getData(subtype, currNode)
+  $: predictionArr = plugin.g.nodes().map((to) => {
+    const i = plugin.g.node(to)
     return {
       measure: measures[i],
       linked: linkedQ(resolvedLinks, currNode, to),
@@ -61,7 +63,7 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    console.log({ measures })
+    // value = 'Adamic Adar'
     debug(settings, { similarityArr: predictionArr })
   })
 
@@ -71,7 +73,7 @@
 <div>
   <span
     >Link Prediction Algorithm:
-    <select bind:value>
+    <select bind:value={subtype}>
       {#each LP.LINK_PREDICTION_TYPES as subtype}
         <option value={subtype.subtype}>{subtype.subtype}</option>
       {/each}
