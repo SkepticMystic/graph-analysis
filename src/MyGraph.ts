@@ -4,13 +4,16 @@ import { DECIMALS } from "src/Constants";
 import { nodeIntersection } from "src/GeneralGraphFn";
 import type { AnalysisAlg, GraphData, ResolvedLinks, Subtypes } from "src/Interfaces";
 import { nxnArray, roundNumber, sum } from "src/Utility";
+import type { App, HeadingCache, LinkCache } from 'obsidian'
 
 export default class MyGraph extends Graph {
     resolvedLinks: ResolvedLinks;
+    app: App;
 
-    constructor(resolvedLinks: ResolvedLinks) {
+    constructor(resolvedLinks: ResolvedLinks, app: App) {
         super()
         this.resolvedLinks = resolvedLinks;
+        this.app = app;
     }
 
     nodeMapping: { [name: string]: number } = {}
@@ -110,27 +113,98 @@ export default class MyGraph extends Graph {
             },
 
             'Co-Citations': (a: string) => {
+                const mdCache = this.app.metadataCache;
                 const results: number[] = new Array(this.nodes().length).fill(0)
                 const pres = (this.predecessors(a) as string[]);
                 pres.forEach(pre => {
-                    const succs = (this.successors(pre) as string[])
-                    succs.forEach(succ => {
+                    const cache = mdCache.getFileCache(mdCache.getFirstLinkpathDest(pre, ''));
+                    const bestReference: {[name: string]: number} = {};
+                    const ownLinks = cache.links.filter((link) => link.link === a);
+                    const ownSections = ownLinks.map((link) =>
+                        cache.sections.find((section) =>
+                          section.position.start.line <= link.position.start.line &&
+                          section.position.end.line >= link.position.end.line)
+                    )
 
-                        
-                        const i = this.node(succ)
-                        // Get TFile for pre
-                        // Get links from cache
-                        // Get distance
-                        // Duplicate links: Only take high score
-                        // Weight the results
+                    let minHeadingLevel = 7;
+                    let maxHeadingLevel = 0;
+                    const ownHeadings: [HeadingCache, number][] = [];
+                    ownLinks.forEach((link) => {
+                        if (!cache.headings) return;
+                          cache.headings.forEach((heading, index) => {
+                              minHeadingLevel = Math.min(minHeadingLevel, heading.level);
+                              maxHeadingLevel = Math.max(maxHeadingLevel, heading.level);
+                              // The link falls under this header!
+                              if (heading.position.start.line <= link.position.start.line) {
+                                  for (const j of Array(cache.headings.length - index - 1).keys()) {
+                                      let nextHeading = cache.headings[j + index + 1];
+                                      // Scan for the next header with at least as low of a level
+                                      if (nextHeading.level >= heading.level) {
+                                          if (nextHeading.position.start.line <= link.position.start.line) return
+                                          ownHeadings.push([heading, nextHeading.position.start.line]);
+                                          return;
+                                      }
+                                  }
+                                  // No more headers after this one. Use arbitrarily number for length to keep things simple...
+                                  ownHeadings.push([heading, 100000000000]);
+                              }
+                          })
+                      }
+                    )
+                    cache.links.forEach((link) => {
+                        if (link.link === a) return;
 
-                        results[i]++
-                        results[i]
+                        // Check if it is in the same sentence
+                        const sameSentenceOwnLink = ownLinks.find((ownLink) =>
+                          ownLink.position.start.line === link.position.start.line);
+                        if (sameSentenceOwnLink) {
+                            bestReference[link.link] = 1;
+                            return;
+                        }
+
+                        if (!(link.link in bestReference)) {
+                            bestReference[link.link] = 0;
+                        }
+
+                        // Check if it is in the same paragraph
+                        const sameParagraph = ownSections.find((section) =>
+                          section.position.start.line <= link.position.start.line &&
+                          section.position.end.line >= link.position.end.line);
+                        if (sameParagraph) {
+                            bestReference[link.link] = Math.max(1/2, bestReference[link.link]);
+                            return;
+                        }
+
+                        // Find the best corresponding heading
+                        const headingMatches = ownHeadings.filter(([heading, end]) =>
+                          heading.position.start.line <= link.position.start.line &&
+                          end > link.position.end.line);
+                        if (headingMatches.length > 0) {
+                            const bestLevel = Math.max(...headingMatches.map(([heading, _]) => heading.level));
+                            // Intuition: If they are both under the same 'highest'-level heading, they get weight 1/4
+                            // Then, maxHeadingLevel - bestLevel = 0, so we get 1/(2^2)=1/4. If the link appears only under
+                            // less specific headings, the weight will decrease.
+                            bestReference[link.link] = Math.max(
+                              1/Math.pow(2, 2 + maxHeadingLevel - bestLevel), bestReference[link.link]);
+                            return;
+                        }
+
+                        // The links appear together in the same document, but not under a shared heading
+                        minHeadingLevel = cache.headings && cache.headings.length > 0 ? minHeadingLevel : 0;
+                        maxHeadingLevel = cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0;
+                        // Intuition of weight: The least specific heading will give the weight 2 + maxHeadingLevel - minHeadingLevel
+                        // We want to weight it 1 factor less.
+                        bestReference[link.link] = Math.max(
+                          1/Math.pow(2, 3 + maxHeadingLevel - minHeadingLevel), bestReference[link.link]);
                     });
+
+                    // Add the found weights to the results
+                    for (let key in bestReference) {
+                        results[this.node(key)] += bestReference[key];
+                    }
                 })
                 const currI = this.node(a)
                 results[currI] = 0
-                console.log({ coResults: results })
                 return results
             },
 
@@ -160,6 +234,7 @@ export default class MyGraph extends Graph {
         }
 
     getData(subtype: Subtypes, from: string): number[] {
+        console.log({subtype, from});
         const i = this.node(from)
         if (i === undefined) { return new Array(this.nodes().length) }
         // Check for symmetric measures
