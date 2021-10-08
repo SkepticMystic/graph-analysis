@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.20](https://github.com/SkepticMystic/graph-analysis/compare/0.0.19...0.0.20) (2021-10-08)
+
+
+### Bug Fixes
+
+* :bug: Bug fixes, simplifications ([6adb719](https://github.com/SkepticMystic/graph-analysis/commit/6adb719d55c1fdb76de5923d8bc88025740acc28))
+
 ### [0.0.19](https://github.com/SkepticMystic/graph-analysis/compare/0.0.18...0.0.19) (2021-10-08)
 
 ### [0.0.18](https://github.com/SkepticMystic/graph-analysis/compare/0.0.17...0.0.18) (2021-10-07)
