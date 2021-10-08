@@ -118,12 +118,12 @@ export default class MyGraph extends Graph {
                 const pres = (this.predecessors(a) as string[]);
                 pres.forEach(pre => {
                     const cache = mdCache.getFileCache(mdCache.getFirstLinkpathDest(pre, ''));
-                    const bestReference: {[name: string]: number} = {};
+                    const bestReference: { [name: string]: number } = {};
                     const ownLinks = cache.links.filter((link) => link.link === a);
                     const ownSections = ownLinks.map((link) =>
                         cache.sections.find((section) =>
-                          section.position.start.line <= link.position.start.line &&
-                          section.position.end.line >= link.position.end.line)
+                            section.position.start.line <= link.position.start.line &&
+                            section.position.end.line >= link.position.end.line)
                     )
 
                     let minHeadingLevel = 7;
@@ -131,32 +131,32 @@ export default class MyGraph extends Graph {
                     const ownHeadings: [HeadingCache, number][] = [];
                     ownLinks.forEach((link) => {
                         if (!cache.headings) return;
-                          cache.headings.forEach((heading, index) => {
-                              minHeadingLevel = Math.min(minHeadingLevel, heading.level);
-                              maxHeadingLevel = Math.max(maxHeadingLevel, heading.level);
-                              // The link falls under this header!
-                              if (heading.position.start.line <= link.position.start.line) {
-                                  for (const j of Array(cache.headings.length - index - 1).keys()) {
-                                      let nextHeading = cache.headings[j + index + 1];
-                                      // Scan for the next header with at least as low of a level
-                                      if (nextHeading.level >= heading.level) {
-                                          if (nextHeading.position.start.line <= link.position.start.line) return
-                                          ownHeadings.push([heading, nextHeading.position.start.line]);
-                                          return;
-                                      }
-                                  }
-                                  // No more headers after this one. Use arbitrarily number for length to keep things simple...
-                                  ownHeadings.push([heading, 100000000000]);
-                              }
-                          })
-                      }
+                        cache.headings.forEach((heading, index) => {
+                            minHeadingLevel = Math.min(minHeadingLevel, heading.level);
+                            maxHeadingLevel = Math.max(maxHeadingLevel, heading.level);
+                            // The link falls under this header!
+                            if (heading.position.start.line <= link.position.start.line) {
+                                for (const j of Array(cache.headings.length - index - 1).keys()) {
+                                    let nextHeading = cache.headings[j + index + 1];
+                                    // Scan for the next header with at least as low of a level
+                                    if (nextHeading.level >= heading.level) {
+                                        if (nextHeading.position.start.line <= link.position.start.line) return
+                                        ownHeadings.push([heading, nextHeading.position.start.line]);
+                                        return;
+                                    }
+                                }
+                                // No more headers after this one. Use arbitrarily number for length to keep things simple...
+                                ownHeadings.push([heading, 100000000000]);
+                            }
+                        })
+                    }
                     )
                     cache.links.forEach((link) => {
                         if (link.link === a) return;
 
                         // Check if it is in the same sentence
                         const sameSentenceOwnLink = ownLinks.find((ownLink) =>
-                          ownLink.position.start.line === link.position.start.line);
+                            ownLink.position.start.line === link.position.start.line);
                         if (sameSentenceOwnLink) {
                             bestReference[link.link] = 1;
                             return;
@@ -168,24 +168,24 @@ export default class MyGraph extends Graph {
 
                         // Check if it is in the same paragraph
                         const sameParagraph = ownSections.find((section) =>
-                          section.position.start.line <= link.position.start.line &&
-                          section.position.end.line >= link.position.end.line);
+                            section.position.start.line <= link.position.start.line &&
+                            section.position.end.line >= link.position.end.line);
                         if (sameParagraph) {
-                            bestReference[link.link] = Math.max(1/2, bestReference[link.link]);
+                            bestReference[link.link] = Math.max(1 / 2, bestReference[link.link]);
                             return;
                         }
 
                         // Find the best corresponding heading
                         const headingMatches = ownHeadings.filter(([heading, end]) =>
-                          heading.position.start.line <= link.position.start.line &&
-                          end > link.position.end.line);
+                            heading.position.start.line <= link.position.start.line &&
+                            end > link.position.end.line);
                         if (headingMatches.length > 0) {
                             const bestLevel = Math.max(...headingMatches.map(([heading, _]) => heading.level));
                             // Intuition: If they are both under the same 'highest'-level heading, they get weight 1/4
                             // Then, maxHeadingLevel - bestLevel = 0, so we get 1/(2^2)=1/4. If the link appears only under
                             // less specific headings, the weight will decrease.
                             bestReference[link.link] = Math.max(
-                              1/Math.pow(2, 2 + maxHeadingLevel - bestLevel), bestReference[link.link]);
+                                1 / Math.pow(2, 2 + maxHeadingLevel - bestLevel), bestReference[link.link]);
                             return;
                         }
 
@@ -195,7 +195,7 @@ export default class MyGraph extends Graph {
                         // Intuition of weight: The least specific heading will give the weight 2 + maxHeadingLevel - minHeadingLevel
                         // We want to weight it 1 factor less.
                         bestReference[link.link] = Math.max(
-                          1/Math.pow(2, 3 + maxHeadingLevel - minHeadingLevel), bestReference[link.link]);
+                            1 / Math.pow(2, 3 + maxHeadingLevel - minHeadingLevel), bestReference[link.link]);
                     });
 
                     // Add the found weights to the results
@@ -234,7 +234,7 @@ export default class MyGraph extends Graph {
         }
 
     getData(subtype: Subtypes, from: string): number[] {
-        console.log({subtype, from});
+        console.log({ subtype, from });
         const i = this.node(from)
         if (i === undefined) { return new Array(this.nodes().length) }
         // Check for symmetric measures

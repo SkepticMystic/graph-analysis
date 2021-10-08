@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import * as Sim from 'src/Algorithms/Similarity'
+  import { SIMILARITY_TYPES } from 'src/Algorithms/Similarity'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
   import type { GraphAnalysisSettings, Subtypes } from 'src/Interfaces'
@@ -56,7 +56,7 @@
   <span
     >Similarity Algorithm:
     <select bind:value={subtype}>
-      {#each Sim.SIMILARITY_TYPES as subtype}
+      {#each SIMILARITY_TYPES as subtype}
         <option value={subtype.subtype}>{subtype.subtype}</option>
       {/each}
     </select>

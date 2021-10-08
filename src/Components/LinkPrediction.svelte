@@ -1,11 +1,10 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import type GraphAnalysisPlugin from 'src/main'
-  import * as LP from 'src/Algorithms/LinkPrediction'
+  import { LINK_PREDICTION_TYPES } from 'src/Algorithms/LinkPrediction'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
-  import { currAlg } from 'src/GeneralGraphFn'
-  import type { GraphAnalysisSettings, Subtypes } from 'src/Interfaces'
+  import type { GraphAnalysisSettings } from 'src/Interfaces'
+  import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
     dropPath,
@@ -74,7 +73,7 @@
   <span
     >Link Prediction Algorithm:
     <select bind:value={subtype}>
-      {#each LP.LINK_PREDICTION_TYPES as subtype}
+      {#each LINK_PREDICTION_TYPES as subtype}
         <option value={subtype.subtype}>{subtype.subtype}</option>
       {/each}
     </select>

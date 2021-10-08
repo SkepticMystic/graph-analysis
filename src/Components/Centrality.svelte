@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { App, TFile } from 'obsidian'
-  import * as Central from 'src/Algorithms/Centrality'
+  import type { App } from 'obsidian'
+  import { CENTRALITY_TYPES } from 'src/Algorithms/Centrality'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
   import type { GraphAnalysisSettings, Subtypes } from 'src/Interfaces'
@@ -53,7 +53,7 @@
   <span
     >Centrality Algorithm:
     <select bind:value>
-      {#each Central.CENTRALITY_TYPES as subtype}
+      {#each CENTRALITY_TYPES as subtype}
         <option value={subtype.subtype}>{subtype.subtype}</option>
       {/each}
     </select>
