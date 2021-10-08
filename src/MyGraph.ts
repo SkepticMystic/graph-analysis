@@ -4,7 +4,8 @@ import { DECIMALS } from "src/Constants";
 import { nodeIntersection } from "src/GeneralGraphFn";
 import type { AnalysisAlg, GraphData, ResolvedLinks, Subtypes } from "src/Interfaces";
 import { nxnArray, roundNumber, sum } from "src/Utility";
-import type { App, HeadingCache, LinkCache } from 'obsidian'
+import type { App, HeadingCache, LinkCache } from 'obsidian';
+
 
 export default class MyGraph extends Graph {
     resolvedLinks: ResolvedLinks;
@@ -116,16 +117,33 @@ export default class MyGraph extends Graph {
                 const mdCache = this.app.metadataCache;
                 const results: number[] = new Array(this.nodes().length).fill(0)
                 const pres = (this.predecessors(a) as string[]);
+
+                // const tokenizer = require('sbd');
+
                 pres.forEach(pre => {
-                    const cache = mdCache.getFileCache(mdCache.getFirstLinkpathDest(pre, ''));
+                    const file = mdCache.getFirstLinkpathDest(pre, '');
+                    const cache = mdCache.getFileCache(file);
+
                     const bestReference: { [name: string]: number } = {};
-                    const ownLinks = cache.links.filter((link) => link.link === a);
+                    const ownLinks = cache.links.filter((link) => {
+                        let spl = a.split('/');
+                        return link.link === spl[spl.length-1];
+                    });
+
+                    // const cachedRead = this.app.vault.cachedRead(file);
+                    // Find the sentence the link is in
+                    // const ownSentences = ownLinks.map((link) => {
+                    //    let line = cachedRead[link.position.start.line];
+                    // });
+
+                    // Find the section the link is in
                     const ownSections = ownLinks.map((link) =>
                         cache.sections.find((section) =>
                             section.position.start.line <= link.position.start.line &&
                             section.position.end.line >= link.position.end.line)
                     )
 
+                    // Find the headings the link is under
                     let minHeadingLevel = 7;
                     let maxHeadingLevel = 0;
                     const ownHeadings: [HeadingCache, number][] = [];
@@ -194,6 +212,7 @@ export default class MyGraph extends Graph {
                         maxHeadingLevel = cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0;
                         // Intuition of weight: The least specific heading will give the weight 2 + maxHeadingLevel - minHeadingLevel
                         // We want to weight it 1 factor less.
+
                         bestReference[link.link] = Math.max(
                             1 / Math.pow(2, 3 + maxHeadingLevel - minHeadingLevel), bestReference[link.link]);
                     });

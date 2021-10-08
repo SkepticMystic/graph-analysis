@@ -33,6 +33,7 @@
     "@tsconfig/svelte": "^2.0.1",
     "graphlib": "^2.1.8",
     "lodash.isequal": "^4.5.0",
+    "sbd": "^1.0.19",
     "standard-version": "^9.3.1",
     "svelte": "3.35.0"
   }
