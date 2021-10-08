@@ -29,6 +29,7 @@ export type AnalysisAlg = (a: string) => number[];
 export interface GraphAnalysisSettings {
     noInfinity: boolean;
     noZero: boolean;
+    defaultAnalysisType: Analyses;
     debugMode: boolean;
     superDebugMode: boolean;
 }

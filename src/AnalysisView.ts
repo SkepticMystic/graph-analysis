@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
+import type { Analyses } from "src/Interfaces";
 import type GraphAnalysisPlugin from "src/main";
-import type MyGraph from "src/MyGraph";
 import Centrality from "./Components/Centrality.svelte";
 import LinkPrediction from "./Components/LinkPrediction.svelte";
 import Similarity from "./Components/Similarity.svelte";
@@ -52,7 +52,7 @@ export default class AnalysisView extends ItemView {
         const componentDiv = contentEl.createDiv();
 
         const drawComponent = (
-            type: string,
+            type: Analyses,
             componentDiv: HTMLDivElement) => {
             if (!ANALYSIS_TYPES.includes(type)) {
                 throw new Error(`${type} is not one of the analysis types`)
@@ -81,11 +81,11 @@ export default class AnalysisView extends ItemView {
             };
         }
         // Default Analysis Type
-        selector.value = 'Similarity'
-        drawComponent(selector.value, componentDiv)
+        selector.value = settings.defaultAnalysisType
+        drawComponent(settings.defaultAnalysisType, componentDiv)
 
         selector.addEventListener('change', () => {
-            drawComponent(selector.value, componentDiv)
+            drawComponent((selector.value as Analyses), componentDiv)
         })
     }
 }

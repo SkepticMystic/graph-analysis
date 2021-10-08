@@ -3,6 +3,7 @@ import type { Analyses, GraphAnalysisSettings } from "src/Interfaces";
 export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
     noInfinity: false,
     noZero: false,
+    defaultAnalysisType: 'Similarity',
     debugMode: false,
     superDebugMode: false,
 }
