@@ -132,10 +132,25 @@ export default class MyGraph extends Graph {
                     });
 
                     const cachedRead = await this.app.vault.cachedRead(file);
+                    const content = cachedRead.split('\n');
                     // Find the sentence the link is in
-                    const ownSentences = ownLinks.map((link) => {
-                       let line = cachedRead[link.position.start.line];
+                    const ownSentences: [number, number, number][] = ownLinks.map((link) => {
+                       let line = content[link.position.end.line];
+                       const sentences = tokenizer.sentences(line, {preserve_whitespace: true});
+                       console.log({line}, {sentences});
+                       let aggrSentenceLength = 0;
+                       let res: [number, number, number] = null;
+                       sentences.forEach((sentence:string) => {
+                           if (res) return;
+                           aggrSentenceLength += sentence.length;
+                           // Edge case that does not work: If alias has end of sentences.
+                           if (link.position.end.col <= aggrSentenceLength) {
+                               res = [link.position.end.line, aggrSentenceLength - sentence.length, aggrSentenceLength];
+                           }
+                       });
+                       return res;
                     });
+                    console.log({ownSentences});
 
                     // Find the section the link is in
                     const ownSections = ownLinks.map((link) =>
@@ -173,24 +188,34 @@ export default class MyGraph extends Graph {
                     cache.links.forEach((link) => {
                         if (link.link === a) return;
 
-                        // Check if it is in the same sentence
-                        const sameSentenceOwnLink = ownLinks.find((ownLink) =>
-                            ownLink.position.start.line === link.position.start.line);
-                        if (sameSentenceOwnLink) {
-                            bestReference[link.link] = 1;
-                            return;
-                        }
-
+                        // Initialize to 0 if not set yet
                         if (!(link.link in bestReference)) {
                             bestReference[link.link] = 0;
                         }
+
+                        // Check if the link is on the same line
+                        let hasOwnLine = false;
+                        ownSentences.forEach(([line, start, end]) => {
+                            if (link.position.start.line === line) {
+                                // Give a higher score if it is also in the same sentence
+                                if (link.position.start.col >= start && link.position.end.col < end) {
+                                    bestReference[link.link] = 1;
+                                }
+                                else {
+                                    bestReference[link.link] = Math.max(1/2, bestReference[link.link]);
+                                }
+                                hasOwnLine = true;
+                            }
+                        });
+                        if (hasOwnLine) return;
+
 
                         // Check if it is in the same paragraph
                         const sameParagraph = ownSections.find((section) =>
                             section.position.start.line <= link.position.start.line &&
                             section.position.end.line >= link.position.end.line);
                         if (sameParagraph) {
-                            bestReference[link.link] = Math.max(1 / 2, bestReference[link.link]);
+                            bestReference[link.link] = Math.max(1 / 4, bestReference[link.link]);
                             return;
                         }
 
@@ -204,7 +229,7 @@ export default class MyGraph extends Graph {
                             // Then, maxHeadingLevel - bestLevel = 0, so we get 1/(2^2)=1/4. If the link appears only under
                             // less specific headings, the weight will decrease.
                             bestReference[link.link] = Math.max(
-                                1 / Math.pow(2, 2 + maxHeadingLevel - bestLevel), bestReference[link.link]);
+                                1 / Math.pow(2, 3 + maxHeadingLevel - bestLevel), bestReference[link.link]);
                             return;
                         }
 
@@ -215,7 +240,7 @@ export default class MyGraph extends Graph {
                         // We want to weight it 1 factor less.
 
                         bestReference[link.link] = Math.max(
-                            1 / Math.pow(2, 3 + maxHeadingLevel - minHeadingLevel), bestReference[link.link]);
+                            1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel), bestReference[link.link]);
                     });
 
                     // Add the found weights to the results
