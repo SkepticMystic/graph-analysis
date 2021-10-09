@@ -31,5 +31,4 @@ export const SIMILARITY_TYPES: {
     subtype: string
 }[] = [
         { subtype: 'Jaccard' },
-        { subtype: 'Co-Citations' },
     ]

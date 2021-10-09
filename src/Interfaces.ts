@@ -10,7 +10,8 @@ export interface ResolvedLinks {
 export type Analyses =
     // "Centrality" | 
     "Similarity" |
-    "Link Prediction"
+    "Link Prediction" |
+    "Co-Citations";
 
 export type Subtypes =
     'Adamic Adar'
@@ -21,10 +22,15 @@ export type Subtypes =
 // | 'Closeness'
 
 export type GraphData = {
-    [matrix in Subtypes]: number[][];
+    [matrix in Subtypes]: number[][] | CoCitationRes[][];
 };
 
-export type AnalysisAlg = (a: string) => Promise<number[]>;
+export interface CoCitationRes {
+    measure: number;
+    sentences: string[];
+}
+
+export type AnalysisAlg<T> = (a: string) => Promise<T>;
 
 export interface GraphAnalysisSettings {
     noInfinity: boolean;
@@ -35,7 +41,7 @@ export interface GraphAnalysisSettings {
 }
 
 export type AnalysisForAll = (
-    alg: AnalysisAlg,
+    alg: AnalysisAlg<number[]>,
     g: Graph,
     currNode: string
 ) => MyGraph

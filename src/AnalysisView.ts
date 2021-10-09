@@ -2,7 +2,7 @@ import { ItemView, WorkspaceLeaf } from "obsidian";
 import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
 import type { Analyses } from "src/Interfaces";
 import type GraphAnalysisPlugin from "src/main";
-import Centrality from "./Components/Centrality.svelte";
+import CoCitations from "./Components/CoCitations.svelte";
 import LinkPrediction from "./Components/LinkPrediction.svelte";
 import Similarity from "./Components/Similarity.svelte";
 
@@ -69,9 +69,12 @@ export default class AnalysisView extends ItemView {
                 }
             };
             switch (type) {
-                case 'Centrality':
-                    new Centrality(componentInfo)
-                    break
+                // case 'Centrality':
+                //     new Centrality(componentInfo)
+                //     break
+                case 'Co-Citations':
+                    new CoCitations(componentInfo);
+                    break;
                 case 'Link Prediction':
                     new LinkPrediction(componentInfo)
                     break

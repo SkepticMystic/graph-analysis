@@ -1,9 +1,9 @@
 import type { Analyses, GraphAnalysisSettings } from "src/Interfaces";
 
 export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
-    noInfinity: false,
-    noZero: false,
-    defaultAnalysisType: 'Similarity',
+    noInfinity: true,
+    noZero: true,
+    defaultAnalysisType: 'Co-Citations',
     debugMode: false,
     superDebugMode: false,
 }
@@ -15,7 +15,8 @@ export const VIEW_TYPE_GRAPH_ANALYSIS = 'graph-analysis';
 export const ANALYSIS_TYPES: Analyses[] = [
     // 'Centrality',
     'Link Prediction',
-    'Similarity'
+    'Similarity',
+    'Co-Citations'
 ]
 
 export const LINKED = 'analysis-linked';

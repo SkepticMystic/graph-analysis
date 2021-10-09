@@ -1,12 +1,10 @@
-import * as graphlib from "graphlib";
 import { Graph } from "graphlib";
 import { DECIMALS } from "src/Constants";
 import { nodeIntersection } from "src/GeneralGraphFn";
-import type { AnalysisAlg, GraphData, ResolvedLinks, Subtypes } from "src/Interfaces";
+import type { AnalysisAlg, CoCitationRes, GraphData, ResolvedLinks, Subtypes } from 'src/Interfaces'
 import { nxnArray, roundNumber, sum } from "src/Utility";
 import type { App, HeadingCache, LinkCache } from 'obsidian';
 import tokenizer from 'sbd';
-import { getLinkpath } from 'obsidian'
 
 
 export default class MyGraph extends Graph {
@@ -63,7 +61,7 @@ export default class MyGraph extends Graph {
     }
 
     algs: {
-        [subtype in Subtypes]: AnalysisAlg
+        [subtype in Subtypes]: AnalysisAlg<number[]> | AnalysisAlg<CoCitationRes[]>
     } = {
             "Jaccard": async (a: string): Promise<number[]> => {
                 const Na = this.neighbors(a) as string[]
@@ -116,9 +114,12 @@ export default class MyGraph extends Graph {
               return results;
             },
 
-            'Co-Citations': async (a: string) : Promise<number[]> => {
+            'Co-Citations': async (a: string) : Promise<CoCitationRes[]> => {
                 const mdCache = this.app.metadataCache;
-                const results: number[] = new Array(this.nodes().length).fill(0)
+                const results: CoCitationRes[] = new Array<CoCitationRes>(this.nodes().length)
+                for (let i = 0; i < this.nodes().length; i++) {
+                    results[i] = {measure: 0, sentences: []};
+                }
                 const pres = (this.predecessors(a) as string[]);
 
                 for (const preI in pres) {
@@ -126,7 +127,7 @@ export default class MyGraph extends Graph {
                     const file = mdCache.getFirstLinkpathDest(pre, '');
                     const cache = mdCache.getFileCache(file);
 
-                    const bestReference: { [name: string]: number } = {};
+                    const bestReference: { [name: string]: [number, string]} = {};
                     let spl = a.split('/');
                     let ownBasename = spl[spl.length-1]
                     const ownLinks = cache.links.filter((link) => {
@@ -185,24 +186,29 @@ export default class MyGraph extends Graph {
                         })
                     }
                     )
+                    minHeadingLevel = cache.headings && cache.headings.length > 0 ? minHeadingLevel : 0;
+                    maxHeadingLevel = cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0;
+
                     cache.links.forEach((link) => {
                         if (link.link === ownBasename) return;
 
                         // Initialize to 0 if not set yet
                         if (!(link.link in bestReference)) {
-                            bestReference[link.link] = 0;
+                            bestReference[link.link] = [0, ''];
                         }
 
                         // Check if the link is on the same line
                         let hasOwnLine = false;
                         ownSentences.forEach(([line, start, end]) => {
                             if (link.position.start.line === line) {
+                                const sentence = content[line].slice(start, end);
                                 // Give a higher score if it is also in the same sentence
                                 if (link.position.start.col >= start && link.position.end.col <= end) {
-                                    bestReference[link.link] = 1;
+                                    bestReference[link.link] = [1, sentence];
                                 }
-                                else {
-                                    bestReference[link.link] = Math.max(1/2, bestReference[link.link]);
+                                // Assumes we prefer earlier results... Not sure if that makes sense!
+                                else if (bestReference[link.link][0] < 1/2) {
+                                    bestReference[link.link] = [1/2, sentence];
                                 }
                                 hasOwnLine = true;
                             }
@@ -214,8 +220,8 @@ export default class MyGraph extends Graph {
                         const sameParagraph = ownSections.find((section) =>
                             section.position.start.line <= link.position.start.line &&
                             section.position.end.line >= link.position.end.line);
-                        if (sameParagraph) {
-                            bestReference[link.link] = Math.max(1 / 4, bestReference[link.link]);
+                        if (sameParagraph && bestReference[link.link][0] < 1/4) {
+                            bestReference[link.link] = [1/4, content[link.position.start.line]];
                             return;
                         }
 
@@ -228,32 +234,35 @@ export default class MyGraph extends Graph {
                             // Intuition: If they are both under the same 'highest'-level heading, they get weight 1/4
                             // Then, maxHeadingLevel - bestLevel = 0, so we get 1/(2^2)=1/4. If the link appears only under
                             // less specific headings, the weight will decrease.
-                            bestReference[link.link] = Math.max(
-                                1 / Math.pow(2, 3 + maxHeadingLevel - bestLevel), bestReference[link.link]);
-                            return;
+                            const score = 1 / Math.pow(2, 3 + maxHeadingLevel - bestLevel);
+                            if (bestReference[link.link][0] < score) {
+                                bestReference[link.link] = [score, content[link.position.start.line]];
+                                return;
+                            }
                         }
 
                         // The links appear together in the same document, but not under a shared heading
-                        minHeadingLevel = cache.headings && cache.headings.length > 0 ? minHeadingLevel : 0;
-                        maxHeadingLevel = cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0;
                         // Intuition of weight: The least specific heading will give the weight 2 + maxHeadingLevel - minHeadingLevel
                         // We want to weight it 1 factor less.
-
-                        bestReference[link.link] = Math.max(
-                            1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel), bestReference[link.link]);
+                        const score = 1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel);
+                        if (bestReference[link.link][0] < score) {
+                            bestReference[link.link] = [score, content[link.position.start.line]];
+                        }
                     });
 
                     // Add the found weights to the results
                     for (let key in bestReference) {
                         const file = mdCache.getFirstLinkpathDest(key, '');
                         if (file) {
-                            results[this.node(file.path.slice(0, file.path.length-3))] += bestReference[key];
+                            const ccRes = results[this.node(file.path.slice(0, file.path.length-3))];
+                            ccRes.measure += bestReference[key][0];
+                            ccRes.sentences.push(bestReference[key][1]);
                         }
                     }
                 }
 
                 const currI = this.node(a)
-                results[currI] = 0
+                results[currI] = {measure: 0, sentences: []};
                 return results
             },
 
@@ -282,7 +291,7 @@ export default class MyGraph extends Graph {
             // },
         }
 
-    async getData(subtype: Subtypes, from: string): Promise<number[]> {
+    async getData(subtype: Subtypes, from: string): Promise<number[] | CoCitationRes[]> {
         console.log({ subtype, from });
         const i = this.node(from)
         if (i === undefined) { return new Array(this.nodes().length) }
