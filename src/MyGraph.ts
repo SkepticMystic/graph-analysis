@@ -6,6 +6,7 @@ import type { AnalysisAlg, GraphData, ResolvedLinks, Subtypes } from "src/Interf
 import { nxnArray, roundNumber, sum } from "src/Utility";
 import type { App, HeadingCache, LinkCache } from 'obsidian';
 import tokenizer from 'sbd';
+import { getLinkpath } from 'obsidian'
 
 
 export default class MyGraph extends Graph {
@@ -126,9 +127,10 @@ export default class MyGraph extends Graph {
                     const cache = mdCache.getFileCache(file);
 
                     const bestReference: { [name: string]: number } = {};
+                    let spl = a.split('/');
+                    let ownBasename = spl[spl.length-1]
                     const ownLinks = cache.links.filter((link) => {
-                        let spl = a.split('/');
-                        return link.link === spl[spl.length-1];
+                        return link.link === ownBasename;
                     });
 
                     const cachedRead = await this.app.vault.cachedRead(file);
@@ -137,7 +139,6 @@ export default class MyGraph extends Graph {
                     const ownSentences: [number, number, number][] = ownLinks.map((link) => {
                        let line = content[link.position.end.line];
                        const sentences = tokenizer.sentences(line, {preserve_whitespace: true});
-                       console.log({line}, {sentences});
                        let aggrSentenceLength = 0;
                        let res: [number, number, number] = null;
                        sentences.forEach((sentence:string) => {
@@ -150,7 +151,6 @@ export default class MyGraph extends Graph {
                        });
                        return res;
                     });
-                    console.log({ownSentences});
 
                     // Find the section the link is in
                     const ownSections = ownLinks.map((link) =>
@@ -186,7 +186,7 @@ export default class MyGraph extends Graph {
                     }
                     )
                     cache.links.forEach((link) => {
-                        if (link.link === a) return;
+                        if (link.link === ownBasename) return;
 
                         // Initialize to 0 if not set yet
                         if (!(link.link in bestReference)) {
@@ -245,13 +245,15 @@ export default class MyGraph extends Graph {
 
                     // Add the found weights to the results
                     for (let key in bestReference) {
-                        results[this.node(key)] += bestReference[key];
+                        const file = mdCache.getFirstLinkpathDest(key, '');
+                        if (file) {
+                            results[this.node(file.path.slice(0, file.path.length-3))] += bestReference[key];
+                        }
                     }
                 }
 
                 const currI = this.node(a)
                 results[currI] = 0
-                console.log({results})
                 return results
             },
 
