@@ -72,25 +72,22 @@
 
   let resolvedLinks = app.metadataCache.resolvedLinks
   $: subtype = 'Jaccard'
-  $: measures = plugin.g.getData(subtype, currNode)
-
-  $: similarityArr = plugin.g.nodes().map((to) => {
-    const i = plugin.g.node(to)
-    return {
-      measure: measures[i],
-      linked: linkedQ(resolvedLinks, currNode, to),
-      to,
-    }
-  })
-
-  $: sortedSimilarities = similarityArr.sort((a, b) =>
-    a.measure > b.measure ? -1 : 1
-  )
+  $: promiseSortedSimilarities = plugin.g.getData(subtype, currNode)
+    .then(measures => plugin.g.nodes().map((to) => {
+      const i = plugin.g.node(to)
+      return {
+        measure: measures[i],
+        linked: linkedQ(resolvedLinks, currNode, to),
+        to,
+      }
+    }).sort((a, b) =>
+      a.measure > b.measure ? -1 : 1
+    ));
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
     let subtype = 'Jaccard'
-    debug(settings, { similarityArr })
+    debug(settings, { promiseSortedSimilarities})
   })
 
   let { noInfinity, noZero } = settings
@@ -133,25 +130,27 @@
       <th scope="col">Similarity</th>
     </tr>
   </thead>
-  {#each sortedSimilarities as node}
-    {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
-      <tr class={node.linked ? LINKED : NOT_LINKED}>
-        <td
-          class="internal-link {TD_NODE}"
-          on:click={(e) => {
-            openOrSwitch(app, node.to, currFile, e)
-          }}
-          on:contextmenu={(e) => {
-            openMenu(e)
-          }}
-          on:mouseover={(e) => hoverPreview(e, view)}
-        >
-          {dropPath(node.to)}
-        </td>
-        <td class={TD_MEASURE}>{node.measure}</td>
-      </tr>
-    {/if}
-  {/each}
+  {#await promiseSortedSimilarities then sortedSimilarities}
+      {#each sortedSimilarities as node}
+        {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
+        <tr class={node.linked ? LINKED : NOT_LINKED}>
+          <td
+            class="internal-link {TD_NODE}"
+            on:click={(e) => {
+              openOrSwitch(app, node.to, currFile, e)
+            }}
+            on:contextmenu={(e) => {
+              openMenu(e)
+            }}
+            on:mouseover={(e) => hoverPreview(e, view)}
+          >
+            {dropPath(node.to)}
+          </td>
+          <td class={TD_MEASURE}>{node.measure}</td>
+        </tr>
+      {/if}
+    {/each}
+  {/await}
 </table>
 
 <style>

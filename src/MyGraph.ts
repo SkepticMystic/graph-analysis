@@ -5,6 +5,8 @@ import { nodeIntersection } from "src/GeneralGraphFn";
 import type { AnalysisAlg, GraphData, ResolvedLinks, Subtypes } from "src/Interfaces";
 import { nxnArray, roundNumber, sum } from "src/Utility";
 import type { App, HeadingCache, LinkCache } from 'obsidian';
+import tokenizer from 'sbd';
+import { getLinkpath } from 'obsidian'
 
 
 export default class MyGraph extends Graph {
@@ -63,7 +65,7 @@ export default class MyGraph extends Graph {
     algs: {
         [subtype in Subtypes]: AnalysisAlg
     } = {
-            "Jaccard": (a: string) => {
+            "Jaccard": async (a: string): Promise<number[]> => {
                 const Na = this.neighbors(a) as string[]
                 const results: number[] = []
 
@@ -81,7 +83,7 @@ export default class MyGraph extends Graph {
             },
 
 
-            'Adamic Adar': (a: string): number[] => {
+            'Adamic Adar': async (a: string): Promise<number[]> => {
                 const Na = this.neighbors(a) as string[]
                 const results: number[] = []
 
@@ -102,7 +104,7 @@ export default class MyGraph extends Graph {
                 return results
             },
 
-            'Common Neighbours': (a: string): number[] => {
+            'Common Neighbours': async (a: string): Promise<number[]> => {
                 const Na = this.neighbors(a) as string[]
                 const results: number[] = []
 
@@ -110,31 +112,45 @@ export default class MyGraph extends Graph {
                     const Nb = (this.neighbors(to) ?? []) as string[]
                     results.push(nodeIntersection(Na, Nb).length)
                 })
-                return results
+                // return new Promise<number[]>(results);
+              return results;
             },
 
-            'Co-Citations': (a: string) => {
+            'Co-Citations': async (a: string) : Promise<number[]> => {
                 const mdCache = this.app.metadataCache;
                 const results: number[] = new Array(this.nodes().length).fill(0)
                 const pres = (this.predecessors(a) as string[]);
 
-                // const tokenizer = require('sbd');
-
-                pres.forEach(pre => {
+                for (const preI in pres) {
+                    const pre = pres[preI];
                     const file = mdCache.getFirstLinkpathDest(pre, '');
                     const cache = mdCache.getFileCache(file);
 
                     const bestReference: { [name: string]: number } = {};
+                    let spl = a.split('/');
+                    let ownBasename = spl[spl.length-1]
                     const ownLinks = cache.links.filter((link) => {
-                        let spl = a.split('/');
-                        return link.link === spl[spl.length-1];
+                        return link.link === ownBasename;
                     });
 
-                    // const cachedRead = this.app.vault.cachedRead(file);
+                    const cachedRead = await this.app.vault.cachedRead(file);
+                    const content = cachedRead.split('\n');
                     // Find the sentence the link is in
-                    // const ownSentences = ownLinks.map((link) => {
-                    //    let line = cachedRead[link.position.start.line];
-                    // });
+                    const ownSentences: [number, number, number][] = ownLinks.map((link) => {
+                       let line = content[link.position.end.line];
+                       const sentences = tokenizer.sentences(line, {preserve_whitespace: true});
+                       let aggrSentenceLength = 0;
+                       let res: [number, number, number] = null;
+                       sentences.forEach((sentence:string) => {
+                           if (res) return;
+                           aggrSentenceLength += sentence.length;
+                           // Edge case that does not work: If alias has end of sentences.
+                           if (link.position.end.col <= aggrSentenceLength) {
+                               res = [link.position.end.line, aggrSentenceLength - sentence.length, aggrSentenceLength];
+                           }
+                       });
+                       return res;
+                    });
 
                     // Find the section the link is in
                     const ownSections = ownLinks.map((link) =>
@@ -170,26 +186,36 @@ export default class MyGraph extends Graph {
                     }
                     )
                     cache.links.forEach((link) => {
-                        if (link.link === a) return;
+                        if (link.link === ownBasename) return;
 
-                        // Check if it is in the same sentence
-                        const sameSentenceOwnLink = ownLinks.find((ownLink) =>
-                            ownLink.position.start.line === link.position.start.line);
-                        if (sameSentenceOwnLink) {
-                            bestReference[link.link] = 1;
-                            return;
-                        }
-
+                        // Initialize to 0 if not set yet
                         if (!(link.link in bestReference)) {
                             bestReference[link.link] = 0;
                         }
+
+                        // Check if the link is on the same line
+                        let hasOwnLine = false;
+                        ownSentences.forEach(([line, start, end]) => {
+                            if (link.position.start.line === line) {
+                                // Give a higher score if it is also in the same sentence
+                                if (link.position.start.col >= start && link.position.end.col <= end) {
+                                    bestReference[link.link] = 1;
+                                }
+                                else {
+                                    bestReference[link.link] = Math.max(1/2, bestReference[link.link]);
+                                }
+                                hasOwnLine = true;
+                            }
+                        });
+                        if (hasOwnLine) return;
+
 
                         // Check if it is in the same paragraph
                         const sameParagraph = ownSections.find((section) =>
                             section.position.start.line <= link.position.start.line &&
                             section.position.end.line >= link.position.end.line);
                         if (sameParagraph) {
-                            bestReference[link.link] = Math.max(1 / 2, bestReference[link.link]);
+                            bestReference[link.link] = Math.max(1 / 4, bestReference[link.link]);
                             return;
                         }
 
@@ -203,7 +229,7 @@ export default class MyGraph extends Graph {
                             // Then, maxHeadingLevel - bestLevel = 0, so we get 1/(2^2)=1/4. If the link appears only under
                             // less specific headings, the weight will decrease.
                             bestReference[link.link] = Math.max(
-                                1 / Math.pow(2, 2 + maxHeadingLevel - bestLevel), bestReference[link.link]);
+                                1 / Math.pow(2, 3 + maxHeadingLevel - bestLevel), bestReference[link.link]);
                             return;
                         }
 
@@ -214,20 +240,24 @@ export default class MyGraph extends Graph {
                         // We want to weight it 1 factor less.
 
                         bestReference[link.link] = Math.max(
-                            1 / Math.pow(2, 3 + maxHeadingLevel - minHeadingLevel), bestReference[link.link]);
+                            1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel), bestReference[link.link]);
                     });
 
                     // Add the found weights to the results
                     for (let key in bestReference) {
-                        results[this.node(key)] += bestReference[key];
+                        const file = mdCache.getFirstLinkpathDest(key, '');
+                        if (file) {
+                            results[this.node(file.path.slice(0, file.path.length-3))] += bestReference[key];
+                        }
                     }
-                })
+                }
+
                 const currI = this.node(a)
                 results[currI] = 0
                 return results
             },
 
-            'testSubtype': (a: string) => new Array(this.nodes().length).fill(1.2)
+            'testSubtype': async (a: string) => new Array(this.nodes().length).fill(1.2)
 
 
             // 'Closeness': (a: string) => {
@@ -252,7 +282,7 @@ export default class MyGraph extends Graph {
             // },
         }
 
-    getData(subtype: Subtypes, from: string): number[] {
+    async getData(subtype: Subtypes, from: string): Promise<number[]> {
         console.log({ subtype, from });
         const i = this.node(from)
         if (i === undefined) { return new Array(this.nodes().length) }
@@ -260,7 +290,7 @@ export default class MyGraph extends Graph {
         if (this.data[subtype]?.[i]?.[0] !== undefined) {
             return this.data[subtype][i]
         } else {
-            this.data[subtype][i] = this.algs[subtype](from)
+            this.data[subtype][i] = await this.algs[subtype](from)
             return this.data[subtype][i]
         }
     }
