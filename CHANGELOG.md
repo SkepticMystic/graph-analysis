@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.21](https://github.com/SkepticMystic/graph-analysis/compare/0.0.20...0.0.21) (2021-10-09)
+
+
+### Features
+
+* :sparkles: Default analysis type option ([179eddb](https://github.com/SkepticMystic/graph-analysis/commit/179eddbec46c8e1e2bce27995102920702fa7c23))
+* :sparkles: Right click to write link to yaml of current or target file ([910836b](https://github.com/SkepticMystic/graph-analysis/commit/910836b53baff0b536f2a6e915639804ab6dddcc))
+
 ### [0.0.20](https://github.com/SkepticMystic/graph-analysis/compare/0.0.19...0.0.20) (2021-10-08)
 
 
