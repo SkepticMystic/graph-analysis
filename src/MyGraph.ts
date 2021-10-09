@@ -198,7 +198,7 @@ export default class MyGraph extends Graph {
                         ownSentences.forEach(([line, start, end]) => {
                             if (link.position.start.line === line) {
                                 // Give a higher score if it is also in the same sentence
-                                if (link.position.start.col >= start && link.position.end.col < end) {
+                                if (link.position.start.col >= start && link.position.end.col <= end) {
                                     bestReference[link.link] = 1;
                                 }
                                 else {
