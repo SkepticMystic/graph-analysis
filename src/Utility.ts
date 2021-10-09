@@ -1,4 +1,4 @@
-import type { App, ItemView, TFile, WorkspaceLeaf } from "obsidian";
+import { App, FrontMatterCache, ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
 import { DECIMALS } from 'src/Constants';
 import type { GraphAnalysisSettings, ResolvedLinks } from "src/Interfaces";
 
@@ -75,3 +75,41 @@ export function linkedQ(resolvedLinks: ResolvedLinks, from: string, to: string) 
 }
 
 export const nxnArray = (n: number): undefined[][] => [...Array(n)].map(e => Array(n))
+
+/**
+ * Adds or updates the given yaml `key` to `value` in the given TFile
+ * @param  {string} key
+ * @param  {string} value
+ * @param  {TFile} file
+ * @param  {App} app
+ */
+export const createOrUpdateYaml = async (
+    key: string,
+    value: string,
+    file: TFile,
+    app: App
+) => {
+    const api = app.plugins.plugins.metaedit?.api
+
+    if (!api) {
+        new Notice('Metaedit must be enabled for this function to work');
+        return
+    }
+    let valueStr = value.toString()
+    const frontmatter = app.metadataCache.getFileCache(file)?.frontmatter;
+    console.log({ api, frontmatter })
+    if (!frontmatter || frontmatter[key] === undefined) {
+        console.log(`Creating: ${key}: ${valueStr}`)
+        await api.createYamlProperty(key, `['${valueStr}']`, file);
+    } else if ([...[frontmatter[key]]].flat(3).some(val => val == valueStr)) {
+        console.log('Already Exists!')
+        return
+    }
+    else {
+        const oldValueFlat: string[] = [...[frontmatter[key]]].flat(4);
+        const newValue = [...oldValueFlat, valueStr].map(val => `'${val}'`);
+        console.log(`Updating: ${key}: ${newValue}`)
+        await api.update(key, `[${newValue.join(", ")}]`, file);
+    }
+
+}
