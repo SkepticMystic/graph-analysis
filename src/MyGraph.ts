@@ -5,6 +5,7 @@ import { nodeIntersection } from "src/GeneralGraphFn";
 import type { AnalysisAlg, GraphData, ResolvedLinks, Subtypes } from "src/Interfaces";
 import { nxnArray, roundNumber, sum } from "src/Utility";
 import type { App, HeadingCache, LinkCache } from 'obsidian';
+import tokenizer from 'sbd';
 
 
 export default class MyGraph extends Graph {
@@ -63,7 +64,7 @@ export default class MyGraph extends Graph {
     algs: {
         [subtype in Subtypes]: AnalysisAlg
     } = {
-            "Jaccard": (a: string) => {
+            "Jaccard": async (a: string): Promise<number[]> => {
                 const Na = this.neighbors(a) as string[]
                 const results: number[] = []
 
@@ -81,7 +82,7 @@ export default class MyGraph extends Graph {
             },
 
 
-            'Adamic Adar': (a: string): number[] => {
+            'Adamic Adar': async (a: string): Promise<number[]> => {
                 const Na = this.neighbors(a) as string[]
                 const results: number[] = []
 
@@ -102,7 +103,7 @@ export default class MyGraph extends Graph {
                 return results
             },
 
-            'Common Neighbours': (a: string): number[] => {
+            'Common Neighbours': async (a: string): Promise<number[]> => {
                 const Na = this.neighbors(a) as string[]
                 const results: number[] = []
 
@@ -110,17 +111,17 @@ export default class MyGraph extends Graph {
                     const Nb = (this.neighbors(to) ?? []) as string[]
                     results.push(nodeIntersection(Na, Nb).length)
                 })
-                return results
+                // return new Promise<number[]>(results);
+              return results;
             },
 
-            'Co-Citations': (a: string) => {
+            'Co-Citations': async (a: string) : Promise<number[]> => {
                 const mdCache = this.app.metadataCache;
                 const results: number[] = new Array(this.nodes().length).fill(0)
                 const pres = (this.predecessors(a) as string[]);
 
-                // const tokenizer = require('sbd');
-
-                pres.forEach(pre => {
+                for (const preI in pres) {
+                    const pre = pres[preI];
                     const file = mdCache.getFirstLinkpathDest(pre, '');
                     const cache = mdCache.getFileCache(file);
 
@@ -130,11 +131,11 @@ export default class MyGraph extends Graph {
                         return link.link === spl[spl.length-1];
                     });
 
-                    // const cachedRead = this.app.vault.cachedRead(file);
+                    const cachedRead = await this.app.vault.cachedRead(file);
                     // Find the sentence the link is in
-                    // const ownSentences = ownLinks.map((link) => {
-                    //    let line = cachedRead[link.position.start.line];
-                    // });
+                    const ownSentences = ownLinks.map((link) => {
+                       let line = cachedRead[link.position.start.line];
+                    });
 
                     // Find the section the link is in
                     const ownSections = ownLinks.map((link) =>
@@ -221,13 +222,15 @@ export default class MyGraph extends Graph {
                     for (let key in bestReference) {
                         results[this.node(key)] += bestReference[key];
                     }
-                })
+                }
+
                 const currI = this.node(a)
                 results[currI] = 0
+                console.log({results})
                 return results
             },
 
-            'testSubtype': (a: string) => new Array(this.nodes().length).fill(1.2)
+            'testSubtype': async (a: string) => new Array(this.nodes().length).fill(1.2)
 
 
             // 'Closeness': (a: string) => {
@@ -252,7 +255,7 @@ export default class MyGraph extends Graph {
             // },
         }
 
-    getData(subtype: Subtypes, from: string): number[] {
+    async getData(subtype: Subtypes, from: string): Promise<number[]> {
         console.log({ subtype, from });
         const i = this.node(from)
         if (i === undefined) { return new Array(this.nodes().length) }
@@ -260,7 +263,7 @@ export default class MyGraph extends Graph {
         if (this.data[subtype]?.[i]?.[0] !== undefined) {
             return this.data[subtype][i]
         } else {
-            this.data[subtype][i] = this.algs[subtype](from)
+            this.data[subtype][i] = await this.algs[subtype](from)
             return this.data[subtype][i]
         }
     }

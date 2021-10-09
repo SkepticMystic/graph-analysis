@@ -8,6 +8,7 @@
     "module": "ESNext",
     "target": "es6",
     "allowJs": true,
+    "checkJs": false,
     "noImplicitAny": true,
     "moduleResolution": "node",
     "importHelpers": true,

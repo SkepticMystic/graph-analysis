@@ -24,7 +24,7 @@ export type GraphData = {
     [matrix in Subtypes]: number[][];
 };
 
-export type AnalysisAlg = (a: string) => number[];
+export type AnalysisAlg = (a: string) => Promise<number[]>;
 
 export interface GraphAnalysisSettings {
     noInfinity: boolean;
