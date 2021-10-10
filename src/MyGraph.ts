@@ -261,8 +261,10 @@ export default class MyGraph extends Graph {
                         const file = mdCache.getFirstLinkpathDest(key, '');
                         if (file) {
                             const ccRes = results[this.node(file.path.slice(0, file.path.length-3))];
-                            ccRes.measure += preCocitations[key][0];
-                            ccRes.coCitations.push(...preCocitations[key][1]);
+                            if (ccRes) {
+                                ccRes.measure += preCocitations[key][0];
+                                ccRes.coCitations.push(...preCocitations[key][1]);
+                            }
                         }
                     }
                 }
