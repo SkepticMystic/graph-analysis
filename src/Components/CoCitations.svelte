@@ -76,7 +76,7 @@
       const i = plugin.g.node(to)
       return {
         measure: ccRess[i].measure,
-        sentences: ccRess[i].sentences,
+        coCitations: ccRess[i].coCitations,
         linked: linkedQ(resolvedLinks, currNode, to),
         to,
       }

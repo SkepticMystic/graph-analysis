@@ -25,9 +25,16 @@ export type GraphData = {
     [matrix in Subtypes]: number[][] | CoCitationRes[][];
 };
 
+export interface CoCitation {
+    sentence: string,
+    measure: number,
+    source: string,
+    line: number
+}
+
 export interface CoCitationRes {
     measure: number;
-    sentences: string[];
+    coCitations: CoCitation[];
 }
 
 export type AnalysisAlg<T> = (a: string) => Promise<T>;

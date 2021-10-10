@@ -1,7 +1,7 @@
 import { Graph } from "graphlib";
 import { DECIMALS } from "src/Constants";
 import { nodeIntersection } from "src/GeneralGraphFn";
-import type { AnalysisAlg, CoCitationRes, GraphData, ResolvedLinks, Subtypes } from 'src/Interfaces'
+import type { AnalysisAlg, CoCitation, CoCitationRes, GraphData, ResolvedLinks, Subtypes } from 'src/Interfaces'
 import { nxnArray, roundNumber, sum } from "src/Utility";
 import type { App, HeadingCache, LinkCache } from 'obsidian';
 import tokenizer from 'sbd';
@@ -118,7 +118,7 @@ export default class MyGraph extends Graph {
                 const mdCache = this.app.metadataCache;
                 const results: CoCitationRes[] = new Array<CoCitationRes>(this.nodes().length)
                 for (let i = 0; i < this.nodes().length; i++) {
-                    results[i] = {measure: 0, sentences: []};
+                    results[i] = {measure: 0, coCitations: []};
                 }
                 const pres = (this.predecessors(a) as string[]);
 
@@ -127,7 +127,7 @@ export default class MyGraph extends Graph {
                     const file = mdCache.getFirstLinkpathDest(pre, '');
                     const cache = mdCache.getFileCache(file);
 
-                    const bestReference: { [name: string]: [number, string]} = {};
+                    const preCocitations: { [name: string]: [number, CoCitation[]]} = {};
                     let spl = a.split('/');
                     let ownBasename = spl[spl.length-1]
                     const ownLinks = cache.links.filter((link) => {
@@ -193,8 +193,8 @@ export default class MyGraph extends Graph {
                         if (link.link === ownBasename) return;
 
                         // Initialize to 0 if not set yet
-                        if (!(link.link in bestReference)) {
-                            bestReference[link.link] = [0, ''];
+                        if (!(link.link in preCocitations)) {
+                            preCocitations[link.link] = [0, []];
                         }
 
                         // Check if the link is on the same line
@@ -204,11 +204,15 @@ export default class MyGraph extends Graph {
                                 const sentence = content[line].slice(start, end);
                                 // Give a higher score if it is also in the same sentence
                                 if (link.position.start.col >= start && link.position.end.col <= end) {
-                                    bestReference[link.link] = [1, sentence];
+                                    preCocitations[link.link][0] = 1;
+                                    preCocitations[link.link][1].push({sentence: sentence, measure: 1,
+                                        source: pre, line: link.position.start.line})
                                 }
-                                // Assumes we prefer earlier results... Not sure if that makes sense!
-                                else if (bestReference[link.link][0] < 1/2) {
-                                    bestReference[link.link] = [1/2, sentence];
+
+                                else {
+                                    preCocitations[link.link][0] = Math.max(preCocitations[link.link][0], 1/2);
+                                    preCocitations[link.link][1].push({sentence: content[line], measure: 1/2,
+                                        source: pre, line: link.position.start.line});
                                 }
                                 hasOwnLine = true;
                             }
@@ -220,8 +224,10 @@ export default class MyGraph extends Graph {
                         const sameParagraph = ownSections.find((section) =>
                             section.position.start.line <= link.position.start.line &&
                             section.position.end.line >= link.position.end.line);
-                        if (sameParagraph && bestReference[link.link][0] < 1/4) {
-                            bestReference[link.link] = [1/4, content[link.position.start.line]];
+                        if (sameParagraph) {
+                            preCocitations[link.link][0] = Math.max(preCocitations[link.link][0], 1/4);
+                            preCocitations[link.link][1].push({sentence: content[link.position.start.line], measure: 1/4,
+                                source: pre, line: link.position.start.line});
                             return;
                         }
 
@@ -235,34 +241,40 @@ export default class MyGraph extends Graph {
                             // Then, maxHeadingLevel - bestLevel = 0, so we get 1/(2^2)=1/4. If the link appears only under
                             // less specific headings, the weight will decrease.
                             const score = 1 / Math.pow(2, 3 + maxHeadingLevel - bestLevel);
-                            if (bestReference[link.link][0] < score) {
-                                bestReference[link.link] = [score, content[link.position.start.line]];
-                                return;
-                            }
+                            preCocitations[link.link][0] = Math.max(preCocitations[link.link][0], score);
+                            preCocitations[link.link][1].push({measure: score, sentence: content[link.position.start.line],
+                                source: pre, line: link.position.start.line});
+                            return;
                         }
 
                         // The links appear together in the same document, but not under a shared heading
                         // Intuition of weight: The least specific heading will give the weight 2 + maxHeadingLevel - minHeadingLevel
                         // We want to weight it 1 factor less.
                         const score = 1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel);
-                        if (bestReference[link.link][0] < score) {
-                            bestReference[link.link] = [score, content[link.position.start.line]];
-                        }
+                        preCocitations[link.link][0] = Math.max(preCocitations[link.link][0], score);
+                        preCocitations[link.link][1].push({measure: score, sentence: content[link.position.start.line],
+                            source: pre, line: link.position.start.line});
                     });
 
                     // Add the found weights to the results
-                    for (let key in bestReference) {
+                    for (let key in preCocitations) {
                         const file = mdCache.getFirstLinkpathDest(key, '');
                         if (file) {
                             const ccRes = results[this.node(file.path.slice(0, file.path.length-3))];
-                            ccRes.measure += bestReference[key][0];
-                            ccRes.sentences.push(bestReference[key][1]);
+                            ccRes.measure += preCocitations[key][0];
+                            ccRes.coCitations.push(...preCocitations[key][1]);
                         }
                     }
                 }
 
                 const currI = this.node(a)
-                results[currI] = {measure: 0, sentences: []};
+                results[currI] = {measure: 0, coCitations: []};
+                for (const key in results) {
+                    if (results[key].coCitations.length > 0) {
+                        results[key].coCitations = results[key].coCitations.sort((a, b) =>
+                          a.measure > b.measure ? -1 : 1);
+                    }
+                }
                 return results
             },
 
