@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { App, Menu, Notice } from 'obsidian'
+  import type { App } from 'obsidian'
   import { SIMILARITY_TYPES } from 'src/Algorithms/Similarity'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
   import type { GraphAnalysisSettings } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
-    createOrUpdateYaml,
     debug,
     dropPath,
     hoverPreview,
@@ -73,22 +72,26 @@
 
   let resolvedLinks = app.metadataCache.resolvedLinks
   $: subtype = 'Jaccard'
-  $: promiseSortedSimilarities = plugin.g.getData(subtype, currNode)
-    .then(measures => plugin.g.nodes().map((to) => {
-      const i = plugin.g.node(to)
-      return {
-        measure: measures[i],
-        linked: linkedQ(resolvedLinks, currNode, to),
-        to,
-      }
-    }).sort((a, b) =>
-      a.measure > b.measure ? -1 : 1
-    ));
+  $: promiseSortedSimilarities = plugin.g
+    .getData(subtype, currNode)
+    .then((measures) =>
+      plugin.g
+        .nodes()
+        .map((to) => {
+          const i = plugin.g.node(to)
+          return {
+            measure: measures[i],
+            linked: linkedQ(resolvedLinks, currNode, to),
+            to,
+          }
+        })
+        .sort((a, b) => (a.measure > b.measure ? -1 : 1))
+    )
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
     let subtype = 'Jaccard'
-    debug(settings, { promiseSortedSimilarities})
+    debug(settings, { promiseSortedSimilarities })
   })
 
   let { noInfinity, noZero } = settings
@@ -132,8 +135,8 @@
     </tr>
   </thead>
   {#await promiseSortedSimilarities then sortedSimilarities}
-      {#each sortedSimilarities as node}
-        {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
+    {#each sortedSimilarities as node}
+      {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
         <tr class={node.linked ? LINKED : NOT_LINKED}>
           <td
             class="internal-link {TD_NODE}"
