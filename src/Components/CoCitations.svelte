@@ -123,13 +123,16 @@
     border-radius: 3px; */
   }
 
-  summary .internal-link {
-    font-size: large;
+  .analysis-node,
+  .CC-sentence {
+    font-size: var(--font-size-secondary);
   }
   span.analysis-measure {
     background-color: var(--background-secondary-alt);
     padding: 2px 4px;
     border-radius: 3px;
+    font-size: 12px;
+    line-height: 12px;
   }
   span.analysis-measure:hover {
     background-color: var(--interactive-accent);
@@ -137,13 +140,14 @@
 
   .CC-item {
     padding-left: 30px;
+    font-weight: 600;
   }
 
   .CC-sentence {
     padding-left: 40px;
     color: var(--text-muted);
   }
-  /* .GA-CC .top-row {
+  /* .top-row {
     display: flex;
     justify-content: space-between;
   } */
