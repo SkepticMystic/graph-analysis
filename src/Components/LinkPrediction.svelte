@@ -30,19 +30,31 @@
 
   let { resolvedLinks } = app.metadataCache
   // $: subtype = 'Adamic Adar'
-  $: measures = plugin.g.getData(subtype, currNode)
-  $: predictionArr = plugin.g.nodes().map((to) => {
-    const i = plugin.g.node(to)
-    return {
-      measure: measures[i],
-      linked: linkedQ(resolvedLinks, currNode, to),
-      to,
-    }
-  })
+  // $: measures = plugin.g.getData(subtype, currNode)
+  // $: predictionArr = plugin.g.nodes().map((to) => {
+  //   const i = plugin.g.node(to)
+  //   return {
+  //     measure: measures[i],
+  //     linked: linkedQ(resolvedLinks, currNode, to),
+  //     to,
+  //   }
+  // })
 
-  $: sortedPredictions = predictionArr.sort((a, b) =>
-    a.measure > b.measure ? -1 : 1
-  )
+  $: promisePredictionArr = plugin.g
+    .getData(subtype, currNode)
+    .then((measures) =>
+      plugin.g
+        .nodes()
+        .map((to) => {
+          const i = plugin.g.node(to)
+          return {
+            measure: measures[i],
+            linked: linkedQ(resolvedLinks, currNode, to),
+            to,
+          }
+        })
+        .sort((a, b) => (a.measure > b.measure ? -1 : 1))
+    )
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
@@ -89,25 +101,27 @@
       <th scope="col">Prediction</th>
     </tr>
   </thead>
-  {#each sortedPredictions as node}
-    {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
-      <tr class={node.linked ? LINKED : NOT_LINKED}>
-        <td
-          class="internal-link {TD_NODE}"
-          on:click={(e) => openOrSwitch(app, node.to, currFile, e)}
-          on:mouseover={(e) => hoverPreview(e, view)}
-          on:contextmenu={(e) => {
-            openMenu(e, app)
-          }}
-        >
-          {dropPath(node.to)}
-        </td>
-        <td class={TD_MEASURE}>
-          {node.measure}
-        </td>
-      </tr>
-    {/if}
-  {/each}
+  {#await promisePredictionArr then sortedPredictions}
+    {#each sortedPredictions as node}
+      {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
+        <tr class={node.linked ? LINKED : NOT_LINKED}>
+          <td
+            class="internal-link {TD_NODE}"
+            on:click={(e) => openOrSwitch(app, node.to, currFile, e)}
+            on:mouseover={(e) => hoverPreview(e, view)}
+            on:contextmenu={(e) => {
+              openMenu(e, app)
+            }}
+          >
+            {dropPath(node.to)}
+          </td>
+          <td class={TD_MEASURE}>
+            {node.measure}
+          </td>
+        </tr>
+      {/if}
+    {/each}
+  {/await}
 </table>
 
 <style>
