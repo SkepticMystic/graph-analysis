@@ -95,7 +95,7 @@
                   <span class={TD_MEASURE}>{coCite.measure}</span>
                 </div>
                 <div class="CC-sentence">
-                  {coCite.sentence}
+                  ${coCite.sentence}
                 </div>
               {/each}
             </div>
@@ -115,7 +115,7 @@
   .GA-CC {
     /* border: 1px solid var(--background-modifier-border);
     border-radius: 3px; */
-    padding: 5px;
+    /* padding: 5px; */
   }
 
   .GA-details {
@@ -126,6 +126,12 @@
   .analysis-node,
   .CC-sentence {
     font-size: var(--font-size-secondary);
+    border: 1px solid transparent;
+    border-radius: 5px;
+  }
+
+  .CC-sentence:hover {
+    background-color: var(--background-secondary-alt);
   }
   span.analysis-measure {
     background-color: var(--background-secondary-alt);
