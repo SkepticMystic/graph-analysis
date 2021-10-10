@@ -10,6 +10,7 @@
     dropPath,
     hoverPreview,
     linkedQ,
+    openMenu,
     openOrSwitch,
   } from 'src/Utility'
   import { onMount } from 'svelte'
@@ -20,23 +21,6 @@
   export let view: AnalysisView
 
   let subtype = 'Adamic Adar'
-  // let currFile = app.workspace.getActiveFile()
-  // app.workspace.on('active-leaf-change', () => {
-  //   currFile = app.workspace.getActiveFile()
-  // })
-  // $: currNode = currFile.path.split('.md', 1)[0]
-
-  // const { resolvedLinks } = app.metadataCache
-  // $: predictionArr = plugin.g.nodes().map((to) => {
-  //   return {
-  //     measure: plugin.g.getData(value, currNode, to),
-  //     linked: linkedQ(resolvedLinks, currNode, to),
-  //     to,
-  //   }
-  // })
-  // $: sortedPredictions = predictionArr.sort((a, b) =>
-  //   a.measure > b.measure ? -1 : 1
-  // )
 
   $: currFile = app.workspace.getActiveFile()
   $: currNode = currFile.path.split('.md', 1)[0]
@@ -112,6 +96,9 @@
           class="internal-link {TD_NODE}"
           on:click={(e) => openOrSwitch(app, node.to, currFile, e)}
           on:mouseover={(e) => hoverPreview(e, view)}
+          on:contextmenu={(e) => {
+            openMenu(e, app)
+          }}
         >
           {dropPath(node.to)}
         </td>

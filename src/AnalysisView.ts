@@ -53,7 +53,8 @@ export default class AnalysisView extends ItemView {
 
         const drawComponent = (
             type: Analyses,
-            componentDiv: HTMLDivElement) => {
+            componentDiv: HTMLDivElement
+        ) => {
             if (!ANALYSIS_TYPES.includes(type)) {
                 throw new Error(`${type} is not one of the analysis types`)
             }

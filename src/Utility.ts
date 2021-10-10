@@ -1,4 +1,4 @@
-import { App, FrontMatterCache, ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
+import { App, FrontMatterCache, ItemView, Menu, Notice, TFile, WorkspaceLeaf } from "obsidian";
 import { DECIMALS } from 'src/Constants';
 import type { GraphAnalysisSettings, ResolvedLinks } from "src/Interfaces";
 
@@ -112,4 +112,48 @@ export const createOrUpdateYaml = async (
         await api.update(key, `[${newValue.join(", ")}]`, file);
     }
 
+}
+
+export function openMenu(event: MouseEvent, app: App) {
+    const tdEl = event.target
+    const menu = new Menu(app)
+    menu.addItem((item) =>
+        item
+            .setTitle('Create Link: Current')
+            .setIcon('documents')
+            .onClick((e) => {
+                try {
+                    const currFile = app.workspace.getActiveFile()
+                    const targetStr = tdEl.innerText
+                    createOrUpdateYaml('key', targetStr, currFile, app)
+
+                    new Notice('Write Successful')
+                } catch (error) {
+                    new Notice('Write failed')
+                }
+            })
+    )
+
+    menu.addItem((item) =>
+        item
+            .setTitle('Create Link: Target')
+            .setIcon('documents')
+            .onClick((e) => {
+                const currStr = app.workspace.getActiveFile().basename
+
+                const { target } = event
+                const targetStr = target.innerText
+                const targetFile = app.metadataCache.getFirstLinkpathDest(
+                    targetStr,
+                    ''
+                )
+                if (!targetFile) {
+                    new Notice(`${targetStr} does not exist in your vault yet`)
+                    return
+                } else {
+                    createOrUpdateYaml('key', currStr, targetFile, app)
+                }
+            })
+    )
+    menu.showAtMouseEvent(event)
 }
