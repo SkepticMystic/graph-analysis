@@ -95,7 +95,17 @@
                   <span class={TD_MEASURE}>{coCite.measure}</span>
                 </div>
                 <div class="CC-sentence">
-                  ${coCite.sentence}
+                  {#if coCite.measure < 0.5}
+                    <span>{coCite.sentence[0]}</span>
+                    <mark>{coCite.sentence[1]}</mark>
+                    <span>{coCite.sentence[2]}</span>
+                  {:else}
+                    <span>{coCite.sentence[0]}</span>
+                    <mark>{coCite.sentence[1]}</mark>
+                    <span>{coCite.sentence[2]}</span>
+                    <mark>{coCite.sentence[3]}</mark>
+                    <span>{coCite.sentence[4]}</span>
+                  {/if}
                 </div>
               {/each}
             </div>
@@ -153,8 +163,12 @@
     padding-left: 40px;
     color: var(--text-muted);
   }
-  /* .top-row {
-    display: flex;
-    justify-content: space-between;
-  } */
+  .top-row span + span {
+    float: right;
+  }
+
+  mark {
+    color: var(--text-normal);
+    background-color: var(--text-highlight-bg);
+  }
 </style>
