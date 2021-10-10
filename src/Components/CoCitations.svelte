@@ -1,14 +1,11 @@
 <script lang="ts">
-  import { App, Menu, Notice } from 'obsidian'
-  import { SIMILARITY_TYPES } from 'src/Algorithms/Similarity'
+  import type { App } from 'obsidian'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
-  import type { GraphAnalysisSettings } from 'src/Interfaces'
+  import type { CoCitationRes, GraphAnalysisSettings } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
-    createOrUpdateYaml,
     debug,
-    dropPath,
     hoverPreview,
     linkedQ,
     openMenu,
@@ -28,58 +25,126 @@
   })
 
   let resolvedLinks = app.metadataCache.resolvedLinks
-  $: promiseSortedSimilarities = plugin.g.getData('Co-Citations', currNode)
-    .then(ccRess => plugin.g.nodes().map((to) => {
-      const i = plugin.g.node(to)
-      return {
-        measure: ccRess[i].measure,
-        coCitations: ccRess[i].coCitations,
-        linked: linkedQ(resolvedLinks, currNode, to),
-        to,
-      }
-    }).sort((a, b) =>
-      a.measure > b.measure ? -1 : 1
-    )).then(res => {console.log({res}); return res;});
+  $: promiseSortedSimilarities = plugin.g
+    .getData('Co-Citations', currNode)
+    .then((ccRess: CoCitationRes[]) =>
+      plugin.g
+        .nodes()
+        .map((to) => {
+          const i = plugin.g.node(to)
+          return {
+            measure: ccRess[i].measure,
+            coCitations: ccRess[i].coCitations,
+            linked: linkedQ(resolvedLinks, currNode, to),
+            to,
+          }
+        })
+        .sort((a, b) => (a.measure > b.measure ? -1 : 1))
+    )
+    .then((res) => {
+      console.log({ res })
+      return res
+    })
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    debug(settings, { promiseSortedSimilarities})
+    debug(settings, { promiseSortedSimilarities })
   })
 
   let { noInfinity, noZero } = settings
   //   let [noInfinity, noZero] = [settings.noInfinity, settings.noZero]
 </script>
 
-
-<table class="graph-analysis-table markdown-preview-view">
-  <thead>
-    <tr>
-      <th scope="col">Note</th>
-      <th scope="col">Similarity</th>
-    </tr>
-  </thead>
+<div class="GA-CCs">
   {#await promiseSortedSimilarities then sortedSimilarities}
-      {#each sortedSimilarities as node}
-        {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
-        <tr class={node.linked ? LINKED : NOT_LINKED}>
-          <td
-            class="internal-link {TD_NODE}"
-            on:click={(e) => {
-              openOrSwitch(app, node.to, currFile, e)
-            }}
-            on:contextmenu={(e) => {
-              openMenu(e)
-            }}
-            on:mouseover={(e) => hoverPreview(e, view)}
-          >
-            {dropPath(node.to)}
-          </td>
-          <td class={TD_MEASURE}>{node.measure}</td>
-        </tr>
+    {#each sortedSimilarities as node}
+      {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
+        <div class="GA-CC">
+          <details>
+            <summary>
+              <span
+                class="{node.linked ? LINKED : NOT_LINKED} {node.to} top-row"
+              >
+                <span
+                  class="internal-link {TD_NODE}"
+                  on:click={(e) => {
+                    openOrSwitch(app, node.to, currFile, e)
+                  }}
+                  on:contextmenu={(e) => {
+                    openMenu(e, app)
+                  }}
+                  on:mouseover={(e) => hoverPreview(e, view)}>{node.to}</span
+                >
+                <span class={TD_MEASURE}>{node.measure}</span>
+              </span>
+            </summary>
+            <div class="GA-details">
+              {#each node.coCitations as coCite}
+                <div class="CC-item">
+                  <span
+                    class="internal-link {TD_NODE}"
+                    on:click={(e) => {
+                      openOrSwitch(app, coCite.source, currFile, e)
+                    }}
+                    on:contextmenu={(e) => {
+                      openMenu(e, app)
+                    }}
+                    on:mouseover={(e) => hoverPreview(e, view)}
+                    >{coCite.source}</span
+                  >
+                  <span class={TD_MEASURE}>{coCite.measure}</span>
+                </div>
+                <div class="CC-sentence">
+                  {coCite.sentence}
+                </div>
+              {/each}
+            </div>
+          </details>
+        </div>
       {/if}
     {/each}
   {/await}
-</table>
+</div>
 
 <style>
+  .GA-CCs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .GA-CC {
+    /* border: 1px solid var(--background-modifier-border);
+    border-radius: 3px; */
+    padding: 5px;
+  }
+
+  .GA-details {
+    /* border: 1px solid var(--background-modifier-border);
+    border-radius: 3px; */
+  }
+
+  summary .internal-link {
+    font-size: large;
+  }
+  span.analysis-measure {
+    background-color: var(--background-secondary-alt);
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+  span.analysis-measure:hover {
+    background-color: var(--interactive-accent);
+  }
+
+  .CC-item {
+    padding-left: 30px;
+  }
+
+  .CC-sentence {
+    padding-left: 40px;
+    color: var(--text-muted);
+  }
+  /* .GA-CC .top-row {
+    display: flex;
+    justify-content: space-between;
+  } */
 </style>
