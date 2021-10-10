@@ -3,7 +3,7 @@ import { DECIMALS } from "src/Constants";
 import { nodeIntersection } from "src/GeneralGraphFn";
 import type { AnalysisAlg, CoCitation, CoCitationRes, GraphData, ResolvedLinks, Subtypes } from 'src/Interfaces'
 import { nxnArray, roundNumber, sum } from "src/Utility";
-import type { App, HeadingCache, LinkCache } from 'obsidian';
+import type { App, HeadingCache, LinkCache, ReferenceCache } from 'obsidian'
 import tokenizer from 'sbd';
 
 
@@ -137,17 +137,17 @@ export default class MyGraph extends Graph {
                     const cachedRead = await this.app.vault.cachedRead(file);
                     const content = cachedRead.split('\n');
                     // Find the sentence the link is in
-                    const ownSentences: [number, number, number][] = ownLinks.map((link) => {
+                    const ownSentences: [number, number, number, ReferenceCache][] = ownLinks.map((link) => {
                        let line = content[link.position.end.line];
                        const sentences = tokenizer.sentences(line, {preserve_whitespace: true});
                        let aggrSentenceLength = 0;
-                       let res: [number, number, number] = null;
+                       let res: [number, number, number, ReferenceCache] = null;
                        sentences.forEach((sentence:string) => {
                            if (res) return;
                            aggrSentenceLength += sentence.length;
                            // Edge case that does not work: If alias has end of sentences.
                            if (link.position.end.col <= aggrSentenceLength) {
-                               res = [link.position.end.line, aggrSentenceLength - sentence.length, aggrSentenceLength];
+                               res = [link.position.end.line, aggrSentenceLength - sentence.length, aggrSentenceLength, link];
                            }
                        });
                        return res;
@@ -197,21 +197,36 @@ export default class MyGraph extends Graph {
                             preCocitations[link.link] = [0, []];
                         }
 
+                        const lineContent = content[link.position.start.line];
                         // Check if the link is on the same line
                         let hasOwnLine = false;
-                        ownSentences.forEach(([line, start, end]) => {
+                        ownSentences.forEach(([line, start, end, ownLink]) => {
                             if (link.position.start.line === line) {
-                                const sentence = content[line].slice(start, end);
+                                const m1Start = Math.min(link.position.start.col, ownLink.position.start.col);
+                                const m1End = Math.min(link.position.end.col, ownLink.position.end.col);
+                                const m2Start = Math.max(link.position.start.col, ownLink.position.start.col);
+                                const m2End = Math.max(link.position.end.col, ownLink.position.end.col);
                                 // Give a higher score if it is also in the same sentence
                                 if (link.position.start.col >= start && link.position.end.col <= end) {
+                                    const sentenceS = lineContent.slice(start, end);
+                                    const sentence = [sentenceS.slice(0, m1Start),
+                                                      sentenceS.slice(m1Start, m1End + 1),
+                                                      sentenceS.slice(m1End + 1, m2Start),
+                                                      sentenceS.slice(m2Start, m2End + 1),
+                                                      sentenceS.slice(m2End + 1, sentenceS.length)];
                                     preCocitations[link.link][0] = 1;
                                     preCocitations[link.link][1].push({sentence: sentence, measure: 1,
                                         source: pre, line: link.position.start.line})
                                 }
 
                                 else {
+                                    const sentence = [lineContent.slice(0, m1Start),
+                                        lineContent.slice(m1Start, m1End + 1),
+                                        lineContent.slice(m1End + 1, m2Start),
+                                        lineContent.slice(m2Start, m2End + 1),
+                                        lineContent.slice(m2End + 1, lineContent.length)];
                                     preCocitations[link.link][0] = Math.max(preCocitations[link.link][0], 1/2);
-                                    preCocitations[link.link][1].push({sentence: content[line], measure: 1/2,
+                                    preCocitations[link.link][1].push({sentence: sentence, measure: 1/2,
                                         source: pre, line: link.position.start.line});
                                 }
                                 hasOwnLine = true;
@@ -219,6 +234,9 @@ export default class MyGraph extends Graph {
                         });
                         if (hasOwnLine) return;
 
+                        const sentence = [lineContent.slice(0, link.position.start.col),
+                                          lineContent.slice(link.position.start.col, link.position.end.col + 1),
+                                          lineContent.slice(link.position.end.col + 1, lineContent.length)];
 
                         // Check if it is in the same paragraph
                         const sameParagraph = ownSections.find((section) =>
@@ -226,7 +244,7 @@ export default class MyGraph extends Graph {
                             section.position.end.line >= link.position.end.line);
                         if (sameParagraph) {
                             preCocitations[link.link][0] = Math.max(preCocitations[link.link][0], 1/4);
-                            preCocitations[link.link][1].push({sentence: content[link.position.start.line], measure: 1/4,
+                            preCocitations[link.link][1].push({sentence: sentence, measure: 1/4,
                                 source: pre, line: link.position.start.line});
                             return;
                         }
@@ -242,7 +260,7 @@ export default class MyGraph extends Graph {
                             // less specific headings, the weight will decrease.
                             const score = 1 / Math.pow(2, 3 + maxHeadingLevel - bestLevel);
                             preCocitations[link.link][0] = Math.max(preCocitations[link.link][0], score);
-                            preCocitations[link.link][1].push({measure: score, sentence: content[link.position.start.line],
+                            preCocitations[link.link][1].push({measure: score, sentence: sentence,
                                 source: pre, line: link.position.start.line});
                             return;
                         }
@@ -252,7 +270,7 @@ export default class MyGraph extends Graph {
                         // We want to weight it 1 factor less.
                         const score = 1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel);
                         preCocitations[link.link][0] = Math.max(preCocitations[link.link][0], score);
-                        preCocitations[link.link][1].push({measure: score, sentence: content[link.position.start.line],
+                        preCocitations[link.link][1].push({measure: score, sentence: sentence,
                             source: pre, line: link.position.start.line});
                     });
 

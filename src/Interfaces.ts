@@ -26,7 +26,7 @@ export type GraphData = {
 };
 
 export interface CoCitation {
-    sentence: string,
+    sentence: string[],
     measure: number,
     source: string,
     line: number
