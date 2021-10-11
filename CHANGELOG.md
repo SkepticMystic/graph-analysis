@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.24](https://github.com/SkepticMystic/graph-analysis/compare/0.0.22...0.0.24) (2021-10-11)
+
+
+### Features
+
+* :lipstick: Highlight matches in coCites sentence ([1916a1a](https://github.com/SkepticMystic/graph-analysis/commit/1916a1a683265868177434fde479276ac4b08fd0))
+* :sparkles: Better openOrSwitch ([f8e590e](https://github.com/SkepticMystic/graph-analysis/commit/f8e590eccde68915f67386e94bf4d6c49201c0cf))
+* :sparkles: Co-Citations backlinks pane! ([a42cf63](https://github.com/SkepticMystic/graph-analysis/commit/a42cf630d2b6519bee837cebbeed92d34bf92eb2))
+
+
+### Bug Fixes
+
+* :bug: Fix similarity component with new Promised results ([05d78f9](https://github.com/SkepticMystic/graph-analysis/commit/05d78f901deb4f74376d2fc464509b102791951d))
+* :bug: Somewhat fix LinkPrediction with new Promised results ([c6995b3](https://github.com/SkepticMystic/graph-analysis/commit/c6995b36c85b9e14503f95731ebb5380b2726102))
+* 🐛 Fixed highlights being one character off ([afbbf23](https://github.com/SkepticMystic/graph-analysis/commit/afbbf23235378e9d1aa53d55ccbf262bc5ec34a2))
+
 ### [0.0.23](https://github.com/SkepticMystic/graph-analysis/compare/0.0.22...0.0.23) (2021-10-11)
 
 
