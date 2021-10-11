@@ -210,10 +210,10 @@ export default class MyGraph extends Graph {
                                 if (link.position.start.col >= start && link.position.end.col <= end) {
                                     const sentenceS = lineContent.slice(start, end);
                                     const sentence = [sentenceS.slice(0, m1Start),
-                                                      sentenceS.slice(m1Start, m1End + 1),
-                                                      sentenceS.slice(m1End + 1, m2Start),
-                                                      sentenceS.slice(m2Start, m2End + 1),
-                                                      sentenceS.slice(m2End + 1, sentenceS.length)];
+                                                      sentenceS.slice(m1Start, m1End),
+                                                      sentenceS.slice(m1End, m2Start),
+                                                      sentenceS.slice(m2Start, m2End),
+                                                      sentenceS.slice(m2End, sentenceS.length)];
                                     preCocitations[link.link][0] = 1;
                                     preCocitations[link.link][1].push({sentence: sentence, measure: 1,
                                         source: pre, line: link.position.start.line})
@@ -221,10 +221,10 @@ export default class MyGraph extends Graph {
 
                                 else {
                                     const sentence = [lineContent.slice(0, m1Start),
-                                        lineContent.slice(m1Start, m1End + 1),
-                                        lineContent.slice(m1End + 1, m2Start),
-                                        lineContent.slice(m2Start, m2End + 1),
-                                        lineContent.slice(m2End + 1, lineContent.length)];
+                                        lineContent.slice(m1Start, m1End),
+                                        lineContent.slice(m1End, m2Start),
+                                        lineContent.slice(m2Start, m2End),
+                                        lineContent.slice(m2End, lineContent.length)];
                                     preCocitations[link.link][0] = Math.max(preCocitations[link.link][0], 1/2);
                                     preCocitations[link.link][1].push({sentence: sentence, measure: 1/2,
                                         source: pre, line: link.position.start.line});
@@ -235,8 +235,8 @@ export default class MyGraph extends Graph {
                         if (hasOwnLine) return;
 
                         const sentence = [lineContent.slice(0, link.position.start.col),
-                                          lineContent.slice(link.position.start.col, link.position.end.col + 1),
-                                          lineContent.slice(link.position.end.col + 1, lineContent.length)];
+                                          lineContent.slice(link.position.start.col, link.position.end.col),
+                                          lineContent.slice(link.position.end.col, lineContent.length)];
 
                         // Check if it is in the same paragraph
                         const sameParagraph = ownSections.find((section) =>
