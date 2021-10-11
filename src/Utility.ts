@@ -135,6 +135,7 @@ export const createOrUpdateYaml = async (
     file: TFile,
     app: App
 ) => {
+    // @ts-ignore
     const api = app.plugins.plugins.metaedit?.api
 
     if (!api) {

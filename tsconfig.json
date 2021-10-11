@@ -12,7 +12,7 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "lib": ["dom", "es5", "scripthost", "es2015"],
+    "lib": ["dom", "es5", "scripthost", "es2019"],
     "types": ["node", "svelte"],
     "paths": {
       "src": ["src/*"]

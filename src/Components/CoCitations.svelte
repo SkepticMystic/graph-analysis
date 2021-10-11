@@ -42,7 +42,7 @@
         .sort((a, b) => (a.measure > b.measure ? -1 : 1))
     )
     .then((res) => {
-      console.log({ res })
+      debug(settings, {res});
       return res
     })
 
