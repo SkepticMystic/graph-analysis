@@ -6,6 +6,7 @@
   import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
+    dropPath,
     hoverPreview,
     linkedQ,
     openMenu,
@@ -73,7 +74,9 @@
                   on:contextmenu={(e) => {
                     openMenu(e, app)
                   }}
-                  on:mouseover={(e) => hoverPreview(e, view)}>{node.to}</span
+                  on:mouseover={(e) => hoverPreview(e, view)}
+                >
+                  {dropPath(node.to)}</span
                 >
                 <span class={TD_MEASURE}>{node.measure}</span>
               </span>
@@ -90,7 +93,7 @@
                       openMenu(e, app)
                     }}
                     on:mouseover={(e) => hoverPreview(e, view)}
-                    >{coCite.source}</span
+                    >{dropPath(coCite.source)}</span
                   >
                   <span class={TD_MEASURE}>{coCite.measure}</span>
                 </div>
