@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.25](https://github.com/SkepticMystic/graph-analysis/compare/0.0.24...0.0.25) (2021-10-11)
+
+
+### Features
+
+* :lipstick: Don't display entire path, only basename ([6d3ed29](https://github.com/SkepticMystic/graph-analysis/commit/6d3ed295ba306eb509c1d8d636eaa5755f7fd27f))
+
 ### [0.0.24](https://github.com/SkepticMystic/graph-analysis/compare/0.0.22...0.0.24) (2021-10-11)
 
 
