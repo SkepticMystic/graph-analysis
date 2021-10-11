@@ -94,7 +94,12 @@
                   >
                   <span class={TD_MEASURE}>{coCite.measure}</span>
                 </div>
-                <div class="CC-sentence">
+                <div
+                  class="CC-sentence"
+                  on:click={(e) => {
+                    openOrSwitch(app, coCite.source, currFile, e)
+                  }}
+                >
                   {#if coCite.measure < 0.5}
                     <span>{coCite.sentence[0]}</span>
                     <mark>{coCite.sentence[1]}</mark>

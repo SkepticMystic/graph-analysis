@@ -1,4 +1,5 @@
 import { App, FrontMatterCache, ItemView, Menu, Notice, TFile, WorkspaceLeaf } from "obsidian";
+import type GraphAnalysisPlugin from "src";
 import { DECIMALS } from 'src/Constants';
 import type { GraphAnalysisSettings, ResolvedLinks } from "src/Interfaces";
 
@@ -61,45 +62,48 @@ export function hoverPreview(event: MouseEvent, view: ItemView): void {
 
 export async function openOrSwitch(
     app: App,
+    // plugin: GraphAnalysisPlugin,
+    // lineObj: {} | null,
     dest: string,
     currFile: TFile,
     event: MouseEvent
-  ): Promise<void> {
+): Promise<void> {
     const { workspace } = app;
     let destFile = app.metadataCache.getFirstLinkpathDest(dest, currFile.path);
-  
+
     // If dest doesn't exist, make it
     if (!destFile) {
-      const newFileFolder = app.fileManager.getNewFileParent(currFile.path).path;
-      const newFilePath = `${newFileFolder}${newFileFolder === "/" ? "" : "/"}${dest}.md`;
-      await app.vault.create(newFilePath, "");
-      destFile = app.metadataCache.getFirstLinkpathDest(
-        newFilePath,
-        currFile.path
-      );
+        const newFileFolder = app.fileManager.getNewFileParent(currFile.path).path;
+        const newFilePath = `${newFileFolder}${newFileFolder === "/" ? "" : "/"}${dest}.md`;
+        await app.vault.create(newFilePath, "");
+        destFile = app.metadataCache.getFirstLinkpathDest(
+            newFilePath,
+            currFile.path
+        );
     }
-  
+
     // Check if it's already open
     const leavesWithDestAlreadyOpen: WorkspaceLeaf[] = [];
     // For all open leaves, if the leave's basename is equal to the link destination, rather activate that leaf instead of opening it in two panes
     workspace.iterateAllLeaves((leaf) => {
-      if (leaf.view?.file?.basename === dest) {
-        leavesWithDestAlreadyOpen.push(leaf);
-      }
+        if (leaf.view?.file?.basename === dest) {
+            leavesWithDestAlreadyOpen.push(leaf);
+        }
     });
-  
+
     // Rather switch to it if it is open
     if (leavesWithDestAlreadyOpen.length > 0) {
-      workspace.setActiveLeaf(leavesWithDestAlreadyOpen[0]);
+        workspace.setActiveLeaf(leavesWithDestAlreadyOpen[0]);
     } else {
-      const mode = (app.vault as any).getConfig("defaultViewMode");
-      const leaf = (event.ctrlKey || event.getModifierState('Meta'))
-        ? workspace.splitActiveLeaf()
-        : workspace.getUnpinnedLeaf();
-  
-      await leaf.openFile(destFile, { active: true, mode });
+        const mode = (app.vault as any).getConfig("defaultViewMode");
+        const leaf = (event.ctrlKey || event.getModifierState('Meta'))
+            ? workspace.splitActiveLeaf()
+            : workspace.getUnpinnedLeaf();
+
+        await leaf.openFile(destFile, { active: true, mode });
+        
     }
-  }
+}
 
 export function roundNumber(num: number, dec: number = DECIMALS): number {
     return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
