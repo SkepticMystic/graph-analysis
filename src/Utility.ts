@@ -1,5 +1,4 @@
-import { App, FrontMatterCache, ItemView, Menu, Notice, TFile, WorkspaceLeaf } from "obsidian";
-import type GraphAnalysisPlugin from "src";
+import { App, ItemView, Menu, Notice, TFile, WorkspaceLeaf } from "obsidian";
 import { DECIMALS } from 'src/Constants';
 import type { GraphAnalysisSettings, ResolvedLinks } from "src/Interfaces";
 
@@ -101,7 +100,7 @@ export async function openOrSwitch(
             : workspace.getUnpinnedLeaf();
 
         await leaf.openFile(destFile, { active: true, mode });
-        
+
     }
 }
 

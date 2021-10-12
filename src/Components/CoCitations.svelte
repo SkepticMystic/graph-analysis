@@ -11,6 +11,7 @@
     linkedQ,
     openMenu,
     openOrSwitch,
+    roundNumber,
   } from 'src/Utility'
   import { onMount } from 'svelte'
 
@@ -78,7 +79,7 @@
                 >
                   {dropPath(node.to)}</span
                 >
-                <span class={TD_MEASURE}>{node.measure}</span>
+                <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
               </span>
             </summary>
             <div class="GA-details">
@@ -95,7 +96,7 @@
                     on:mouseover={(e) => hoverPreview(e, view)}
                     >{dropPath(coCite.source)}</span
                   >
-                  <span class={TD_MEASURE}>{coCite.measure}</span>
+                  <span class={TD_MEASURE}>{roundNumber(coCite.measure, 3)}</span>
                 </div>
                 <div
                   class="CC-sentence"
