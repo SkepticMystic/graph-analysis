@@ -1,57 +1,64 @@
-## Obsidian Sample Plugin
+# Graph Analysis
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+Graph analysis is an Obsidian plugin which adds a new view type - the analysis
+view.
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+The view shows a table of note names and numbers, each representing the value of
+some graph analysis algorithm on that note in relation to the current ntoe.
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+e.g.
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Changes the default font color to red using `styles.css`.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+- `[[A]] is 0.9 Similar to [[B]]`
+- `[[A]] has a 0.6 chance of being connected to [[B]]`
+- `[[A]] is co-cited with [[B]] 6 times`
 
-### First time developing plugins?
+In the analysis view, you have the option to choose between different
+`Analysis Types`, and different `Algorithms` within those types.
 
-Quick starting guide for new plugin devs:
+There is also the option to hide `Infinity` and `Zero` values.
 
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+![](https://i.imgur.com/rYxYPCS.png)
 
-### Releasing new releases
+## Analysis Types
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments.
-- Publish the release.
+Graph Analysis currently has 3 different analysis types:
 
-### Adding your plugin to the community plugin list
+1. Similarity
+2. Link Prediction
+3. Co-Citations
 
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+Each of which implement different algorithms with different purposes.
 
-### How to use
+### Similarity
 
-- Clone this repo.
-- `npm i` or `yarn` to install dependencies
-- `npm run dev` to start compilation in watch mode.
+Similarity is a measure of how similar two notes are based on their
+connectedness in the graph (ie. note content is not considered).
 
-### Manually installing the plugin
+Currently, only the Jaccard Similarity measure is implemented.
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+### Link Prediction
 
-### API Documentation
+Link Prediction is a measure of the probability that two notes should be
+connected based on their other connections in the graph.
 
-See https://github.com/obsidianmd/obsidian-api
+Link prediction algorithms include:
+
+1. Adamic Adar
+2. Common Neighbours
+
+### Co-Citations
+
+Co-Citations counts the number of time two notes are cited together in the same
+note.
+
+For example, if `[[C]]` has `[[A]] and [[B]]` in its content, then `[[A]]` and
+`[[B]]` will each have a co-citation of one (in relation to one another).
+
+Think of co-citations as 2nd-order backlinks.
+
+Each note with co-citations > 0 is given a drop down menu. Inside each drop
+down, you can see which note co-cites those two notes, and the sentence in which
+they are co-cited (if in the same sentence), otherwise just the sentence with
+the other link.
+
+![](https://i.imgur.com/9yspOkN.png)
