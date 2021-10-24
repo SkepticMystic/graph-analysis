@@ -19,7 +19,7 @@ export default class MyGraph extends Graph {
 
     nodeMapping: { [name: string]: number } = {}
 
-    initGraph(): MyGraph {
+    async initGraph(): Promise<MyGraph> {
         let i = 0;
         for (const source in this.resolvedLinks) {
             if (source.split('.').last() === 'md') {
@@ -48,11 +48,10 @@ export default class MyGraph extends Graph {
         // 'Closeness': []
     };
 
-    initData(): void {
+    async initData(): Promise<void> {
         const n = this.nodes().length;
         Object.keys(this.data).forEach((key: Subtypes) => {
-            const nxnMatrix: undefined[][] = nxnArray(n);
-            this.data[key] = nxnMatrix
+            this.data[key] = nxnArray(n);
         })
     }
 

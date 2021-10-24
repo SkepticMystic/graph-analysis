@@ -4,6 +4,7 @@ import { DEFAULT_SETTINGS, VIEW_TYPE_GRAPH_ANALYSIS } from "src/Constants";
 import type { GraphAnalysisSettings } from 'src/Interfaces';
 import MyGraph from 'src/MyGraph';
 import { SampleSettingTab } from 'src/Settings';
+import { debug } from './Utility'
 
 
 export default class GraphAnalysisPlugin extends Plugin {
@@ -36,24 +37,21 @@ export default class GraphAnalysisPlugin extends Plugin {
 
 
 		this.app.workspace.onLayoutReady(() => {
-			setTimeout(() => {
+			setTimeout(async () => {
 				console.time('Initialise Graph')
 				const { resolvedLinks } = this.app.metadataCache;
 				this.g = new MyGraph(resolvedLinks, this.app);
-				this.g.initGraph();
-				this.g.initData();
-				console.log({ g: this.g })
+				await this.g.initGraph();
+				await this.g.initData();
+				debug(this.settings, {g: this.g});
 				console.timeEnd('Initialise Graph')
-
-			}, 2000)
-			setTimeout(() => {
 				this.registerView(
 					VIEW_TYPE_GRAPH_ANALYSIS,
 					(leaf: WorkspaceLeaf) => (this.view = new AnalysisView(leaf, this))
 				);
-				this.initView(VIEW_TYPE_GRAPH_ANALYSIS);
-			}, 3000)
-		})
+				await this.initView(VIEW_TYPE_GRAPH_ANALYSIS);
+			}, 13000)
+		});
 
 		this.registerEvent(this.app.workspace.on('active-leaf-change', () => {
 			// const currNode = this.app.workspace.getActiveFile().path.split('.md', 1)[0]

@@ -4,6 +4,7 @@ import typescript from '@rollup/plugin-typescript';
 import svelte from "rollup-plugin-svelte";
 import autoPreprocess from 'svelte-preprocess';
 import json from '@rollup/plugin-json';
+import ignore from 'rollup-plugin-ignore';
 
 const isProd = (process.env.BUILD === 'production');
 
@@ -26,6 +27,7 @@ export default {
   },
   external: ['obsidian'],
   plugins: [
+    ignore(["path", "url"], { commonjsBugFix: true }),
     commonjs({
       include: ['node_modules/**'],
     }),
