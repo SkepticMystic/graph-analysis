@@ -1,5 +1,4 @@
 import { App, FrontMatterCache, ItemView, Menu, Notice, TFile, WorkspaceLeaf } from "obsidian";
-import type GraphAnalysisPlugin from "src";
 import { DECIMALS } from 'src/Constants';
 import type { GraphAnalysisSettings, ResolvedLinks } from "src/Interfaces";
 
