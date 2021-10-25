@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.28](https://github.com/SkepticMystic/graph-analysis/compare/0.0.27...0.0.28) (2021-10-25)
+
+
+### Features
+
+* :sparkles: Refresh Index button ([fc6b6aa](https://github.com/SkepticMystic/graph-analysis/commit/fc6b6aa77fbfeb950e0af1606033d23cbac64fda))
+
 ### [0.0.27](https://github.com/SkepticMystic/graph-analysis/compare/0.0.26...0.0.27) (2021-10-25)
 
 
