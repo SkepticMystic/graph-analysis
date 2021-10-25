@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.27](https://github.com/SkepticMystic/graph-analysis/compare/0.0.26...0.0.27) (2021-10-25)
+
+
+### Bug Fixes
+
+* Better handling of indexing on initial load of Obsidian ([651b7ea](https://github.com/SkepticMystic/graph-analysis/commit/651b7ea5cc289ccb78c28bf822c633df44fdc0b6))
+
 ### [0.0.26](https://github.com/SkepticMystic/graph-analysis/compare/0.0.25...0.0.26) (2021-10-25)
 
 
