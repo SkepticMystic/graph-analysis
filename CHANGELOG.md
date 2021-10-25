@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.26](https://github.com/SkepticMystic/graph-analysis/compare/0.0.25...0.0.26) (2021-10-25)
+
+
+### Bug Fixes
+
+* :bug: Console log undefined var ([1ffed5b](https://github.com/SkepticMystic/graph-analysis/commit/1ffed5b9278b3a05e0b3dfa16e12bebf04177174))
+
 ### [0.0.25](https://github.com/SkepticMystic/graph-analysis/compare/0.0.24...0.0.25) (2021-10-11)
 
 
