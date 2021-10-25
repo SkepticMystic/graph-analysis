@@ -1,31 +1,43 @@
-table.graph-analysis-table, table.graph-analysis-table tr, table.graph-analysis-table td {
-    border: 1px solid var(--background-modifier-border);
+table.graph-analysis-table {
+  border-collapse: collapse;
 }
+table.graph-analysis-table,
+table.graph-analysis-table tr,
+table.graph-analysis-table td {
+  border: 1px solid var(--background-modifier-border);
+}
+
 
 table.graph-analysis-table td {
-    padding: 2px;
+  padding: 2px;
 }
 
-
-td.internal-link, span.internal-link {
+td.internal-link,
+span.internal-link {
   color: var(--text-accent);
   text-decoration-line: none !important;
 }
 
-td.internal-link:hover, span.internal-link:hover {
+td.internal-link:hover,
+span.internal-link:hover {
   color: var(--text-accent-hover, var(--text-accent));
 }
 
-tr.analysis-linked{
+tr.analysis-linked {
   /* display:none */
 }
-tr.analysis-not-linked{
+tr.analysis-not-linked {
   /* background-color: yellow */
 }
 
-td.analysis-measure{
+td.analysis-measure {
   /* display:none */
 }
-td.analysis-node{
+td.analysis-node {
   /* background-color: yellow */
+}
+
+select.dropdown.GA-DD {
+  line-height: normal;
+  padding: 0.2em 1.9em 0.2em 0.8em;
 }

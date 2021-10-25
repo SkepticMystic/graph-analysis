@@ -20,50 +20,6 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
-  // function openMenu(event: MouseEvent) {
-  //   const tdEl = event.target
-  //   const menu = new Menu(app)
-  //   menu.addItem((item) =>
-  //     item
-  //       .setTitle('Create Link: Current')
-  //       .setIcon('documents')
-  //       .onClick((e) => {
-  //         try {
-  //           const currFile = app.workspace.getActiveFile()
-  //           const targetStr = event.target.innerText
-  //           createOrUpdateYaml('key', targetStr, currFile, app)
-
-  //           new Notice('Write Successful')
-  //         } catch (error) {
-  //           new Notice('Write failed')
-  //         }
-  //       })
-  //   )
-
-  //   menu.addItem((item) =>
-  //     item
-  //       .setTitle('Create Link: Target')
-  //       .setIcon('documents')
-  //       .onClick((e) => {
-  //         const currStr = app.workspace.getActiveFile().basename
-
-  //         const { target } = event
-  //         const targetStr = target.innerText
-  //         const targetFile = app.metadataCache.getFirstLinkpathDest(
-  //           targetStr,
-  //           ''
-  //         )
-  //         if (!targetFile) {
-  //           new Notice(`${targetStr} does not exist in your vault yet`)
-  //           return
-  //         } else {
-  //           createOrUpdateYaml('key', currStr, targetFile, app)
-  //         }
-  //       })
-  //   )
-  //   menu.showAtMouseEvent(event)
-  // }
-
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile.path.split('.md', 1)[0]
   app.workspace.on('active-leaf-change', () => {
@@ -101,7 +57,7 @@
 <div>
   <span
     >Similarity Algorithm:
-    <select bind:value={subtype}>
+    <select bind:value={subtype} class="dropdown GA-DD">
       {#each SIMILARITY_TYPES as subtype}
         <option value={subtype.subtype}>{subtype.subtype}</option>
       {/each}

@@ -68,7 +68,7 @@
 <div>
   <span
     >Link Prediction Algorithm:
-    <select bind:value={subtype}>
+    <select bind:value={subtype} class="dropdown GA-DD">
       {#each LINK_PREDICTION_TYPES as subtype}
         <option value={subtype.subtype}>{subtype.subtype}</option>
       {/each}

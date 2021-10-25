@@ -52,7 +52,7 @@
 <div>
   <span
     >Centrality Algorithm:
-    <select bind:value>
+    <select class="dropdown GA-DD" bind:value>
       {#each CENTRALITY_TYPES as subtype}
         <option value={subtype.subtype}>{subtype.subtype}</option>
       {/each}

@@ -7,7 +7,12 @@
 </script>
 
 <label for="Algorithm">Choose an analysis type:</label>
-<select id="Algorithm" name="cars" on:blur={(e) => (analysisType = e.value)}>
+<select
+  class="dropdown GA-DD"
+  id="Algorithm"
+  name="Algorithm"
+  on:blur={(e) => (analysisType = e.value)}
+>
   <option value="closeness">Closeness</option>
   <option value="similarity">Similarity</option>
 </select>
