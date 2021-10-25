@@ -131,6 +131,7 @@
   .GA-CCs {
     display: flex;
     flex-direction: column;
+    padding-left: 10px;
   }
 
   .GA-CC {
