@@ -7,7 +7,6 @@ table.graph-analysis-table td {
   border: 1px solid var(--background-modifier-border);
 }
 
-
 table.graph-analysis-table td {
   padding: 2px;
 }
@@ -40,4 +39,9 @@ td.analysis-node {
 select.dropdown.GA-DD {
   line-height: normal;
   padding: 0.2em 1.9em 0.2em 0.8em;
+}
+
+button.GA-Refresh-Button {
+  /* float: right; */
+  margin-left: 10px;
 }

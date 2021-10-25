@@ -2,6 +2,7 @@ import { ItemView, WorkspaceLeaf } from 'obsidian'
 import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from 'src/Constants'
 import type { Analyses } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
+import { claim_component } from 'svelte/internal'
 import CoCitations from './Components/CoCitations.svelte'
 import LinkPrediction from './Components/LinkPrediction.svelte'
 import Similarity from './Components/Similarity.svelte'
@@ -43,11 +44,21 @@ export default class AnalysisView extends ItemView {
     const contentEl = this.contentEl
     contentEl.empty()
 
-    const settingsSpan = contentEl.createSpan({ text: 'Analysis type: ' })
-    const selector = settingsSpan.createEl('select', { cls: 'dropdown GA-DD' })
+    const settingsDiv = contentEl.createDiv({ text: 'Analysis: ' })
+    const selector = settingsDiv.createEl('select', { cls: 'dropdown GA-DD' })
     ANALYSIS_TYPES.forEach((type) => {
       selector.createEl('option', { value: type, text: type })
     })
+    const refreshGraphButton = settingsDiv.createEl(
+      'button',
+      { text: 'Refresh', cls: 'GA-Refresh-Button' },
+      (but) => {
+        but.addEventListener('click', async () => {
+          await this.plugin.refreshGraph()
+          await this.draw()
+        })
+      }
+    )
 
     const componentDiv = contentEl.createDiv()
 
@@ -83,7 +94,7 @@ export default class AnalysisView extends ItemView {
     }
     // Default Analysis Type
     selector.value = settings.defaultAnalysisType
-    drawComponent(settings.defaultAnalysisType, componentDiv)
+    drawComponent(selector.value as Analyses, componentDiv)
 
     selector.addEventListener('change', () => {
       drawComponent(selector.value as Analyses, componentDiv)
