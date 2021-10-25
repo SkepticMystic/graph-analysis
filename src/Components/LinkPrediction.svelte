@@ -1,18 +1,12 @@
 <script lang="ts">
   import type { App } from 'obsidian'
+  import { openOrSwitch } from 'obsidian-community-lib'
   import { LINK_PREDICTION_TYPES } from 'src/Algorithms/LinkPrediction'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
   import type { GraphAnalysisSettings } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import {
-    debug,
-    dropPath,
-    hoverPreview,
-    linkedQ,
-    openMenu,
-    openOrSwitch,
-  } from 'src/Utility'
+  import { debug, dropPath, hoverPreview, linkedQ, openMenu } from 'src/Utility'
   import { onMount } from 'svelte'
 
   export let app: App

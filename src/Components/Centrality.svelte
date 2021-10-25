@@ -1,17 +1,12 @@
 <script lang="ts">
   import type { App } from 'obsidian'
+  import { openOrSwitch } from 'obsidian-community-lib'
   import { CENTRALITY_TYPES } from 'src/Algorithms/Centrality'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
   import type { GraphAnalysisSettings, Subtypes } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import {
-    debug,
-    dropPath,
-    hoverPreview,
-    linkedQ,
-    openOrSwitch,
-  } from 'src/Utility'
+  import { debug, dropPath, hoverPreview, linkedQ } from 'src/Utility'
   import { onMount } from 'svelte'
 
   export let plugin: GraphAnalysisPlugin

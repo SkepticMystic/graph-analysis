@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { App } from 'obsidian'
+  import { openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
   import type { CoCitationRes, GraphAnalysisSettings } from 'src/Interfaces'
@@ -10,7 +11,6 @@
     hoverPreview,
     linkedQ,
     openMenu,
-    openOrSwitch,
     roundNumber,
   } from 'src/Utility'
   import { onMount } from 'svelte'
@@ -52,9 +52,6 @@
     currFile = app.workspace.getActiveFile()
     debug(settings, { promiseSortedSimilarities })
   })
-
-  let { noInfinity, noZero } = settings
-  //   let [noInfinity, noZero] = [settings.noInfinity, settings.noZero]
 </script>
 
 <div class="GA-CCs">
