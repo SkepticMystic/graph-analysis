@@ -55,32 +55,28 @@
 </script>
 
 <div>
-  <span
-    >Link Prediction Algorithm:
-    <select bind:value={subtype} class="dropdown GA-DD">
-      {#each LINK_PREDICTION_TYPES as subtype}
-        <option value={subtype.subtype}>{subtype.subtype}</option>
-      {/each}
-    </select>
-  </span>
+  <label for="Alg">Alg:</label>
+  <select bind:value={subtype} name="Alg" class="dropdown GA-DD">
+    {#each LINK_PREDICTION_TYPES as subtype}
+      <option value={subtype.subtype}>{subtype.subtype}</option>
+    {/each}
+  </select>
 
-  <span
-    >Exclude Infinity:
-    <input
-      type="checkbox"
-      checked={noInfinity}
-      on:change={() => (noInfinity = !noInfinity)}
-    />
-  </span>
+  <label for="Infinity">Infinity?</label>
+  <input
+    name="Infinity"
+    type="checkbox"
+    checked={noInfinity}
+    on:change={() => (noInfinity = !noInfinity)}
+  />
 
-  <span
-    >Exclude Zero:
-    <input
-      type="checkbox"
-      checked={noZero}
-      on:change={() => (noZero = !noZero)}
-    />
-  </span>
+  <label for="Zero">Zero?</label>
+  <input
+    name="Zero"
+    type="checkbox"
+    checked={noZero}
+    on:change={() => (noZero = !noZero)}
+  />
 </div>
 
 <table class="graph-analysis-table markdown-preview-view">

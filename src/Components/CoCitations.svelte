@@ -44,7 +44,7 @@
         .sort((a, b) => (a.measure > b.measure ? -1 : 1))
     )
     .then((res) => {
-      debug(settings, {res});
+      debug(settings, { res })
       return res
     })
 
@@ -96,7 +96,9 @@
                     on:mouseover={(e) => hoverPreview(e, view)}
                     >{dropPath(coCite.source)}</span
                   >
-                  <span class={TD_MEASURE}>{roundNumber(coCite.measure, 3)}</span>
+                  <span class={TD_MEASURE}
+                    >{roundNumber(coCite.measure, 3)}</span
+                  >
                 </div>
                 <div
                   class="CC-sentence"
