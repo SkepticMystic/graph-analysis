@@ -29,16 +29,6 @@
   })
 
   let { resolvedLinks } = app.metadataCache
-  // $: subtype = 'Adamic Adar'
-  // $: measures = plugin.g.getData(subtype, currNode)
-  // $: predictionArr = plugin.g.nodes().map((to) => {
-  //   const i = plugin.g.node(to)
-  //   return {
-  //     measure: measures[i],
-  //     linked: linkedQ(resolvedLinks, currNode, to),
-  //     to,
-  //   }
-  // })
 
   $: promisePredictionArr = plugin.g
     .getData(subtype, currNode)
@@ -58,8 +48,7 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    // value = 'Adamic Adar'
-    debug(settings, { similarityArr: predictionArr })
+    debug(settings, { similarityArr: promisePredictionArr })
   })
 
   let { noInfinity, noZero } = settings
