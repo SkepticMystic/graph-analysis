@@ -79,4 +79,4 @@ You can set the default analysis type in the plugin settings.
 
 There is also the option to hide `Infinity` and `Zero` values.
 
-![](https://i.imgur.com/rYxYPCS.png)
+![image](https://user-images.githubusercontent.com/70717676/138652879-d8b0e4a7-d70a-44e8-ba3c-67e04f6a8edd.png)
