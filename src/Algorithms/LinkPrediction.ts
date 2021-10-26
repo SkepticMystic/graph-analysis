@@ -1,4 +1,3 @@
-
 // export const adamicAdarLinkPrediction: LinkPredictionAlg = (g: Graph, a: string, b: string): number => {
 //     const [Na, Nb] = [g.neighbors(a) as string[], g.neighbors(b) as string[]];
 //     const Nab = nodeIntersection(Na, Nb);
@@ -41,9 +40,5 @@
 // }
 
 export const LINK_PREDICTION_TYPES: {
-    subtype: string
-}[] = [
-        { subtype: 'Adamic Adar' },
-        { subtype: 'Common Neighbours' },
-        { subtype: 'testSubtype' }
-    ]
+  subtype: string
+}[] = [{ subtype: 'Adamic Adar' }, { subtype: 'Common Neighbours' }]

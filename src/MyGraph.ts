@@ -49,7 +49,6 @@ export default class MyGraph extends Graph {
     'Adamic Adar': [],
     'Common Neighbours': [],
     Jaccard: [],
-    testSubtype: [],
     'Co-Citations': [],
     // 'Closeness': []
   }
@@ -376,8 +375,6 @@ export default class MyGraph extends Graph {
       }
       return results
     },
-
-    testSubtype: async (a: string) => new Array(this.nodes().length).fill(1.2),
 
     // 'Closeness': (a: string) => {
     //     const paths = graphlib.alg.dijkstra(this, a);
