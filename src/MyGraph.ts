@@ -29,13 +29,13 @@ export default class MyGraph extends Graph {
     let i = 0
     for (const source in this.resolvedLinks) {
       if (source.split('.').last() === 'md') {
-        const sourceNoMD = source.split('.md', 1)[0]
+        const sourceNoMD = source.split('.md').slice(0, -1).join('')
         this.setNode(sourceNoMD, i)
 
         i++
         for (const dest in this.resolvedLinks[source]) {
           if (dest.split('.').last() === 'md') {
-            const destNoMD = dest.split('.md')[0]
+            const destNoMD = dest.split('.md').slice(0, -1).join('')
             this.setEdge(sourceNoMD, destNoMD)
           }
         }
