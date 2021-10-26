@@ -87,7 +87,7 @@
           <td
             class="internal-link {TD_NODE}"
             on:click={(e) => {
-              openOrSwitch(app, node.to, currFile, e)
+              openOrSwitch(app, node.to, e)
             }}
             on:contextmenu={(e) => {
               openMenu(e, app)

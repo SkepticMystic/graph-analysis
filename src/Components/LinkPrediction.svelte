@@ -86,7 +86,7 @@
         <tr class={node.linked ? LINKED : NOT_LINKED}>
           <td
             class="internal-link {TD_NODE}"
-            on:click={(e) => openOrSwitch(app, node.to, currFile, e)}
+            on:click={(e) => openOrSwitch(app, node.to, e)}
             on:mouseover={(e) => hoverPreview(e, view)}
             on:contextmenu={(e) => {
               openMenu(e, app)

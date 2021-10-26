@@ -67,7 +67,7 @@
                 <span
                   class="internal-link {TD_NODE}"
                   on:click={(e) => {
-                    openOrSwitch(app, node.to, currFile, e)
+                    openOrSwitch(app, node.to, e)
                   }}
                   on:contextmenu={(e) => {
                     openMenu(e, app)
@@ -85,7 +85,7 @@
                   <span
                     class="internal-link {TD_NODE}"
                     on:click={(e) => {
-                      openOrSwitch(app, coCite.source, currFile, e)
+                      openOrSwitch(app, coCite.source, e)
                     }}
                     on:contextmenu={(e) => {
                       openMenu(e, app)
@@ -100,7 +100,7 @@
                 <div
                   class="CC-sentence"
                   on:click={(e) => {
-                    openOrSwitch(app, coCite.source, currFile, e)
+                    openOrSwitch(app, coCite.source, e)
                   }}
                 >
                   {#if coCite.measure < 0.5}
@@ -135,11 +135,6 @@
     /* border: 1px solid var(--background-modifier-border);
     border-radius: 3px; */
     /* padding: 5px; */
-  }
-
-  .GA-details {
-    /* border: 1px solid var(--background-modifier-border);
-    border-radius: 3px; */
   }
 
   .analysis-node,
