@@ -45,3 +45,8 @@ button.GA-Refresh-Button {
   /* float: right; */
   margin-left: 10px;
 }
+
+body.is-mobile .GA-details,
+body.is-mobile .GA-details::before {
+  font-size: larger;
+}
