@@ -130,13 +130,16 @@ export default class MyGraph extends Graph {
       for (const preI in pres) {
         const pre = pres[preI]
         const file = mdCache.getFirstLinkpathDest(pre, '')
+        if (!file) {
+          continue;
+        }
         const cache = mdCache.getFileCache(file)
 
         const preCocitations: { [name: string]: [number, CoCitation[]] } = {}
         let spl = a.split('/')
-        let ownBasename = spl[spl.length - 1]
+        let ownBasename = spl[spl.length - 1].toLowerCase();
         const ownLinks = cache.links.filter((link) => {
-          return link.link === ownBasename
+          return link.link.toLowerCase() === ownBasename
         })
 
         const cachedRead = await this.app.vault.cachedRead(file)
@@ -209,7 +212,7 @@ export default class MyGraph extends Graph {
           cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0
 
         cache.links.forEach((link) => {
-          if (link.link === ownBasename) return
+          if (link.link.toLowerCase() === ownBasename) return
 
           // Initialize to 0 if not set yet
           if (!(link.link in preCocitations)) {
@@ -349,6 +352,7 @@ export default class MyGraph extends Graph {
             line: link.position.start.line,
           })
         })
+
 
         // Add the found weights to the results
         for (let key in preCocitations) {
