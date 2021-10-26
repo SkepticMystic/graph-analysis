@@ -25,7 +25,7 @@
     currFile = app.workspace.getActiveFile()
   })
 
-  let resolvedLinks = app.metadataCache.resolvedLinks
+  let { resolvedLinks } = app.metadataCache
   $: promiseSortedSimilarities = plugin.g
     .getData('Co-Citations', currNode)
     .then((ccRess: CoCitationRes[]) =>
@@ -60,11 +60,11 @@
         <div class="GA-CC">
           <details>
             <summary>
-              <span
-                class="{node.linked ? LINKED : NOT_LINKED} {node.to} top-row"
-              >
+              <span class="{node.to} top-row">
                 <span
-                  class="internal-link {TD_NODE}"
+                  class="{node.linked
+                    ? LINKED
+                    : NOT_LINKED} internal-link {TD_NODE}"
                   on:click={(e) => {
                     openOrSwitch(app, node.to, e)
                   }}
@@ -82,7 +82,10 @@
               {#each node.coCitations as coCite}
                 <div class="CC-item">
                   <span
-                    class="internal-link {TD_NODE}"
+                    class="
+                    {linkedQ(resolvedLinks, currNode, coCite.source)
+                      ? LINKED
+                      : NOT_LINKED} internal-link {TD_NODE}"
                     on:click={(e) => {
                       openOrSwitch(app, coCite.source, e)
                     }}
@@ -130,11 +133,11 @@
     padding-left: 10px;
   }
 
-  .GA-CC {
-    /* border: 1px solid var(--background-modifier-border);
-    border-radius: 3px; */
-    /* padding: 5px; */
-  }
+  /* .GA-CC {
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 3px; 
+    padding: 5px; 
+  } */
 
   .analysis-node,
   .CC-sentence {
