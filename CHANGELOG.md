@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.32](https://github.com/SkepticMystic/graph-analysis/compare/0.0.31...0.0.32) (2021-10-26)
+
+
+### Features
+
+* :sparkles: Add linkedQ class to co-cites ([2b8a80c](https://github.com/SkepticMystic/graph-analysis/commit/2b8a80cb00f083b405b7344ba5c47182bd865dae))
+
+
+### Bug Fixes
+
+* :bug: Keep same analysisType on refresh ([abfcd7b](https://github.com/SkepticMystic/graph-analysis/commit/abfcd7b21ccd9c16c9b6ca2549e7a17064ba029c))
+* :bug: Remove testSubtype ([5575f8a](https://github.com/SkepticMystic/graph-analysis/commit/5575f8a1c3aea7d0b0deaa609b83f712062dfc2a))
+
 ### [0.0.31](https://github.com/SkepticMystic/graph-analysis/compare/0.0.30...0.0.31) (2021-10-26)
 
 
