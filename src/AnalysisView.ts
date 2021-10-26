@@ -38,16 +38,18 @@ export default class AnalysisView extends ItemView {
     return Promise.resolve()
   }
 
-  async draw(): Promise<void> {
+  async draw(analysisType?: Analyses): Promise<void> {
     const app = this.app
     const { settings } = this.plugin
     const contentEl = this.contentEl
     contentEl.empty()
 
     const settingsDiv = contentEl.createDiv({ text: 'Analysis: ' })
-    const selector = settingsDiv.createEl('select', { cls: 'dropdown GA-DD' })
+    const analysisSelector = settingsDiv.createEl('select', {
+      cls: 'dropdown GA-DD',
+    })
     ANALYSIS_TYPES.forEach((type) => {
-      selector.createEl('option', { value: type, text: type })
+      analysisSelector.createEl('option', { value: type, text: type })
     })
     const refreshGraphButton = settingsDiv.createEl(
       'button',
@@ -55,7 +57,7 @@ export default class AnalysisView extends ItemView {
       (but) => {
         but.addEventListener('click', async () => {
           await this.plugin.refreshGraph()
-          await this.draw()
+          await this.draw(analysisSelector.value as Analyses)
         })
       }
     )
@@ -93,11 +95,11 @@ export default class AnalysisView extends ItemView {
       }
     }
     // Default Analysis Type
-    selector.value = settings.defaultAnalysisType
-    drawComponent(selector.value as Analyses, componentDiv)
+    analysisSelector.value = analysisType ?? settings.defaultAnalysisType
+    drawComponent(analysisSelector.value as Analyses, componentDiv)
 
-    selector.addEventListener('change', () => {
-      drawComponent(selector.value as Analyses, componentDiv)
+    analysisSelector.addEventListener('change', () => {
+      drawComponent(analysisSelector.value as Analyses, componentDiv)
     })
   }
 }
