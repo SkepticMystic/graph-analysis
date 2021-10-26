@@ -8,7 +8,6 @@ import { debug } from './Utility'
 
 export default class GraphAnalysisPlugin extends Plugin {
   settings: GraphAnalysisSettings
-  view: AnalysisView
   g: MyGraph
 
   async onload() {
@@ -32,15 +31,15 @@ export default class GraphAnalysisPlugin extends Plugin {
 
     this.addSettingTab(new SampleSettingTab(this.app, this))
 
-    this.app.workspace.onLayoutReady(() => {
-      setTimeout(async () => {
-        await this.refreshGraph()
-        this.registerView(
-          VIEW_TYPE_GRAPH_ANALYSIS,
-          (leaf: WorkspaceLeaf) => (this.view = new AnalysisView(leaf, this))
-        )
-        await this.initView(VIEW_TYPE_GRAPH_ANALYSIS)
-      }, 4000)
+    this.app.workspace.onLayoutReady(async () => {
+      // setTimeout(async () => {
+      await this.refreshGraph()
+      this.registerView(
+        VIEW_TYPE_GRAPH_ANALYSIS,
+        (leaf: WorkspaceLeaf) => new AnalysisView(leaf, this)
+      )
+      await this.initView(VIEW_TYPE_GRAPH_ANALYSIS)
+      // }, 4000)
     })
 
     // this.registerEvent(this.app.workspace.on('active-leaf-change', () => {}))
@@ -77,10 +76,12 @@ export default class GraphAnalysisPlugin extends Plugin {
 
   onunload() {
     console.log('unloading graph analysis plugin')
-    const openLeaves = this.app.workspace.getLeavesOfType(
-      VIEW_TYPE_GRAPH_ANALYSIS
-    )
-    openLeaves.forEach((leaf) => leaf.detach())
+    this.app.workspace
+      .getLeavesOfType(VIEW_TYPE_GRAPH_ANALYSIS)
+      .forEach((leaf) => {
+        leaf.view.unload()
+        leaf.detach()
+      })
   }
 
   initView = async (type: string): Promise<void> => {
