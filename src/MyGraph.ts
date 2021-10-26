@@ -1,7 +1,7 @@
 import { Graph } from 'graphlib'
 import type { App, HeadingCache, ReferenceCache } from 'obsidian'
 import tokenizer from 'sbd'
-import { DECIMALS } from 'src/Constants'
+import { DECIMALS } from 'src/constants'
 import { nodeIntersection } from 'src/GeneralGraphFn'
 import type {
   AnalysisAlg,

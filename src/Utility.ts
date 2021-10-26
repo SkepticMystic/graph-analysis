@@ -1,6 +1,6 @@
 import { App, ItemView, Menu, Notice, TFile } from 'obsidian'
-import { DECIMALS } from 'src/Constants'
-import type { GraphAnalysisSettings, ResolvedLinks } from 'src/Interfaces'
+import { DECIMALS } from 'src/constants'
+import type { GraphAnalysisSettings } from 'src/Interfaces'
 
 export const sum = (arr: number[]) => {
   if (arr.length === 0) {

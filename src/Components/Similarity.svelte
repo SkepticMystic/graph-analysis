@@ -1,9 +1,14 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { openOrSwitch, linkedQ } from 'obsidian-community-lib'
-  import { SIMILARITY_TYPES } from 'src/Algorithms/Similarity'
+  import { linkedQ, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
-  import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
+  import {
+    LINKED,
+    NOT_LINKED,
+    SIMILARITY_TYPES,
+    TD_MEASURE,
+    TD_NODE,
+  } from 'src/constants'
   import type { GraphAnalysisSettings } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import { debug, dropPath, hoverPreview, openMenu } from 'src/Utility'

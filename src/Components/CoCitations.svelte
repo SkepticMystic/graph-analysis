@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { openOrSwitch, linkedQ } from 'obsidian-community-lib'
+  import { linkedQ, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
-  import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
+  import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
   import type { CoCitationRes, GraphAnalysisSettings } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {

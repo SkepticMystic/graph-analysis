@@ -1,6 +1,6 @@
 import { MarkdownView, Notice, Plugin, WorkspaceLeaf } from 'obsidian'
 import AnalysisView from 'src/AnalysisView'
-import { DEFAULT_SETTINGS, VIEW_TYPE_GRAPH_ANALYSIS } from 'src/Constants'
+import { DEFAULT_SETTINGS, VIEW_TYPE_GRAPH_ANALYSIS } from 'src/constants'
 import type { GraphAnalysisSettings } from 'src/Interfaces'
 import MyGraph from 'src/MyGraph'
 import { SampleSettingTab } from 'src/Settings'
