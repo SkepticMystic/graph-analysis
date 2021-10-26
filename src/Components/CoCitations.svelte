@@ -105,7 +105,7 @@
                     openOrSwitch(app, coCite.source, e)
                   }}
                 >
-                  {#if coCite.measure < 0.5}
+                  {#if coCite.sentence.length === 3}
                     <span>{coCite.sentence[0]}</span>
                     <mark>{coCite.sentence[1]}</mark>
                     <span>{coCite.sentence[2]}</span>
