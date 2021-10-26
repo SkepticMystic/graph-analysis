@@ -130,6 +130,9 @@ export default class MyGraph extends Graph {
       for (const preI in pres) {
         const pre = pres[preI]
         const file = mdCache.getFirstLinkpathDest(pre, '')
+        if (!file) {
+          continue;
+        }
         const cache = mdCache.getFileCache(file)
 
         const preCocitations: { [name: string]: [number, CoCitation[]] } = {}
