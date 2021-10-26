@@ -40,7 +40,7 @@ export default class GraphAnalysisPlugin extends Plugin {
           (leaf: WorkspaceLeaf) => (this.view = new AnalysisView(leaf, this))
         )
         await this.initView(VIEW_TYPE_GRAPH_ANALYSIS)
-      }, 13000)
+      }, 4000)
     })
 
     // this.registerEvent(this.app.workspace.on('active-leaf-change', () => {}))
