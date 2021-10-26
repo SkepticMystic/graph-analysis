@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.33](https://github.com/SkepticMystic/graph-analysis/compare/0.0.32...0.0.33) (2021-10-26)
+
+
+### Bug Fixes
+
+* :bug: ? unload view plugin.onunload ([9879307](https://github.com/SkepticMystic/graph-analysis/commit/9879307eadfd001bdf9eb65e6b4b9896f2a67c28))
+* :bug: Check sentence length to decide how many splits ([83a2eb4](https://github.com/SkepticMystic/graph-analysis/commit/83a2eb477ca1e1efdffe5ce09f71c429e5b9a073))
+* :bug: Notename has .md in it edge case ([1f6c7fa](https://github.com/SkepticMystic/graph-analysis/commit/1f6c7fa6610f860a25941302a5700e64312de8cf))
+* Crash in co-citations in case of failure to look up link ([a695698](https://github.com/SkepticMystic/graph-analysis/commit/a69569892dbad348132ea0413e5223159b2f6592))
+* Invalid results with differently-capitalized links ([467427a](https://github.com/SkepticMystic/graph-analysis/commit/467427a051e8801cdef405716bf118644ef59ff7))
+
 ### [0.0.32](https://github.com/SkepticMystic/graph-analysis/compare/0.0.31...0.0.32) (2021-10-26)
 
 
