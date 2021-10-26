@@ -41,19 +41,19 @@ export const dropPath = (path: string) => {
   return path.split('/').last()
 }
 
-export function linkedQ(
-  resolvedLinks: ResolvedLinks,
-  from: string,
-  to: string
-) {
-  if (!from.endsWith('.md')) {
-    from += '.md'
-  }
-  if (!to.endsWith('.md')) {
-    to += '.md'
-  }
-  return resolvedLinks[from]?.hasOwnProperty(to)
-}
+// export function linkedQ(
+//   resolvedLinks: ResolvedLinks,
+//   from: string,
+//   to: string
+// ) {
+//   if (!from.endsWith('.md')) {
+//     from += '.md'
+//   }
+//   if (!to.endsWith('.md')) {
+//     to += '.md'
+//   }
+//   return resolvedLinks[from]?.hasOwnProperty(to)
+// }
 
 export const nxnArray = (n: number): undefined[][] =>
   [...Array(n)].map((e) => Array(n))

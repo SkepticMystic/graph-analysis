@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { openOrSwitch } from 'obsidian-community-lib'
+  import { openOrSwitch, linkedQ } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/Constants'
   import type { CoCitationRes, GraphAnalysisSettings } from 'src/Interfaces'
@@ -9,7 +9,6 @@
     debug,
     dropPath,
     hoverPreview,
-    linkedQ,
     openMenu,
     roundNumber,
   } from 'src/Utility'
