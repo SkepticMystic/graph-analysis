@@ -9,7 +9,7 @@
     TD_MEASURE,
     TD_NODE,
   } from 'src/constants'
-  import type { GraphAnalysisSettings } from 'src/Interfaces'
+  import type { GraphAnalysisSettings, Subtypes } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import { debug, dropPath, hoverPreview, openMenu } from 'src/Utility'
   import { onMount } from 'svelte'
@@ -19,7 +19,7 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
-  let subtype = 'Adamic Adar'
+  let subtype: Subtypes = 'Adamic Adar'
 
   $: currFile = app.workspace.getActiveFile()
   $: currNode = currFile.path.split('.md', 1)[0]

@@ -9,7 +9,7 @@
     TD_MEASURE,
     TD_NODE,
   } from 'src/constants'
-  import type { GraphAnalysisSettings } from 'src/Interfaces'
+  import type { GraphAnalysisSettings, Subtypes } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import { debug, dropPath, hoverPreview, openMenu } from 'src/Utility'
   import { onMount } from 'svelte'
@@ -19,6 +19,7 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
+  let subtype: Subtypes = 'Jaccard'
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile.path.split('.md', 1)[0]
   app.workspace.on('active-leaf-change', () => {
@@ -26,7 +27,7 @@
   })
 
   let resolvedLinks = app.metadataCache.resolvedLinks
-  $: subtype = 'Jaccard'
+  // $: subtype = 'Jaccard'
   $: promiseSortedSimilarities = plugin.g
     .getData(subtype, currNode)
     .then((measures) =>
@@ -45,7 +46,7 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    let subtype = 'Jaccard'
+    subtype = 'Jaccard'
     debug(settings, { promiseSortedSimilarities })
   })
 
