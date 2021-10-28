@@ -31,14 +31,15 @@ export default class GraphAnalysisPlugin extends Plugin {
 
     this.addSettingTab(new SampleSettingTab(this.app, this))
 
+    this.registerView(
+      VIEW_TYPE_GRAPH_ANALYSIS,
+      (leaf: WorkspaceLeaf) => new AnalysisView(leaf, this)
+    )
+
     this.app.workspace.onLayoutReady(async () => {
       // setTimeout(async () => {
       await this.refreshGraph()
-      this.registerView(
-        VIEW_TYPE_GRAPH_ANALYSIS,
-        (leaf: WorkspaceLeaf) => new AnalysisView(leaf, this)
-      )
-      await this.initView(VIEW_TYPE_GRAPH_ANALYSIS)
+      await this.initView()
       // }, 4000)
     })
 
