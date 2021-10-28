@@ -18,12 +18,12 @@
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
-    "@rollup/plugin-typescript": "^8.2.5",
+    "@rollup/plugin-typescript": "^8.3.0",
     "@types/graphlib": "^2.1.8",
     "@types/lodash.isequal": "^4.5.5",
-    "@types/node": "^14.17.20",
-    "obsidian": "^0.12.16",
-    "rollup": "^2.58.0",
+    "@types/node": "^14.17.32",
+    "obsidian": "^0.12.17",
+    "rollup": "^2.58.3",
     "rollup-plugin-ignore": "^1.0.10",
     "rollup-plugin-svelte": "7.1.0",
     "sanitize-html": "^2.5.2",
@@ -31,15 +31,15 @@
     "svelte-check": "^1.6.0",
     "svelte-preprocess": "^4.9.8",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.4"
   },
   "dependencies": {
     "@tsconfig/svelte": "^2.0.1",
     "graphlib": "^2.1.8",
     "lodash.isequal": "^4.5.0",
-    "obsidian-community-lib": "0.0.16",
+    "obsidian-community-lib": "0.0.17",
     "sbd": "^1.0.19",
-    "standard-version": "^9.3.1",
+    "standard-version": "^9.3.2",
     "svelte": "3.35.0"
   }
 }
