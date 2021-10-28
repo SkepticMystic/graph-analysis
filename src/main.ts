@@ -19,13 +19,14 @@ export default class GraphAnalysisPlugin extends Plugin {
       id: 'show-graph-analysis-view',
       name: 'Open Graph Analysis View',
       checkCallback: (checking: boolean) => {
-        if (checking) {
-          return (
-            this.app.workspace.getLeavesOfType(VIEW_TYPE_GRAPH_ANALYSIS)
-              .length === 0
-          )
+        if (!checking) {
+          this.initView()
+          return
         }
-        this.initView()
+        return (
+          this.app.workspace.getLeavesOfType(VIEW_TYPE_GRAPH_ANALYSIS)
+            .length === 0
+        )
       },
     })
 
