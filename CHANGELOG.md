@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.35](https://github.com/SkepticMystic/graph-analysis/compare/0.0.34...0.0.35) (2021-10-28)
+
+
+### Bug Fixes
+
+* :bug: Register view onload ([fe08521](https://github.com/SkepticMystic/graph-analysis/commit/fe08521cc0a4eb64b89b70d2a6144c1922c87dad))
+* :label: Fix type errors ([4e18f39](https://github.com/SkepticMystic/graph-analysis/commit/4e18f394f4cbb8bf93a95991a18bab6b46d86d8b))
+
 ### [0.0.34](https://github.com/SkepticMystic/graph-analysis/compare/0.0.33...0.0.34) (2021-10-26)
 
 ### [0.0.33](https://github.com/SkepticMystic/graph-analysis/compare/0.0.32...0.0.33) (2021-10-26)
