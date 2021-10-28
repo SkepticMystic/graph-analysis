@@ -25,7 +25,7 @@ export default class GraphAnalysisPlugin extends Plugin {
               .length === 0
           )
         }
-        this.initView(VIEW_TYPE_GRAPH_ANALYSIS)
+        this.initView()
       },
     })
 
@@ -84,9 +84,9 @@ export default class GraphAnalysisPlugin extends Plugin {
       })
   }
 
-  initView = async (type: string): Promise<void> => {
+  initView = async (): Promise<void> => {
     let leaf: WorkspaceLeaf = null
-    for (leaf of this.app.workspace.getLeavesOfType(type)) {
+    for (leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE_GRAPH_ANALYSIS)) {
       if (leaf.view instanceof AnalysisView) {
         return
       }
@@ -94,7 +94,7 @@ export default class GraphAnalysisPlugin extends Plugin {
       break
     }
     ;(leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
-      type,
+      type: VIEW_TYPE_GRAPH_ANALYSIS,
       active: true,
     })
   }
