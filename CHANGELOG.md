@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.36](https://github.com/SkepticMystic/graph-analysis/compare/0.0.35...0.0.36) (2021-10-29)
+
+
+### Bug Fixes
+
+* :bug: checkCallback properly ([32bd6cf](https://github.com/SkepticMystic/graph-analysis/commit/32bd6cf0cf56e243fc413bd720ee71cac1bf6da9))
+
 ### [0.0.35](https://github.com/SkepticMystic/graph-analysis/compare/0.0.34...0.0.35) (2021-10-28)
 
 
