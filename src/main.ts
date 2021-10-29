@@ -59,7 +59,9 @@ export default class GraphAnalysisPlugin extends Plugin {
       new Notice('Index Refreshed')
     } catch (error) {
       console.log(error)
-      new Notice('An error occured, please check the console.')
+      new Notice(
+        'An error occured with Graph Analysis, please check the console.'
+      )
     }
   }
 
