@@ -29,7 +29,7 @@
 
   let { resolvedLinks } = app.metadataCache
 
-  $: promisePredictionArr = !currNode ? null : plugin.g
+  $: promisePredictionArr = !currNode || !plugin.g ? null : plugin.g
     .getData(subtype, currNode)
     .then((measures) =>
       plugin.g
@@ -85,7 +85,7 @@
       <th scope="col">Prediction</th>
     </tr>
   </thead>
-  {#if currNode}
+  {#if promiseSortedSimilarities}
     {#await promisePredictionArr then sortedPredictions}
       {#each sortedPredictions as node}
         {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}

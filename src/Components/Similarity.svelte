@@ -28,7 +28,7 @@
 
   let resolvedLinks = app.metadataCache.resolvedLinks
   // $: subtype = 'Jaccard'
-  $: promiseSortedSimilarities = !currNode ? null : plugin.g
+  $: promiseSortedSimilarities = !currNode || !plugin.g ? null : plugin.g
     .getData(subtype, currNode)
     .then((measures) =>
       plugin.g
@@ -86,7 +86,7 @@
       <th scope="col">Similarity</th>
     </tr>
   </thead>
-  {#if currNode}
+  {#if promiseSortedSimilarities }
     {#await promiseSortedSimilarities then sortedSimilarities}
       {#each sortedSimilarities as node}
         {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}

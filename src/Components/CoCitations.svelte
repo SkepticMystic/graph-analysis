@@ -26,14 +26,21 @@
   })
 
   let { resolvedLinks } = app.metadataCache
-  $: promiseSortedSimilarities = !currFile ? null :  plugin.g
+  $: promiseSortedSimilarities = !currNode || !plugin.g ? null :  plugin.g
     .getData('Co-Citations', currNode)
     .then((ccRess: CoCitationRes[]) => {
-      // console.log("Received data");
-      plugin.g
+      let sortedSimilarities = plugin.g
         .nodes()
         .map((to) => {
           const i = plugin.g.node(to)
+          if (!i) {
+            console.log('Missing', {to}, {i});
+            return {
+              measure: 0.0,
+              coCitations: [],
+              linked: []
+            }
+          }
           return {
             measure: ccRess[i].measure,
             coCitations: ccRess[i].coCitations,
@@ -41,7 +48,8 @@
             to,
           }
         })
-        .sort((a, b) => (a.measure > b.measure ? -1 : 1))
+        .sort((a, b) => (a.measure > b.measure ? -1 : 1));
+      return sortedSimilarities;
       }
     )
     .then((res) => {
@@ -56,7 +64,7 @@
 </script>
 
 <div class="GA-CCs">
-  {#if currFile}
+  {#if promiseSortedSimilarities}
     {#await promiseSortedSimilarities then sortedSimilarities}
       {#each sortedSimilarities as node}
         {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}

@@ -38,10 +38,10 @@ export default class GraphAnalysisPlugin extends Plugin {
     )
 
     this.app.workspace.onLayoutReady(async () => {
-      // setTimeout(async () => {
-      await this.refreshGraph()
-      await this.initView()
-      // }, 4000)
+      setTimeout(async () => {
+        await this.refreshGraph()
+        await this.initView()
+      }, 8000)
     })
 
     // this.registerEvent(this.app.workspace.on('active-leaf-change', () => {}))
