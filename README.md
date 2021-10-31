@@ -14,7 +14,9 @@ e.g.
 - `[[A]] has a 0.6 chance of being connected to [[B]]`
 - `[[A]] is co-cited with [[B]] 6 times`
 
+## Documentation on Algorithms
 
+You can read more about the implemented algorithms, or let us know which you want us to add, over [here](https://neo4j.com/docs/graph-data-science/current/algorithms/) 👀
 
 ## Analysis Types
 
