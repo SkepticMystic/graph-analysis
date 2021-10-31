@@ -5,7 +5,7 @@ import { DECIMALS } from 'src/constants'
 import { nodeIntersection } from 'src/GeneralGraphFn'
 import type {
   AnalysisAlg,
-  CoCitation,
+  CoCitation, CoCitationMap,
   CoCitationRes,
   GraphData,
   ResolvedLinks,
@@ -65,7 +65,7 @@ export default class MyGraph extends Graph {
   }
 
   algs: {
-    [subtype in Subtypes]: AnalysisAlg<number[]> | AnalysisAlg<CoCitationRes[]>
+    [subtype in Subtypes]: AnalysisAlg<number[]> | AnalysisAlg<CoCitationMap>
   } = {
     Jaccard: async (a: string): Promise<number[]> => {
       const Na = (this.neighbors(a) as string[]) ?? []
@@ -117,15 +117,9 @@ export default class MyGraph extends Graph {
       return results
     },
 
-    'Co-Citations': async (a: string): Promise<CoCitationRes[]> => {
+    'Co-Citations': async (a: string): Promise<CoCitationMap> => {
       const mdCache = this.app.metadataCache
-      console.log("Initializing array")
-      const results: CoCitationRes[] = new Array<CoCitationRes>(
-        this.nodes().length
-      )
-      for (let i = 0; i < this.nodes().length; i++) {
-        results[i] = { measure: 0, coCitations: [] }
-      }
+      const results: CoCitationMap = {};
       const pres = this.predecessors(a) as string[]
 
       for (const preI in pres) {
@@ -359,24 +353,24 @@ export default class MyGraph extends Graph {
         for (let key in preCocitations) {
           const file = mdCache.getFirstLinkpathDest(key, '')
           if (file) {
-            const ccRes =
-              results[this.node(file.path.slice(0, file.path.length - 3))]
-            if (ccRes) {
-              ccRes.measure += preCocitations[key][0]
-              ccRes.coCitations.push(...preCocitations[key][1])
+            let linkName = file.path.slice(0, file.path.length - 3)
+            let cocitation = preCocitations[key];
+            if (linkName in results) {
+              results[linkName].measure += cocitation[0]
+              results[linkName].coCitations.push(...cocitation[1])
+            }
+            else {
+              results[linkName] = {measure: cocitation[0], coCitations: cocitation[1] }
             }
           }
         }
       }
 
-      const currI = this.node(a)
-      results[currI] = { measure: 0, coCitations: [] }
+      results[a] = {measure: 0, coCitations: [] }
       for (const key in results) {
-        if (results[key].coCitations.length > 0) {
-          results[key].coCitations = results[key].coCitations.sort((a, b) =>
-            a.measure > b.measure ? -1 : 1
-          )
-        }
+        results[key].coCitations = results[key].coCitations.sort((a, b) =>
+          a.measure > b.measure ? -1 : 1
+        )
       }
       return results
     },
@@ -406,19 +400,23 @@ export default class MyGraph extends Graph {
   async getData(
     subtype: Subtypes,
     from: string
-  ): Promise<number[] | CoCitationRes[]> {
+  ): Promise<number[] | CoCitationMap> {
     console.log({ subtype, from })
     const i = this.node(from)
     if (i === undefined) {
       return new Array(this.nodes().length)
     }
     // Check for symmetric measures
-    if (this.data[subtype]?.[i]?.[0] !== undefined) {
-      return this.data[subtype][i]
-    } else {
-      this.data[subtype][i] = await this.algs[subtype](from)
-      return this.data[subtype][i]
+    // TODO: Adapt this for co-citations
+    if (subtype !== 'Co-Citations') {
+      if ((this.data[subtype]?.[i] as number[])?.[0] !== undefined) {
+        return this.data[subtype][i]
+      } else {
+        this.data[subtype][i] = await this.algs[subtype](from)
+        return this.data[subtype][i]
+      }
     }
+    return this.algs[subtype](from);
   }
 
   updateEdgeLabel(from: string, to: string, key: string, newValue: any) {

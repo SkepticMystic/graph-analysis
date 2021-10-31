@@ -19,7 +19,7 @@ export type Subtypes =
 // | 'Closeness'
 
 export type GraphData = {
-  [matrix in Subtypes]: number[][] | CoCitationRes[][]
+  [matrix in Subtypes]: number[][] | CoCitationMap[]
 }
 
 export interface CoCitation {
@@ -32,6 +32,10 @@ export interface CoCitation {
 export interface CoCitationRes {
   measure: number
   coCitations: CoCitation[]
+}
+
+export interface CoCitationMap {
+  [linkName: string]: CoCitationRes
 }
 
 export type AnalysisAlg<T> = (a: string) => Promise<T>

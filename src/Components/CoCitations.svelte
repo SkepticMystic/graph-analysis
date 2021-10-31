@@ -3,7 +3,7 @@
   import { linkedQ, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import type { CoCitationRes, GraphAnalysisSettings } from 'src/Interfaces'
+  import type { CoCitationMap, CoCitationRes, GraphAnalysisSettings } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
@@ -28,22 +28,13 @@
   let { resolvedLinks } = app.metadataCache
   $: promiseSortedSimilarities = !currNode || !plugin.g ? null :  plugin.g
     .getData('Co-Citations', currNode)
-    .then((ccRess: CoCitationRes[]) => {
-      let sortedSimilarities = plugin.g
-        .nodes()
+    .then((ccRess: CoCitationMap) => {
+      let sortedSimilarities = Object.keys(ccRess)
         .map((to) => {
-          const i = plugin.g.node(to)
-          if (!i) {
-            console.log('Missing', {to}, {i});
-            return {
-              measure: 0.0,
-              coCitations: [],
-              linked: []
-            }
-          }
+          let cocitation = ccRess[to]
           return {
-            measure: ccRess[i].measure,
-            coCitations: ccRess[i].coCitations,
+            measure: cocitation.measure,
+            coCitations: cocitation.coCitations,
             linked: linkedQ(resolvedLinks, currNode, to),
             to,
           }
