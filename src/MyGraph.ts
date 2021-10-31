@@ -125,7 +125,9 @@ export default class MyGraph extends Graph {
       for (let i = 0; i < this.nodes().length; i++) {
         results[i] = { measure: 0, coCitations: [] }
       }
+      // console.log("Before finding predecessors")
       const pres = this.predecessors(a) as string[]
+      // console.log("After finding predecessors")
 
       for (const preI in pres) {
         const pre = pres[preI]
@@ -142,6 +144,7 @@ export default class MyGraph extends Graph {
           return link.link.toLowerCase() === ownBasename
         })
 
+        // console.log("Await read")
         const cachedRead = await this.app.vault.cachedRead(file)
         const content = cachedRead.split('\n')
         // Find the sentence the link is in

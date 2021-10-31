@@ -21,14 +21,14 @@
 
   let subtype: Subtypes = 'Jaccard'
   let currFile = app.workspace.getActiveFile()
-  $: currNode = currFile.path.split('.md', 1)[0]
+  $: currNode = currFile?.path.split('.md', 1)[0]
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
   })
 
   let resolvedLinks = app.metadataCache.resolvedLinks
   // $: subtype = 'Jaccard'
-  $: promiseSortedSimilarities = plugin.g
+  $: promiseSortedSimilarities = !currNode ? null : plugin.g
     .getData(subtype, currNode)
     .then((measures) =>
       plugin.g
@@ -86,27 +86,29 @@
       <th scope="col">Similarity</th>
     </tr>
   </thead>
-  {#await promiseSortedSimilarities then sortedSimilarities}
-    {#each sortedSimilarities as node}
-      {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
-        <tr class={node.linked ? LINKED : NOT_LINKED}>
-          <td
-            class="internal-link {TD_NODE}"
-            on:click={(e) => {
-              openOrSwitch(app, node.to, e)
-            }}
-            on:contextmenu={(e) => {
-              openMenu(e, app)
-            }}
-            on:mouseover={(e) => hoverPreview(e, view)}
-          >
-            {dropPath(node.to)}
-          </td>
-          <td class={TD_MEASURE}>{node.measure}</td>
-        </tr>
-      {/if}
-    {/each}
-  {/await}
+  {#if currNode}
+    {#await promiseSortedSimilarities then sortedSimilarities}
+      {#each sortedSimilarities as node}
+        {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
+          <tr class={node.linked ? LINKED : NOT_LINKED}>
+            <td
+              class="internal-link {TD_NODE}"
+              on:click={(e) => {
+                openOrSwitch(app, node.to, e)
+              }}
+              on:contextmenu={(e) => {
+                openMenu(e, app)
+              }}
+              on:mouseover={(e) => hoverPreview(e, view)}
+            >
+              {dropPath(node.to)}
+            </td>
+            <td class={TD_MEASURE}>{node.measure}</td>
+          </tr>
+        {/if}
+      {/each}
+    {/await}
+  {/if}
 </table>
 
 <style>

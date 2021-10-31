@@ -22,14 +22,14 @@
   let subtype: Subtypes = 'Adamic Adar'
 
   $: currFile = app.workspace.getActiveFile()
-  $: currNode = currFile.path.split('.md', 1)[0]
+  $: currNode = currFile?.path.split('.md', 1)[0]
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
   })
 
   let { resolvedLinks } = app.metadataCache
 
-  $: promisePredictionArr = plugin.g
+  $: promisePredictionArr = !currNode ? null : plugin.g
     .getData(subtype, currNode)
     .then((measures) =>
       plugin.g
@@ -85,27 +85,29 @@
       <th scope="col">Prediction</th>
     </tr>
   </thead>
-  {#await promisePredictionArr then sortedPredictions}
-    {#each sortedPredictions as node}
-      {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
-        <tr class={node.linked ? LINKED : NOT_LINKED}>
-          <td
-            class="internal-link {TD_NODE}"
-            on:click={(e) => openOrSwitch(app, node.to, e)}
-            on:mouseover={(e) => hoverPreview(e, view)}
-            on:contextmenu={(e) => {
-              openMenu(e, app)
-            }}
-          >
-            {dropPath(node.to)}
-          </td>
-          <td class={TD_MEASURE}>
-            {node.measure}
-          </td>
-        </tr>
-      {/if}
-    {/each}
-  {/await}
+  {#if currNode}
+    {#await promisePredictionArr then sortedPredictions}
+      {#each sortedPredictions as node}
+        {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
+          <tr class={node.linked ? LINKED : NOT_LINKED}>
+            <td
+              class="internal-link {TD_NODE}"
+              on:click={(e) => openOrSwitch(app, node.to, e)}
+              on:mouseover={(e) => hoverPreview(e, view)}
+              on:contextmenu={(e) => {
+                openMenu(e, app)
+              }}
+            >
+              {dropPath(node.to)}
+            </td>
+            <td class={TD_MEASURE}>
+              {node.measure}
+            </td>
+          </tr>
+        {/if}
+      {/each}
+    {/await}
+  {/if}
 </table>
 
 <style>

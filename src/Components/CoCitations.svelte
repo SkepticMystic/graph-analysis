@@ -20,15 +20,16 @@
   export let view: AnalysisView
 
   let currFile = app.workspace.getActiveFile()
-  $: currNode = currFile.path.split('.md', 1)[0]
+  $: currNode = currFile?.path.split('.md', 1)[0]
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
   })
 
   let { resolvedLinks } = app.metadataCache
-  $: promiseSortedSimilarities = plugin.g
+  $: promiseSortedSimilarities = !currFile ? null :  plugin.g
     .getData('Co-Citations', currNode)
-    .then((ccRess: CoCitationRes[]) =>
+    .then((ccRess: CoCitationRes[]) => {
+      // console.log("Received data");
       plugin.g
         .nodes()
         .map((to) => {
@@ -41,6 +42,7 @@
           }
         })
         .sort((a, b) => (a.measure > b.measure ? -1 : 1))
+      }
     )
     .then((res) => {
       debug(settings, { res })
@@ -54,76 +56,78 @@
 </script>
 
 <div class="GA-CCs">
-  {#await promiseSortedSimilarities then sortedSimilarities}
-    {#each sortedSimilarities as node}
-      {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
-        <div class="GA-CC">
-          <details>
-            <summary>
-              <span class="{node.to} top-row">
-                <span
-                  class="{node.linked
-                    ? LINKED
-                    : NOT_LINKED} internal-link {TD_NODE}"
-                  on:click={(e) => {
-                    openOrSwitch(app, node.to, e)
-                  }}
-                  on:contextmenu={(e) => {
-                    openMenu(e, app)
-                  }}
-                  on:mouseover={(e) => hoverPreview(e, view)}
-                >
-                  {dropPath(node.to)}</span
-                >
-                <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
-              </span>
-            </summary>
-            <div class="GA-details">
-              {#each node.coCitations as coCite}
-                <div class="CC-item">
+  {#if currFile}
+    {#await promiseSortedSimilarities then sortedSimilarities}
+      {#each sortedSimilarities as node}
+        {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
+          <div class="GA-CC">
+            <details>
+              <summary>
+                <span class="{node.to} top-row">
                   <span
-                    class="
-                    {linkedQ(resolvedLinks, currNode, coCite.source)
+                    class="{node.linked
                       ? LINKED
                       : NOT_LINKED} internal-link {TD_NODE}"
                     on:click={(e) => {
-                      openOrSwitch(app, coCite.source, e)
+                      openOrSwitch(app, node.to, e)
                     }}
                     on:contextmenu={(e) => {
                       openMenu(e, app)
                     }}
                     on:mouseover={(e) => hoverPreview(e, view)}
-                    >{dropPath(coCite.source)}</span
                   >
-                  <span class={TD_MEASURE}
-                    >{roundNumber(coCite.measure, 3)}</span
+                    {dropPath(node.to)}</span
                   >
-                </div>
-                <div
-                  class="CC-sentence"
-                  on:click={(e) => {
-                    openOrSwitch(app, coCite.source, e)
-                  }}
-                >
-                  {#if coCite.sentence.length === 3}
-                    <span>{coCite.sentence[0]}</span>
-                    <mark>{coCite.sentence[1]}</mark>
-                    <span>{coCite.sentence[2]}</span>
-                  {:else}
-                    <span>{coCite.sentence[0]}</span>
-                    <mark>{coCite.sentence[1]}</mark>
-                    <span>{coCite.sentence[2]}</span>
-                    <mark>{coCite.sentence[3]}</mark>
-                    <span>{coCite.sentence[4]}</span>
-                  {/if}
-                </div>
-              {/each}
-            </div>
-          </details>
-        </div>
-      {/if}
-    {/each}
-  {/await}
+                  <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
+                </span>
+              </summary>
+              <div class="GA-details">
+                {#each node.coCitations as coCite}
+                  <div class="CC-item">
+                    <span
+                      class="
+                      {linkedQ(resolvedLinks, currNode, coCite.source)
+                        ? LINKED
+                        : NOT_LINKED} internal-link {TD_NODE}"
+                      on:click={(e) => {
+                        openOrSwitch(app, coCite.source, e)
+                      }}
+                      on:contextmenu={(e) => {
+                        openMenu(e, app)
+                      }}
+                      on:mouseover={(e) => hoverPreview(e, view)}
+                      >{dropPath(coCite.source)}</span
+                    >
+                    <span class={TD_MEASURE}
+                      >{roundNumber(coCite.measure, 3)}</span
+                    >
+                  </div>
+                  <div
+                    class="CC-sentence"
+                    on:click={(e) => {
+                      openOrSwitch(app, coCite.source, e)
+                    }}
+                  >
+                    {#if coCite.sentence.length === 3}
+                      <span>{coCite.sentence[0]}</span>
+                      <mark>{coCite.sentence[1]}</mark>
+                      <span>{coCite.sentence[2]}</span>
+                    {:else}
+                      <span>{coCite.sentence[0]}</span>
+                      <mark>{coCite.sentence[1]}</mark>
+                      <span>{coCite.sentence[2]}</span>
+                      <mark>{coCite.sentence[3]}</mark>
+                      <span>{coCite.sentence[4]}</span>
+                    {/if}
+                  </div>
+                {/each}
+              </div>
+            </details>
+          </div>
+        {/if}
+      {/each}
+    {/await}
+  {/if}
 </div>
 
 <style>
