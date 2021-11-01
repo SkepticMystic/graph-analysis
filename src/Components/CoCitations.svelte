@@ -3,12 +3,13 @@
   import { linkedQ, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import type { CoCitationMap, CoCitationRes, GraphAnalysisSettings } from 'src/Interfaces'
+  import type { CoCitationMap, GraphAnalysisSettings } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
     dropPath,
     hoverPreview,
+    jumpToSelection,
     openMenu,
     roundNumber,
   } from 'src/Utility'
@@ -26,27 +27,29 @@
   })
 
   let { resolvedLinks } = app.metadataCache
-  $: promiseSortedSimilarities = !currNode || !plugin.g ? null :  plugin.g
-    .getData('Co-Citations', currNode)
-    .then((ccRess: CoCitationMap) => {
-      let sortedSimilarities = Object.keys(ccRess)
-        .map((to) => {
-          let cocitation = ccRess[to]
-          return {
-            measure: cocitation.measure,
-            coCitations: cocitation.coCitations,
-            linked: linkedQ(resolvedLinks, currNode, to),
-            to,
-          }
-        })
-        .sort((a, b) => (a.measure > b.measure ? -1 : 1));
-      return sortedSimilarities;
-      }
-    )
-    .then((res) => {
-      debug(settings, { res })
-      return res
-    })
+  $: promiseSortedSimilarities =
+    !currNode || !plugin.g
+      ? null
+      : plugin.g
+          .getData('Co-Citations', currNode)
+          .then((ccRess: CoCitationMap) => {
+            let sortedSimilarities = Object.keys(ccRess)
+              .map((to) => {
+                let cocitation = ccRess[to]
+                return {
+                  measure: cocitation.measure,
+                  coCitations: cocitation.coCitations,
+                  linked: linkedQ(resolvedLinks, currNode, to),
+                  to,
+                }
+              })
+              .sort((a, b) => (a.measure > b.measure ? -1 : 1))
+            return sortedSimilarities
+          })
+          .then((res) => {
+            debug(settings, { res })
+            return res
+          })
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
@@ -67,8 +70,8 @@
                     class="{node.linked
                       ? LINKED
                       : NOT_LINKED} internal-link {TD_NODE}"
-                    on:click={(e) => {
-                      openOrSwitch(app, node.to, e)
+                    on:click={async (e) => {
+                      await openOrSwitch(app, node.to, e)
                     }}
                     on:contextmenu={(e) => {
                       openMenu(e, app)
@@ -88,8 +91,8 @@
                       {linkedQ(resolvedLinks, currNode, coCite.source)
                         ? LINKED
                         : NOT_LINKED} internal-link {TD_NODE}"
-                      on:click={(e) => {
-                        openOrSwitch(app, coCite.source, e)
+                      on:click={async (e) => {
+                        await openOrSwitch(app, coCite.source, e)
                       }}
                       on:contextmenu={(e) => {
                         openMenu(e, app)
@@ -103,8 +106,13 @@
                   </div>
                   <div
                     class="CC-sentence"
-                    on:click={(e) => {
-                      openOrSwitch(app, coCite.source, e)
+                    on:click={async (e) => {
+                      await openOrSwitch(app, coCite.source, e)
+                      jumpToSelection(
+                        app,
+                        coCite.line,
+                        coCite.sentence.join('')
+                      )
                     }}
                   >
                     {#if coCite.sentence.length === 3}

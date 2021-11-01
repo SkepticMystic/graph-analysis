@@ -1,4 +1,12 @@
-import { App, ItemView, Menu, Notice, TFile } from 'obsidian'
+import {
+  App,
+  EditorRange,
+  ItemView,
+  MarkdownView,
+  Menu,
+  Notice,
+  TFile,
+} from 'obsidian'
 import { DECIMALS } from 'src/constants'
 import type { GraphAnalysisSettings } from 'src/Interfaces'
 
@@ -122,4 +130,48 @@ export function openMenu(event: MouseEvent, app: App) {
       })
   )
   menu.showAtMouseEvent(event)
+}
+
+export function jumpToSelection(app: App, line: number, sentence: string) {
+  console.log({ line, sentence })
+  const view = app.workspace.getActiveViewOfType(MarkdownView)
+  // Make sure the user is editing a Markdown file.
+  if (view && view.getMode() === 'source') {
+    const { editor } = view
+
+    // Creat sel
+    const lineStartPos = { ch: 0, line }
+    const markStart = editor.posToOffset(lineStartPos)
+
+    // const lineStr = editor.getLine(line)
+    // let startOfSentenceInLine = 0
+    // if (lineStr !== sentence) {
+    //   startOfSentenceInLine = lineStr.indexOf(sentence)
+    // }
+
+    // if (startOfSentenceInLine === -1) {
+    //   console.log('sentence not in lineStr')
+    //   return
+    // }
+
+    const markEnd = markStart + sentence.length
+
+    const markSel: EditorRange = {
+      from: editor.offsetToPos(markStart),
+      to: editor.offsetToPos(markEnd),
+    }
+
+    editor.scrollIntoView(markSel)
+
+    const doc = editor.cm.getDoc()
+    const marker = doc.markText(markSel.from, markSel.to, {
+      className: 'GA-highlight-sentence',
+    })
+
+    setTimeout(() => {
+      marker.clear()
+    }, 1000)
+  } else if (view && view.getMode() === 'preview') {
+    // Handle preview mode
+  }
 }

@@ -50,3 +50,23 @@ body.is-mobile .GA-details,
 body.is-mobile .GA-details::before {
   font-size: larger;
 }
+
+.GA-highlight-sentence {
+  animation: highlightSentence 1.5s 1;
+  border-radius: 3px;
+}
+
+@keyframes highlightSentence {
+  0% {
+    background-color: transparent;
+  }
+  10% {
+    background-color: var(--text-highlight-bg);
+  }
+  80% {
+    background-color: var(--text-highlight-bg);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
