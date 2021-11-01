@@ -27,7 +27,7 @@ export default class AnalysisView extends ItemView {
     return 'Graph Analysis'
   }
 
-  // icon = TRAIL_ICON;
+  icon = 'GA-ICON'
 
   async onOpen(): Promise<void> {
     await this.draw()
@@ -67,6 +67,7 @@ export default class AnalysisView extends ItemView {
       if (!ANALYSIS_TYPES.includes(type)) {
         throw new Error(`${type} is not one of the analysis types`)
       }
+
       componentDiv.empty()
 
       const componentInfo = {

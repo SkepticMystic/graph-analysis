@@ -1,6 +1,10 @@
-import { Notice, Plugin, WorkspaceLeaf } from 'obsidian'
+import { addIcon, Notice, Plugin, WorkspaceLeaf } from 'obsidian'
 import AnalysisView from 'src/AnalysisView'
-import { DEFAULT_SETTINGS, VIEW_TYPE_GRAPH_ANALYSIS } from 'src/constants'
+import {
+  DEFAULT_SETTINGS,
+  iconSVG,
+  VIEW_TYPE_GRAPH_ANALYSIS,
+} from 'src/constants'
 import type { GraphAnalysisSettings } from 'src/Interfaces'
 import MyGraph from 'src/MyGraph'
 import { SampleSettingTab } from 'src/Settings'
@@ -15,6 +19,7 @@ export default class GraphAnalysisPlugin extends Plugin {
     console.log('loading graph analysis plugin')
 
     await this.loadSettings()
+    addIcon('GA-ICON', iconSVG)
 
     this.addCommand({
       id: 'show-graph-analysis-view',
