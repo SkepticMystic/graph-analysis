@@ -5,7 +5,7 @@ import type { GraphAnalysisSettings } from 'src/Interfaces'
 import MyGraph from 'src/MyGraph'
 import { SampleSettingTab } from 'src/Settings'
 import { debug } from './Utility'
-import { openView } from 'obsidian-community-lib'
+import { openView, wait } from 'obsidian-community-lib'
 
 export default class GraphAnalysisPlugin extends Plugin {
   settings: GraphAnalysisSettings
@@ -42,11 +42,39 @@ export default class GraphAnalysisPlugin extends Plugin {
     )
 
     this.app.workspace.onLayoutReady(async () => {
-      setTimeout(async () => {
-        await this.refreshGraph()
-        await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
-      }, 8000)
+      const noFiles = this.app.vault.getMarkdownFiles().length
+      while (!this.resolvedLinksComplete(noFiles)) {
+        await wait(1000)
+      }
+
+      await this.refreshGraph()
+      await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
+
+      // setTimeout(async () => {
+      //   if (this.app.metadataCache.resolvedLinks) {
+      //     await this.refreshGraph()
+      //     await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
+      //   } else {
+      //     setTimeout(async () => {
+      //       if (this.app.metadataCache.resolvedLinks) {
+      //         await this.refreshGraph()
+      //         await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
+      //       } else {
+      //         setTimeout(async () => {
+      //           await this.refreshGraph()
+      //           await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
+      //         }, 8000)
+      //       }
+      //     }, 8000)
+      //   }
+      // }, 8000)
     })
+  }
+
+  resolvedLinksComplete(noFiles: number) {
+    const { resolvedLinks } = this.app.metadataCache
+    console.log({ res: Object.keys(resolvedLinks).length, noFiles })
+    return Object.keys(resolvedLinks).length === noFiles
   }
 
   async refreshGraph() {
