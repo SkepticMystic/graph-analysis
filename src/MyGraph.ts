@@ -12,6 +12,7 @@ import type {
   Subtypes,
 } from 'src/Interfaces'
 import { nxnArray, roundNumber, sum } from 'src/Utility'
+import { getLinkpath } from 'obsidian'
 
 export default class MyGraph extends Graph {
   resolvedLinks: ResolvedLinks
@@ -132,9 +133,10 @@ export default class MyGraph extends Graph {
 
         const preCocitations: { [name: string]: [number, CoCitation[]] } = {}
         let spl = a.split('/')
-        let ownBasename = spl[spl.length - 1].toLowerCase();
+        let ownBasename = spl[spl.length - 1]
         const ownLinks = cache.links.filter((link) => {
-          return link.link.toLowerCase() === ownBasename
+          const linkPath = getLinkpath(link.link);
+          return linkPath === ownBasename
         })
 
         const cachedRead = await this.app.vault.cachedRead(file)
@@ -207,11 +209,12 @@ export default class MyGraph extends Graph {
           cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0
 
         cache.links.forEach((link) => {
-          if (link.link.toLowerCase() === ownBasename) return
+          const linkPath = getLinkpath(link.link)
+          if (linkPath === ownBasename) return
 
           // Initialize to 0 if not set yet
-          if (!(link.link in preCocitations)) {
-            preCocitations[link.link] = [0, []]
+          if (!(linkPath in preCocitations)) {
+            preCocitations[linkPath] = [0, []]
           }
 
           const lineContent = content[link.position.start.line]
@@ -248,8 +251,8 @@ export default class MyGraph extends Graph {
                   sentenceS.slice(m2Start, m2End),
                   sentenceS.slice(m2End, sentenceS.length),
                 ]
-                preCocitations[link.link][0] = 1
-                preCocitations[link.link][1].push({
+                preCocitations[linkPath][0] = 1
+                preCocitations[linkPath][1].push({
                   sentence: sentence,
                   measure: 1,
                   source: pre,
@@ -263,11 +266,11 @@ export default class MyGraph extends Graph {
                   lineContent.slice(m2Start, m2End),
                   lineContent.slice(m2End, lineContent.length),
                 ]
-                preCocitations[link.link][0] = Math.max(
-                  preCocitations[link.link][0],
+                preCocitations[linkPath][0] = Math.max(
+                  preCocitations[linkPath][0],
                   1 / 2
                 )
-                preCocitations[link.link][1].push({
+                preCocitations[linkPath][1].push({
                   sentence: sentence,
                   measure: 1 / 2,
                   source: pre,
@@ -292,11 +295,11 @@ export default class MyGraph extends Graph {
               section.position.end.line >= link.position.end.line
           )
           if (sameParagraph) {
-            preCocitations[link.link][0] = Math.max(
-              preCocitations[link.link][0],
+            preCocitations[linkPath][0] = Math.max(
+              preCocitations[linkPath][0],
               1 / 4
             )
-            preCocitations[link.link][1].push({
+            preCocitations[linkPath][1].push({
               sentence: sentence,
               measure: 1 / 4,
               source: pre,
@@ -319,11 +322,11 @@ export default class MyGraph extends Graph {
             // Then, maxHeadingLevel - bestLevel = 0, so we get 1/(2^2)=1/4. If the link appears only under
             // less specific headings, the weight will decrease.
             const score = 1 / Math.pow(2, 3 + maxHeadingLevel - bestLevel)
-            preCocitations[link.link][0] = Math.max(
-              preCocitations[link.link][0],
+            preCocitations[linkPath][0] = Math.max(
+              preCocitations[linkPath][0],
               score
             )
-            preCocitations[link.link][1].push({
+            preCocitations[linkPath][1].push({
               measure: score,
               sentence: sentence,
               source: pre,
@@ -336,11 +339,11 @@ export default class MyGraph extends Graph {
           // Intuition of weight: The least specific heading will give the weight 2 + maxHeadingLevel - minHeadingLevel
           // We want to weight it 1 factor less.
           const score = 1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel)
-          preCocitations[link.link][0] = Math.max(
-            preCocitations[link.link][0],
+          preCocitations[linkPath][0] = Math.max(
+            preCocitations[linkPath][0],
             score
           )
-          preCocitations[link.link][1].push({
+          preCocitations[linkPath][1].push({
             measure: score,
             sentence: sentence,
             source: pre,
