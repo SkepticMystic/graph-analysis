@@ -1,18 +1,18 @@
 import { Graph } from 'graphlib'
 import type { App, HeadingCache, ReferenceCache } from 'obsidian'
+import { getLinkpath } from 'obsidian'
 import tokenizer from 'sbd'
 import { DECIMALS } from 'src/constants'
 import { nodeIntersection } from 'src/GeneralGraphFn'
 import type {
   AnalysisAlg,
-  CoCitation, CoCitationMap,
-  CoCitationRes,
+  CoCitation,
+  CoCitationMap,
   GraphData,
   ResolvedLinks,
-  Subtypes,
+  Subtype,
 } from 'src/Interfaces'
 import { nxnArray, roundNumber, sum } from 'src/Utility'
-import { getLinkpath } from 'obsidian'
 
 export default class MyGraph extends Graph {
   resolvedLinks: ResolvedLinks
@@ -56,8 +56,8 @@ export default class MyGraph extends Graph {
 
   async initData(): Promise<void> {
     const n = this.nodes().length
-    Object.keys(this.data).forEach((key: Subtypes) => {
-      this.data[key] = nxnArray(n)
+    Object.keys(this.data).forEach((subtype: Subtype) => {
+      this.data[subtype] = nxnArray(n)
     })
   }
 
@@ -66,7 +66,7 @@ export default class MyGraph extends Graph {
   }
 
   algs: {
-    [subtype in Subtypes]: AnalysisAlg<number[]> | AnalysisAlg<CoCitationMap>
+    [subtype in Subtype]: AnalysisAlg<number[]> | AnalysisAlg<CoCitationMap>
   } = {
     Jaccard: async (a: string): Promise<number[]> => {
       const Na = (this.neighbors(a) as string[]) ?? []
@@ -120,14 +120,14 @@ export default class MyGraph extends Graph {
 
     'Co-Citations': async (a: string): Promise<CoCitationMap> => {
       const mdCache = this.app.metadataCache
-      const results: CoCitationMap = {};
+      const results: CoCitationMap = {}
       const pres = this.predecessors(a) as string[]
 
       for (const preI in pres) {
         const pre = pres[preI]
         const file = mdCache.getFirstLinkpathDest(pre, '')
         if (!file) {
-          continue;
+          continue
         }
         const cache = mdCache.getFileCache(file)
 
@@ -135,7 +135,7 @@ export default class MyGraph extends Graph {
         let spl = a.split('/')
         let ownBasename = spl[spl.length - 1]
         const ownLinks = cache.links.filter((link) => {
-          const linkPath = getLinkpath(link.link);
+          const linkPath = getLinkpath(link.link)
           return linkPath === ownBasename
         })
 
@@ -351,25 +351,26 @@ export default class MyGraph extends Graph {
           })
         })
 
-
         // Add the found weights to the results
         for (let key in preCocitations) {
           const file = mdCache.getFirstLinkpathDest(key, '')
           if (file) {
             let linkName = file.path.slice(0, file.path.length - 3)
-            let cocitation = preCocitations[key];
+            let cocitation = preCocitations[key]
             if (linkName in results) {
               results[linkName].measure += cocitation[0]
               results[linkName].coCitations.push(...cocitation[1])
-            }
-            else {
-              results[linkName] = {measure: cocitation[0], coCitations: cocitation[1] }
+            } else {
+              results[linkName] = {
+                measure: cocitation[0],
+                coCitations: cocitation[1],
+              }
             }
           }
         }
       }
 
-      results[a] = {measure: 0, coCitations: [] }
+      results[a] = { measure: 0, coCitations: [] }
       for (const key in results) {
         results[key].coCitations = results[key].coCitations.sort((a, b) =>
           a.measure > b.measure ? -1 : 1
@@ -401,7 +402,7 @@ export default class MyGraph extends Graph {
   }
 
   async getData(
-    subtype: Subtypes,
+    subtype: Subtype,
     from: string
   ): Promise<number[] | CoCitationMap> {
     console.log({ subtype, from })
@@ -419,7 +420,7 @@ export default class MyGraph extends Graph {
         return this.data[subtype][i]
       }
     }
-    return this.algs[subtype](from);
+    return this.algs[subtype](from)
   }
 
   updateEdgeLabel(from: string, to: string, key: string, newValue: any) {

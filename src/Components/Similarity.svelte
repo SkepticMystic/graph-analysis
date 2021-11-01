@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { linkedQ, openOrSwitch } from 'obsidian-community-lib'
+  import { hoverPreview, linkedQ, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import {
     LINKED,
@@ -9,9 +9,9 @@
     TD_MEASURE,
     TD_NODE,
   } from 'src/constants'
-  import type { GraphAnalysisSettings, Subtypes } from 'src/Interfaces'
+  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { debug, dropPath, hoverPreview, openMenu } from 'src/Utility'
+  import { debug, dropPath, openMenu } from 'src/Utility'
   import { onMount } from 'svelte'
 
   export let app: App
@@ -19,7 +19,7 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
-  let subtype: Subtypes = 'Jaccard'
+  let subtype: Subtype = 'Jaccard'
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path.split('.md', 1)[0]
   app.workspace.on('active-leaf-change', () => {
@@ -93,8 +93,8 @@
           <tr class={node.linked ? LINKED : NOT_LINKED}>
             <td
               class="internal-link {TD_NODE}"
-              on:click={(e) => {
-                openOrSwitch(app, node.to, e)
+              on:click={async (e) => {
+                await openOrSwitch(app, node.to, e)
               }}
               on:contextmenu={(e) => {
                 openMenu(e, app)

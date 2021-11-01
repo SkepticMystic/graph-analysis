@@ -29,18 +29,6 @@ export function superDebug<T>(settings: GraphAnalysisSettings, log: T): void {
   }
 }
 
-export function hoverPreview(event: MouseEvent, view: ItemView): void {
-  const targetEl = event.target as HTMLElement
-
-  view.app.workspace.trigger('hover-link', {
-    event,
-    source: view.getViewType(),
-    hoverParent: view,
-    targetEl,
-    linktext: targetEl.innerText,
-  })
-}
-
 export function roundNumber(num: number, dec: number = DECIMALS): number {
   return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec)
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { openOrSwitch, linkedQ } from 'obsidian-community-lib'
+  import { hoverPreview, linkedQ, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import {
     CENTRALITY_TYPES,
@@ -9,9 +9,9 @@
     TD_MEASURE,
     TD_NODE,
   } from 'src/constants'
-  import type { GraphAnalysisSettings, Subtypes } from 'src/Interfaces'
+  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { debug, dropPath, hoverPreview } from 'src/Utility'
+  import { debug, dropPath } from 'src/Utility'
   import { onMount } from 'svelte'
 
   export let plugin: GraphAnalysisPlugin
@@ -23,7 +23,7 @@
     currFile = app.workspace.getActiveFile()
   })
 
-  let value: Subtypes = 'Closeness'
+  let value: Subtype = 'Closeness'
   $: resolvedLinks = app.metadataCache.resolvedLinks
   let { noInfinity, noZero } = settings
 
@@ -90,7 +90,7 @@
       <tr class={node.linked ? LINKED : NOT_LINKED}>
         <td
           class="internal-link {TD_NODE}"
-          on:click={(e) => openOrSwitch(app, node.to, e)}
+          on:click={async (e) => await openOrSwitch(app, node.to, e)}
           on:mouseover={(e) => hoverPreview(e, view)}
         >
           {dropPath(node.to)}

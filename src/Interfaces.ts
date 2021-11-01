@@ -12,7 +12,7 @@ export type Analyses =
   // "Centrality" |
   'Similarity' | 'Link Prediction' | 'Co-Citations'
 
-export type Subtypes =
+export type Subtype =
   | 'Adamic Adar'
   | 'Common Neighbours'
   | 'Jaccard'
@@ -20,7 +20,7 @@ export type Subtypes =
 // | 'Closeness'
 
 export type GraphData = {
-  [matrix in Subtypes]: number[][] | CoCitationMap[]
+  [matrix in Subtype]: number[][] | CoCitationMap[]
 }
 
 export interface CoCitation {
@@ -56,6 +56,22 @@ export type AnalysisForAll = (
 ) => MyGraph
 
 declare module 'obsidian' {
+  interface App {
+    plugins: {
+      plugins: {
+        metaedit: {
+          api: {
+            createYamlProperty(
+              key: string,
+              value: string,
+              file: TFile
+            ): Promise<void>
+            update(key: string, value: string, file: TFile): Promise<void>
+          }
+        }
+      }
+    }
+  }
   interface Editor {
     cm: {
       findWordAt: (pos: EditorPosition) => EditorSelection | null
