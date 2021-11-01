@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/SkepticMystic/graph-analysis/compare/0.0.38...0.1.0) (2021-11-01)
+
+
+### Features
+
+* :sparkles: Jump to `sentence` onClick and highlight ([f978722](https://github.com/SkepticMystic/graph-analysis/commit/f978722656de4705932eb360a398dcc9833809cd))
+
+
+### Bug Fixes
+
+* :bug: Properly await resolvedLinks completion ([69f6bd1](https://github.com/SkepticMystic/graph-analysis/commit/69f6bd1181ab29eb8d293aa4c169fb38d94a9093))
+
 ### [0.0.38](https://github.com/SkepticMystic/graph-analysis/compare/0.0.37...0.0.38) (2021-11-01)
 
 
