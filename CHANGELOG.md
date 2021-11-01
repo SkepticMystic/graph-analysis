@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.38](https://github.com/SkepticMystic/graph-analysis/compare/0.0.37...0.0.38) (2021-11-01)
+
+
+### Features
+
+* Much better performance of co-citations ([67b41e4](https://github.com/SkepticMystic/graph-analysis/commit/67b41e4a88acbac8f9b05f7dae16d794c9222c63))
+
+
+### Bug Fixes
+
+* :bug: Properly checkCallback ([73e86c6](https://github.com/SkepticMystic/graph-analysis/commit/73e86c63c9ade879efbe030879694d20fcf6dbdf))
+* Better force reload handling ([15b1294](https://github.com/SkepticMystic/graph-analysis/commit/15b12941f474da5557614f11f684e13f1f9709d3))
+* Crashes when reloading plugin ([1985918](https://github.com/SkepticMystic/graph-analysis/commit/19859183f0fcc477aa42552f76617cd10f6927df)), closes [#13](https://github.com/SkepticMystic/graph-analysis/issues/13)
+
 ### [0.0.37](https://github.com/SkepticMystic/graph-analysis/compare/0.0.36...0.0.37) (2021-10-29)
 
 ### [0.0.36](https://github.com/SkepticMystic/graph-analysis/compare/0.0.35...0.0.36) (2021-10-29)

@@ -1,6 +1,6 @@
 {
   "name": "graph-analysis",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "description": "Analyse your Obsidian graph",
   "main": "main.js",
   "scripts": {
