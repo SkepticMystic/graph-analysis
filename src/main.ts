@@ -65,19 +65,6 @@ export default class GraphAnalysisPlugin extends Plugin {
     }
   }
 
-  // withCodeMirrorEditor is a convenience function for making sure that a
-  // function runs with a valid view and editor.
-  // withCodeMirrorEditor(
-  //   callback: (editor: CodeMirror.Editor, view?: MarkdownView) => void
-  // ): void {
-  //   const view = this.app.workspace.getActiveViewOfType(MarkdownView)
-  //   if (!view) {
-  //     return
-  //   }
-
-  //   callback(view.sourceMode.cmEditor, view)
-  // }
-
   onunload() {
     console.log('unloading graph analysis plugin')
     this.app.workspace
