@@ -5,6 +5,7 @@ import type { GraphAnalysisSettings } from 'src/Interfaces'
 import MyGraph from 'src/MyGraph'
 import { SampleSettingTab } from 'src/Settings'
 import { debug } from './Utility'
+import { openView } from 'obsidian-community-lib'
 
 export default class GraphAnalysisPlugin extends Plugin {
   settings: GraphAnalysisSettings
@@ -40,11 +41,9 @@ export default class GraphAnalysisPlugin extends Plugin {
     this.app.workspace.onLayoutReady(async () => {
       setTimeout(async () => {
         await this.refreshGraph()
-        await this.initView()
+        await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
       }, 8000)
     })
-
-    // this.registerEvent(this.app.workspace.on('active-leaf-change', () => {}))
   }
 
   async refreshGraph() {
@@ -75,20 +74,20 @@ export default class GraphAnalysisPlugin extends Plugin {
       })
   }
 
-  initView = async (): Promise<void> => {
-    let leaf: WorkspaceLeaf = null
-    for (leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE_GRAPH_ANALYSIS)) {
-      if (leaf.view instanceof AnalysisView) {
-        return
-      }
-      await leaf.setViewState({ type: 'empty' })
-      break
-    }
-    ;(leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
-      type: VIEW_TYPE_GRAPH_ANALYSIS,
-      active: true,
-    })
-  }
+  // initView = async (): Promise<void> => {
+  //   let leaf: WorkspaceLeaf = null
+  //   for (leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE_GRAPH_ANALYSIS)) {
+  //     if (leaf.view instanceof AnalysisView) {
+  //       return
+  //     }
+  //     await leaf.setViewState({ type: 'empty' })
+  //     break
+  //   }
+  //   ;(leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
+  //     type: VIEW_TYPE_GRAPH_ANALYSIS,
+  //     active: true,
+  //   })
+  // }
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
