@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/SkepticMystic/graph-analysis/compare/0.1.2...0.1.3) (2021-11-01)
+
+
+### Features
+
+* :lipstick: Finally an icon! ([2b3e02f](https://github.com/SkepticMystic/graph-analysis/commit/2b3e02f1bc83227940f19f9a261bc1163d7461f0))
+
 ### [0.1.2](https://github.com/SkepticMystic/graph-analysis/compare/0.1.1...0.1.2) (2021-11-01)
 
 
