@@ -73,7 +73,6 @@ export default class GraphAnalysisPlugin extends Plugin {
 
   resolvedLinksComplete(noFiles: number) {
     const { resolvedLinks } = this.app.metadataCache
-    console.log({ res: Object.keys(resolvedLinks).length, noFiles })
     return Object.keys(resolvedLinks).length === noFiles
   }
 

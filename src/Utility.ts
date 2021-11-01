@@ -74,17 +74,13 @@ export const createOrUpdateYaml = async (
   }
   let valueStr = value.toString()
   const frontmatter = app.metadataCache.getFileCache(file)?.frontmatter
-  console.log({ api, frontmatter })
   if (!frontmatter || frontmatter[key] === undefined) {
-    console.log(`Creating: ${key}: ${valueStr}`)
     await api.createYamlProperty(key, `['${valueStr}']`, file)
   } else if ([...[frontmatter[key]]].flat(3).some((val) => val == valueStr)) {
-    console.log('Already Exists!')
     return
   } else {
     const oldValueFlat: string[] = [...[frontmatter[key]]].flat(4)
     const newValue = [...oldValueFlat, valueStr].map((val) => `'${val}'`)
-    console.log(`Updating: ${key}: ${newValue}`)
     await api.update(key, `[${newValue.join(', ')}]`, file)
   }
 }
