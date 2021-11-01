@@ -49,25 +49,6 @@ export default class GraphAnalysisPlugin extends Plugin {
 
       await this.refreshGraph()
       await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
-
-      // setTimeout(async () => {
-      //   if (this.app.metadataCache.resolvedLinks) {
-      //     await this.refreshGraph()
-      //     await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
-      //   } else {
-      //     setTimeout(async () => {
-      //       if (this.app.metadataCache.resolvedLinks) {
-      //         await this.refreshGraph()
-      //         await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
-      //       } else {
-      //         setTimeout(async () => {
-      //           await this.refreshGraph()
-      //           await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
-      //         }, 8000)
-      //       }
-      //     }, 8000)
-      //   }
-      // }, 8000)
     })
   }
 
@@ -103,21 +84,6 @@ export default class GraphAnalysisPlugin extends Plugin {
         leaf.detach()
       })
   }
-
-  // initView = async (): Promise<void> => {
-  //   let leaf: WorkspaceLeaf = null
-  //   for (leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE_GRAPH_ANALYSIS)) {
-  //     if (leaf.view instanceof AnalysisView) {
-  //       return
-  //     }
-  //     await leaf.setViewState({ type: 'empty' })
-  //     break
-  //   }
-  //   ;(leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
-  //     type: VIEW_TYPE_GRAPH_ANALYSIS,
-  //     active: true,
-  //   })
-  // }
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
