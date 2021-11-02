@@ -1,8 +1,7 @@
 # Graph Analysis
 
-Graph analysis is an Obsidian plugin which adds a new view type - the analysis
-view. It implements a set of algorithms that computes useful relations between
-the notes in your vault! Our flagship algorithm is the **Co-citations**, panel,
+Graph analysis adds the **analysis view** to Obsidian which implements a set of algorithms that computes useful relations between
+the notes in your vault! Our flagship algorithm is the **Co-citations** panel,
 that we describe as a _2nd order backlinks panel_. 
 
 The Graph Analysis view shows a table of note names and numbers, each representing the value of
@@ -13,10 +12,6 @@ e.g.
 - `[[A]] is 0.9 Similar to [[B]]`
 - `[[A]] has a 0.6 chance of being connected to [[B]]`
 - `[[A]] is co-cited with [[B]] 6 times`
-
-## Documentation on Algorithms
-
-You can read more about the implemented algorithms, or let us know which you want us to add, over [here](https://neo4j.com/docs/graph-data-science/current/algorithms/) 👀
 
 ## Analysis Types
 
@@ -48,13 +43,13 @@ Link prediction algorithms include:
 ### Co-Citations
 
 Co-Citations counts the number of time two notes are cited together in the same
-note. It gives extra weight when the two notes are cited close together.
+note and gives extra weight when the two notes are cited close together.
+
+Think of co-citations as a **2nd-order backlinks** panel: Instead of showing _where_ something is cited, it shows _why_, 
+or with _whom_ or _what_ it is cited! 
 
 For example, if `[[C]]` has `[[A]] and [[B]]` in its content, then `[[A]]` and
 `[[B]]` will each have a co-citation of one.
-
-Think of co-citations as a 2nd-order backlinks panel: Instead of showing _where_ something is cited, it shows _why_, 
-or with _whom_ or _what_ it is cited! 
 
 Each note with co-citations > 0 is given a drop down menu. Inside each drop
 down, you can see which note co-cites those two notes, and the sentence in which
@@ -82,3 +77,7 @@ You can set the default analysis type in the plugin settings.
 There is also the option to hide `Infinity` and `Zero` values.
 
 ![image](https://user-images.githubusercontent.com/70717676/138652879-d8b0e4a7-d70a-44e8-ba3c-67e04f6a8edd.png)
+
+## Documentation on Algorithms
+
+You can read more about the implemented algorithms, or let us know which you want us to add, over [here](https://neo4j.com/docs/graph-data-science/current/algorithms/) 👀. Information on co-citations can mostly be found on [Wikipedia](https://en.wikipedia.org/wiki/Co-citation). In particular, we implement a variation of [Co-citatition Proximity Analysis](https://en.wikipedia.org/wiki/Co-citation_Proximity_Analysis).
