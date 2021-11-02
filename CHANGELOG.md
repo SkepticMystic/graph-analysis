@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/SkepticMystic/graph-analysis/compare/0.1.4...0.1.5) (2021-11-02)
+
+
+### Bug Fixes
+
+* Highlights in co-citation panes sometimes give incorrect results ([0661a0d](https://github.com/SkepticMystic/graph-analysis/commit/0661a0d9e9d303168a612df5208d59dce5d94330))
+* Incorrect resolving for folder/name links ([6a1711c](https://github.com/SkepticMystic/graph-analysis/commit/6a1711cf11f034f4dd0ce7f647738c7203d77869))
+* Varied capitalization link resolving ([1958b8e](https://github.com/SkepticMystic/graph-analysis/commit/1958b8e262eacd563d6909d8fc97159548430a7a))
+
 ### [0.1.4](https://github.com/SkepticMystic/graph-analysis/compare/0.1.3...0.1.4) (2021-11-01)
 
 ### [0.1.3](https://github.com/SkepticMystic/graph-analysis/compare/0.1.2...0.1.3) (2021-11-01)
