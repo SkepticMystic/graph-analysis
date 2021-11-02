@@ -134,12 +134,19 @@ export default class MyGraph extends Graph {
         const preCocitations: { [name: string]: [number, CoCitation[]] } = {}
         let spl = a.split('/')
         let ownBasename = spl[spl.length - 1]
-        const ownLinks = cache.links.filter((link) => {
-          const linkFile = mdCache.getFirstLinkpathDest(getLinkpath(link.link), file.path)
+        const allLinks = [...cache.links]
+        if (cache.embeds) {
+          allLinks.push(...cache.embeds)
+        }
+        const ownLinks = allLinks.filter((link) => {
+          const linkFile = mdCache.getFirstLinkpathDest(
+            getLinkpath(link.link),
+            file.path
+          )
           if (!linkFile) {
             return false
           }
-          return linkFile.basename === ownBasename
+          return linkFile.basename === ownBasename && linkFile.extension === 'md'
         })
 
         const cachedRead = await this.app.vault.cachedRead(file)
@@ -211,13 +218,12 @@ export default class MyGraph extends Graph {
         maxHeadingLevel =
           cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0
 
-        cache.links.forEach((link) => {
+        allLinks.forEach((link) => {
           const linkFile = mdCache.getFirstLinkpathDest(getLinkpath(link.link), file.path)
-          if (!linkFile) {
-            return
-          }
+          if (!linkFile || linkFile.extension !== 'md') return
+
           const linkPath = linkFile.basename
-          if (linkPath === ownBasename) return
+          if (linkPath === ownBasename)  return
 
           // Initialize to 0 if not set yet
           if (!(linkPath in preCocitations)) {
