@@ -22,11 +22,13 @@ span.internal-link:hover {
   color: var(--text-accent-hover, var(--text-accent));
 }
 
-tr.analysis-linked {
-  /* display:none */
+tr.analysis-linked td:first-child::before,
+span.analysis-linked::before {
+  content: '🔗 ';
 }
-tr.analysis-not-linked {
-  /* background-color: yellow */
+tr.analysis-not-linked,
+span.analysis-not-linked {
+  /* background-color: yellow; */
 }
 
 td.analysis-measure {
