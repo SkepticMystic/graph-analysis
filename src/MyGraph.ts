@@ -135,8 +135,11 @@ export default class MyGraph extends Graph {
         let spl = a.split('/')
         let ownBasename = spl[spl.length - 1]
         const ownLinks = cache.links.filter((link) => {
-          const linkPath = dropPath(getLinkpath(link.link))
-          return linkPath === ownBasename
+          const linkFile = mdCache.getFirstLinkpathDest(getLinkpath(link.link), file.path)
+          if (!linkFile) {
+            return false
+          }
+          return linkFile.basename === ownBasename
         })
 
         const cachedRead = await this.app.vault.cachedRead(file)
@@ -209,7 +212,11 @@ export default class MyGraph extends Graph {
           cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0
 
         cache.links.forEach((link) => {
-          const linkPath = dropPath(getLinkpath(link.link))
+          const linkFile = mdCache.getFirstLinkpathDest(getLinkpath(link.link), file.path)
+          if (!linkFile) {
+            return
+          }
+          const linkPath = linkFile.basename
           if (linkPath === ownBasename) return
 
           // Initialize to 0 if not set yet
