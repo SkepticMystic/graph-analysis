@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { hoverPreview, linkedQ, openOrSwitch } from 'obsidian-community-lib'
+  import { linkedQ, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import {
     CENTRALITY_TYPES,
@@ -11,7 +11,7 @@
   } from 'src/constants'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { debug, dropPath } from 'src/Utility'
+  import { debug, dropPath, hoverPreview } from 'src/Utility'
   import { onMount } from 'svelte'
 
   export let plugin: GraphAnalysisPlugin
@@ -91,7 +91,7 @@
         <td
           class="internal-link {TD_NODE}"
           on:click={async (e) => await openOrSwitch(app, node.to, e)}
-          on:mouseover={(e) => hoverPreview(e, view)}
+          on:mouseover={(e) => hoverPreview(e, view, dropPath(node.to))}
         >
           {dropPath(node.to)}
         </td>

@@ -1,12 +1,5 @@
-import {
-  App,
-  EditorRange,
-  ItemView,
-  MarkdownView,
-  Menu,
-  Notice,
-  TFile,
-} from 'obsidian'
+import { App, EditorRange, MarkdownView, Menu, Notice, TFile } from 'obsidian'
+import type AnalysisView from 'src/AnalysisView'
 import { DECIMALS } from 'src/constants'
 import type { GraphAnalysisSettings } from 'src/Interfaces'
 
@@ -39,6 +32,42 @@ export const dropPath = (path: string) => {
 
 export const nxnArray = (n: number): undefined[][] =>
   [...Array(n)].map((e) => Array(n))
+
+// export function hoverPreview(
+//   event: MouseEvent,
+//   view: AnalysisView,
+//   to?: string
+// ): void {
+//   const targetEl = event.target as HTMLElement
+//   let linkText = to
+//   if (!linkText) {
+//     linkText = targetEl.innerText
+//   }
+
+//   view.app.workspace.trigger('hover-link', {
+//     event,
+//     source: view.getViewType(),
+//     hoverParent: view,
+//     targetEl,
+//     linkText,
+//   })
+// }
+
+export function hoverPreview(
+  event: MouseEvent,
+  view: AnalysisView,
+  to: string
+): void {
+  const targetEl = event.target as HTMLElement
+
+  view.app.workspace.trigger('hover-link', {
+    event,
+    source: view.getViewType(),
+    hoverParent: view,
+    targetEl,
+    linktext: to,
+  })
+}
 
 /**
  * Adds or updates the given yaml `key` to `value` in the given TFile
