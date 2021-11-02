@@ -38,7 +38,7 @@
             .map((to) => {
               return {
                 measure: measures[to],
-                linked: linkedQ(resolvedLinks, currNode, to),
+                linked: linkedQ(resolvedLinks, currNode, to, false),
                 to,
               }
             })

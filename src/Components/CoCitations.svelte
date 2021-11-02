@@ -42,7 +42,7 @@
                 return {
                   measure: cocitation.measure,
                   coCitations: cocitation.coCitations,
-                  linked: linkedQ(resolvedLinks, currNode, to),
+                  linked: linkedQ(resolvedLinks, currNode, to, false),
                   to,
                 }
               })
@@ -93,7 +93,7 @@
                   <div class="CC-item">
                     <span
                       class="
-                      {linkedQ(resolvedLinks, currNode, coCite.source)
+                      {linkedQ(resolvedLinks, currNode, coCite.source, false)
                         ? LINKED
                         : NOT_LINKED} internal-link {TD_NODE}"
                       on:click={async (e) => {
