@@ -28,11 +28,46 @@ Each implement different algorithms with different purposes.
 Similarity is a measure of how similar two notes are based on their
 connectedness in the graph (ie. note content is not considered). Currently, only the Jaccard Similarity measure is implemented.
 
+#### Jaccard Similarity
+
+**Formula**:
+
+![image](https://user-images.githubusercontent.com/70717676/139872572-93504295-6d29-4722-bdb1-3fbeb7bc22ec.png)
+
+[Source](https://neo4j.com/docs/graph-data-science/current/alpha-algorithms/jaccard/#alpha-algorithms-similarity-jaccard-context)
+
+Where 
+- `|x|` is the number of neighbours the node `x` has (links going in or out).
+- `|x & y|` is the number of neighbours that both `x` and `y` have in common
+
 ### Link Prediction
 
 Link Prediction is a measure of the probability that two notes should be
 connected based on their other connections in the graph. The implemented Link Prediction algorithms are Adamic Adar and Common Neighbours.
 
+#### Adamic Adar
+
+**Formula**:
+
+![image](https://user-images.githubusercontent.com/70717676/139873180-c870e072-843c-42a9-83fc-87205b408754.png)
+
+[Source](https://neo4j.com/docs/graph-data-science/current/alpha-algorithms/adamic-adar/)
+
+Where:
+
+- `N(x)` is the number of neighbours of `x`
+
+#### Common Neighbours
+
+**Formula**:
+
+![image](https://user-images.githubusercontent.com/70717676/139873406-d0542335-3b8c-4d08-8a5b-4510408ebd4e.png)
+
+[Source](https://neo4j.com/docs/graph-data-science/current/alpha-algorithms/common-neighbors/)
+
+Where:
+
+- `N(x)` is the numbers of neighbours of `x`
 
 ### Co-Citations
 
