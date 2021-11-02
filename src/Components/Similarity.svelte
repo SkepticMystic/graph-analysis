@@ -62,7 +62,7 @@
     {/each}
   </select>
 
-  <label for="Infinity">Infinity?</label>
+  <label for="Infinity">∞?</label>
   <input
     name="Infinity"
     type="checkbox"
@@ -70,7 +70,7 @@
     on:change={() => (noInfinity = !noInfinity)}
   />
 
-  <label for="Zero">Zero?</label>
+  <label for="Zero">0?</label>
   <input
     name="Zero"
     type="checkbox"
