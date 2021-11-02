@@ -116,13 +116,13 @@
                   >
                     {#if coCite.sentence.length === 3}
                       <span>{coCite.sentence[0]}</span>
-                      <mark>{coCite.sentence[1]}</mark>
+                      <mark><strong>{coCite.sentence[1]}</strong></mark>
                       <span>{coCite.sentence[2]}</span>
                     {:else}
                       <span>{coCite.sentence[0]}</span>
-                      <mark>{coCite.sentence[1]}</mark>
+                      <mark><strong>{coCite.sentence[1]}</strong></mark>
                       <span>{coCite.sentence[2]}</span>
-                      <mark>{coCite.sentence[3]}</mark>
+                      <mark><strong>{coCite.sentence[3]}</strong></mark>
                       <span>{coCite.sentence[4]}</span>
                     {/if}
                   </div>
