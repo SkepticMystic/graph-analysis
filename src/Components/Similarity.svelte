@@ -82,7 +82,7 @@
   <thead>
     <tr>
       <th scope="col">Note</th>
-      <th scope="col">Similarity</th>
+      <th scope="col">Measure</th>
     </tr>
   </thead>
   {#if promiseSortedSimilarities}

@@ -41,6 +41,7 @@ td.analysis-node {
 select.dropdown.GA-DD {
   line-height: normal;
   padding: 0.2em 1.9em 0.2em 0.4em;
+  width: fit-content;
 }
 
 button.GA-Refresh-Button {
