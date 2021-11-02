@@ -39,6 +39,12 @@ export default class GraphAnalysisPlugin extends Plugin {
       },
     })
 
+    this.addCommand({
+      id: 'refresh-analysis-view',
+      name: 'Refresh Graph Analysis View',
+      callback: async () => await this.refreshGraph(),
+    })
+
     this.addSettingTab(new SampleSettingTab(this.app, this))
 
     this.registerView(

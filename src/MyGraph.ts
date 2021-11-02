@@ -3,7 +3,7 @@ import type { App, HeadingCache, ReferenceCache } from 'obsidian'
 import { getLinkpath } from 'obsidian'
 import tokenizer from 'sbd'
 import { DECIMALS } from 'src/constants'
-import { nodeIntersection } from 'src/GeneralGraphFn'
+import { intersection } from 'src/GeneralGraphFn'
 import type {
   AnalysisAlg,
   CoCitation,
@@ -73,7 +73,7 @@ export default class MyGraph extends Graph {
       const results: ResultMap = {}
       this.nodes().forEach((to) => {
         const Nb = (this.neighbors(to) as string[]) ?? []
-        const Nab = nodeIntersection(Na, Nb)
+        const Nab = intersection(Na, Nb)
         const result = roundNumber(
           Nab.length / (Na.length + Nb.length - Nab.length),
           DECIMALS
@@ -90,7 +90,7 @@ export default class MyGraph extends Graph {
 
       this.nodes().forEach((to) => {
         const Nb = this.neighbors(to) as string[]
-        const Nab = nodeIntersection(Na, Nb)
+        const Nab = intersection(Na, Nb)
 
         if (Nab.length) {
           const neighbours: number[] = Nab.map(
@@ -112,7 +112,7 @@ export default class MyGraph extends Graph {
 
       this.nodes().forEach((to) => {
         const Nb = (this.neighbors(to) ?? []) as string[]
-        results[to] = nodeIntersection(Na, Nb).length
+        results[to] = intersection(Na, Nb).length
       })
       return results
     },
