@@ -245,19 +245,22 @@ export default class MyGraph extends Graph {
                 link.position.end.col,
                 ownLink.position.end.col
               )
+              // Break sentence up between the two links
+              const sentence = [
+                lineContent.slice(0, m1Start),
+                lineContent.slice(m1Start, m1End),
+                lineContent.slice(m1End, m2Start),
+                lineContent.slice(m2Start, m2End),
+                lineContent.slice(m2End, lineContent.length),
+              ]
               // Give a higher score if it is also in the same sentence
               if (
                 link.position.start.col >= start &&
                 link.position.end.col <= end
               ) {
-                const sentenceS = lineContent.slice(start, end)
-                const sentence = [
-                  sentenceS.slice(0, m1Start),
-                  sentenceS.slice(m1Start, m1End),
-                  sentenceS.slice(m1End, m2Start),
-                  sentenceS.slice(m2Start, m2End),
-                  sentenceS.slice(m2End, sentenceS.length),
-                ]
+                // If it's in the same sentence, remove the other sentences
+                sentence[0] = sentence[0].slice(start, sentence[0].length)
+                sentence[4] = lineContent.slice(m2End, end)
                 preCocitations[linkPath][0] = 1
                 preCocitations[linkPath][1].push({
                   sentence: sentence,
@@ -266,13 +269,6 @@ export default class MyGraph extends Graph {
                   line: link.position.start.line,
                 })
               } else {
-                const sentence = [
-                  lineContent.slice(0, m1Start),
-                  lineContent.slice(m1Start, m1End),
-                  lineContent.slice(m1End, m2Start),
-                  lineContent.slice(m2Start, m2End),
-                  lineContent.slice(m2End, lineContent.length),
-                ]
                 preCocitations[linkPath][0] = Math.max(
                   preCocitations[linkPath][0],
                   1 / 2
