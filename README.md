@@ -63,7 +63,30 @@ An example why this is useful is given by @HEmile:
 
 ![](https://i.imgur.com/tw9xrjq.png)
 
+## Utility Classes
+
+Each row in the graph analysis tables (or co-citations dropdowns) has a class: `analysis-linked` or `analysis-not-linked`, indicating if the current note is linked to the note in that row. This gives you the ability to style a table row based on whether it's connectedness.
+
+For example, you can make linked notes have a lower opacity:
+
+```css
+tr.analysis-linked {
+    opacity: 0.3;
+}
+```
+
+![image](https://user-images.githubusercontent.com/70717676/139862955-75284ff5-0ced-4548-bf6e-caa353a16fe0.png)
+
+You could even go so far as to hide linked rows completely:
+
+```css
+tr.analysis-linked {
+    display: none;
+}
+```
+
 ## Settings
+
 In the analysis view, you have the option to choose between different
 `Analysis Types`, and different `Algorithms` within those types. 
 You can set the default analysis type in the plugin settings. 
