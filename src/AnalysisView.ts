@@ -8,6 +8,7 @@ import Similarity from './Components/Similarity.svelte'
 
 export default class AnalysisView extends ItemView {
   private plugin: GraphAnalysisPlugin
+  analysisSelector: HTMLSelectElement
   // private view: Analysis;
 
   constructor(leaf: WorkspaceLeaf, plugin: GraphAnalysisPlugin) {
@@ -38,13 +39,14 @@ export default class AnalysisView extends ItemView {
   }
 
   async draw(analysisType?: Analyses): Promise<void> {
-    const app = this.app
+    const { app } = this
+    let { analysisSelector } = this
     const { settings } = this.plugin
     const contentEl = this.contentEl
     contentEl.empty()
 
     const settingsDiv = contentEl.createDiv({ text: 'Type: ' })
-    const analysisSelector = settingsDiv.createEl('select', {
+    analysisSelector = settingsDiv.createEl('select', {
       cls: 'dropdown GA-DD',
     })
     ANALYSIS_TYPES.forEach((type) => {

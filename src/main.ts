@@ -5,7 +5,7 @@ import {
   iconSVG,
   VIEW_TYPE_GRAPH_ANALYSIS,
 } from 'src/constants'
-import type { GraphAnalysisSettings } from 'src/Interfaces'
+import type { Analyses, GraphAnalysisSettings } from 'src/Interfaces'
 import MyGraph from 'src/MyGraph'
 import { SampleSettingTab } from 'src/Settings'
 import { debug } from './Utility'
@@ -42,7 +42,13 @@ export default class GraphAnalysisPlugin extends Plugin {
     this.addCommand({
       id: 'refresh-analysis-view',
       name: 'Refresh Graph Analysis View',
-      callback: async () => await this.refreshGraph(),
+      callback: async () => {
+        await this.refreshGraph()
+        const openView = this.app.workspace.getLeavesOfType(
+          VIEW_TYPE_GRAPH_ANALYSIS
+        )[0].view as AnalysisView
+        openView.draw(openView.analysisSelector.value as Analyses)
+      },
     })
 
     this.addSettingTab(new SampleSettingTab(this.app, this))
