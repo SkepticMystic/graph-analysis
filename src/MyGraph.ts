@@ -12,7 +12,7 @@ import type {
   ResolvedLinks,
   Subtype,
 } from 'src/Interfaces'
-import { nxnArray, roundNumber, sum } from 'src/Utility'
+import { dropPath, nxnArray, roundNumber, sum } from 'src/Utility'
 
 export default class MyGraph extends Graph {
   resolvedLinks: ResolvedLinks
@@ -135,7 +135,7 @@ export default class MyGraph extends Graph {
         let spl = a.split('/')
         let ownBasename = spl[spl.length - 1]
         const ownLinks = cache.links.filter((link) => {
-          const linkPath = getLinkpath(link.link)
+          const linkPath = dropPath(getLinkpath(link.link))
           return linkPath === ownBasename
         })
 
@@ -209,7 +209,7 @@ export default class MyGraph extends Graph {
           cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0
 
         cache.links.forEach((link) => {
-          const linkPath = getLinkpath(link.link)
+          const linkPath = dropPath(getLinkpath(link.link))
           if (linkPath === ownBasename) return
 
           // Initialize to 0 if not set yet
