@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/SkepticMystic/graph-analysis/compare/0.1.7...0.2.0) (2021-11-02)
+
+
+### Features
+
+* :sparkles: Add `linked` class for links in either direction ([8c57be7](https://github.com/SkepticMystic/graph-analysis/commit/8c57be7a4ea2972dde6699aa20314cd14177aae6))
+
+
+### Bug Fixes
+
+* Co-citations doesn't treat transclusions properly ([775bd1d](https://github.com/SkepticMystic/graph-analysis/commit/775bd1d91453baba546b7fe75ef69f616db08631))
+
 ### [0.1.7](https://github.com/SkepticMystic/graph-analysis/compare/0.1.6...0.1.7) (2021-11-02)
 
 ### [0.1.6](https://github.com/SkepticMystic/graph-analysis/compare/0.1.5...0.1.6) (2021-11-02)
