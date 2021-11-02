@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://github.com/SkepticMystic/graph-analysis/compare/0.1.5...0.1.6) (2021-11-02)
+
+
+### Bug Fixes
+
+* :bug: hoverPreview doesn't work from community-lib ([bf77ea0](https://github.com/SkepticMystic/graph-analysis/commit/bf77ea017ca403009d4b5f3a2ff0f51b6b7484d1))
+
 ### [0.1.5](https://github.com/SkepticMystic/graph-analysis/compare/0.1.4...0.1.5) (2021-11-02)
 
 
