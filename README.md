@@ -21,24 +21,18 @@ Graph Analysis currently has 3 different analysis types:
 2. Link Prediction
 3. Co-Citations
 
-Each of which implement different algorithms with different purposes.
+Each implement different algorithms with different purposes.
 
 ### Similarity
 
 Similarity is a measure of how similar two notes are based on their
-connectedness in the graph (ie. note content is not considered).
-
-Currently, only the Jaccard Similarity measure is implemented.
+connectedness in the graph (ie. note content is not considered). Currently, only the Jaccard Similarity measure is implemented.
 
 ### Link Prediction
 
 Link Prediction is a measure of the probability that two notes should be
-connected based on their other connections in the graph.
+connected based on their other connections in the graph. The implemented Link Prediction algorithms are Adamic Adar and Common Neighbours.
 
-Link prediction algorithms include:
-
-1. Adamic Adar
-2. Common Neighbours
 
 ### Co-Citations
 
