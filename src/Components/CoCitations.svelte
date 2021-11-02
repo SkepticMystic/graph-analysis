@@ -3,7 +3,11 @@
   import { linkedQ, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import type { CoCitationMap, GraphAnalysisSettings } from 'src/Interfaces'
+  import type {
+    CoCitationMap,
+    CoCitationRes,
+    GraphAnalysisSettings,
+  } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
@@ -27,15 +31,14 @@
   })
 
   let { resolvedLinks } = app.metadataCache
-  $: promiseSortedSimilarities =
+  $: promiseSortedCoCites =
     !currNode || !plugin.g
       ? null
-      : plugin.g
-          .getData('Co-Citations', currNode)
-          .then((ccRess: CoCitationMap) => {
-            let sortedSimilarities = Object.keys(ccRess)
+      : plugin.g.algs['Co-Citations'](currNode)
+          .then((ccMap) => {
+            let sortedCoCites = Object.keys(ccMap)
               .map((to) => {
-                let cocitation = ccRess[to]
+                let cocitation = ccMap[to] as unknown as CoCitationRes
                 return {
                   measure: cocitation.measure,
                   coCitations: cocitation.coCitations,
@@ -44,7 +47,7 @@
                 }
               })
               .sort((a, b) => (a.measure > b.measure ? -1 : 1))
-            return sortedSimilarities
+            return sortedCoCites
           })
           .then((res) => {
             debug(settings, { res })
@@ -53,14 +56,14 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    debug(settings, { promiseSortedSimilarities })
+    debug(settings, { promiseSortedCoCites })
   })
 </script>
 
 <div class="GA-CCs">
-  {#if promiseSortedSimilarities}
-    {#await promiseSortedSimilarities then sortedSimilarities}
-      {#each sortedSimilarities as node}
+  {#if promiseSortedCoCites}
+    {#await promiseSortedCoCites then sortedCoCites}
+      {#each sortedCoCites as node}
         {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
           <div class="GA-CC">
             <details>

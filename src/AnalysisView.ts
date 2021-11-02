@@ -43,7 +43,7 @@ export default class AnalysisView extends ItemView {
     const contentEl = this.contentEl
     contentEl.empty()
 
-    const settingsDiv = contentEl.createDiv({ text: 'Analysis: ' })
+    const settingsDiv = contentEl.createDiv({ text: 'Type: ' })
     const analysisSelector = settingsDiv.createEl('select', {
       cls: 'dropdown GA-DD',
     })
@@ -52,7 +52,7 @@ export default class AnalysisView extends ItemView {
     })
     const refreshGraphButton = settingsDiv.createEl(
       'button',
-      { text: 'Refresh', cls: 'GA-Refresh-Button' },
+      { text: '🔁', cls: 'GA-Refresh-Button' },
       (but) => {
         but.addEventListener('click', async () => {
           await this.plugin.refreshGraph()

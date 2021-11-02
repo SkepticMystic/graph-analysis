@@ -43,7 +43,8 @@ select.dropdown.GA-DD {
 
 button.GA-Refresh-Button {
   /* float: right; */
-  margin-left: 10px;
+  margin-left: 5px;
+  padding: 3px;
 }
 
 body.is-mobile .GA-details,

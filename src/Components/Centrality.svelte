@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import type { App } from 'obsidian'
   import { linkedQ, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
@@ -99,10 +99,9 @@
       </tr>
     {/if}
   {:else}
-    <!-- this block renders when photos.length === 0 -->
     <p>loading...</p>
   {/each}
 </table>
 
 <style>
-</style>
+</style> -->

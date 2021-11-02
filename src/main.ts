@@ -68,7 +68,7 @@ export default class GraphAnalysisPlugin extends Plugin {
       const { resolvedLinks } = this.app.metadataCache
       this.g = new MyGraph(resolvedLinks, this.app)
       await this.g.initGraph()
-      await this.g.initData()
+      // await this.g.initData()
       debug(this.settings, { g: this.g })
       console.timeEnd('Initialise Graph')
       new Notice('Index Refreshed')

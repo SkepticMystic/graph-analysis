@@ -8,11 +8,11 @@ import type {
   AnalysisAlg,
   CoCitation,
   CoCitationMap,
-  GraphData,
   ResolvedLinks,
+  ResultMap,
   Subtype,
 } from 'src/Interfaces'
-import { dropPath, nxnArray, roundNumber, sum } from 'src/Utility'
+import { dropMD, roundNumber, sum } from 'src/Utility'
 
 export default class MyGraph extends Graph {
   resolvedLinks: ResolvedLinks
@@ -30,13 +30,13 @@ export default class MyGraph extends Graph {
     let i = 0
     for (const source in this.resolvedLinks) {
       if (source.split('.').last() === 'md') {
-        const sourceNoMD = source.split('.md').slice(0, -1).join('')
+        const sourceNoMD = dropMD(source)
         this.setNode(sourceNoMD, i)
 
         i++
         for (const dest in this.resolvedLinks[source]) {
           if (dest.split('.').last() === 'md') {
-            const destNoMD = dest.split('.md').slice(0, -1).join('')
+            const destNoMD = dropMD(dest)
             this.setEdge(sourceNoMD, destNoMD)
           }
         }
@@ -45,46 +45,48 @@ export default class MyGraph extends Graph {
     return this
   }
 
-  // Separate caches for each measure
-  data: GraphData = {
-    'Adamic Adar': [],
-    'Common Neighbours': [],
-    Jaccard: [],
-    'Co-Citations': [],
-    // 'Closeness': []
-  }
+  // // Separate caches for each measure
+  // data: GraphData = {
+  //   'Adamic Adar': [],
+  //   'Common Neighbours': [],
+  //   Jaccard: [],
+  //   'Co-Citations': [],
+  //   // 'Closeness': []
+  // }
 
-  async initData(): Promise<void> {
-    const n = this.nodes().length
-    Object.keys(this.data).forEach((subtype: Subtype) => {
-      this.data[subtype] = nxnArray(n)
-    })
-  }
+  // async initData(): Promise<void> {
+  //   const n = this.nodes().length
+  //   Object.keys(this.data).forEach((subtype: Subtype) => {
+  //     this.data[subtype] = nxnArray(n)
+  //   })
+  // }
 
-  neighTest() {
-    return this.neighbors('transactionalism')
-  }
+  // neighTest() {
+  //   return this.neighbors('transactionalism')
+  // }
 
   algs: {
-    [subtype in Subtype]: AnalysisAlg<number[]> | AnalysisAlg<CoCitationMap>
+    [subtype in Subtype]: AnalysisAlg<ResultMap> | AnalysisAlg<CoCitationMap>
   } = {
-    Jaccard: async (a: string): Promise<number[]> => {
+    Jaccard: async (a: string): Promise<ResultMap> => {
       const Na = (this.neighbors(a) as string[]) ?? []
-      const results: number[] = this.nodes().map((to) => {
+      const results: ResultMap = {}
+      this.nodes().forEach((to) => {
         const Nb = (this.neighbors(to) as string[]) ?? []
         const Nab = nodeIntersection(Na, Nb)
-
-        return roundNumber(
+        const result = roundNumber(
           Nab.length / (Na.length + Nb.length - Nab.length),
           DECIMALS
         )
+
+        results[to] = result
       })
       return results
     },
 
-    'Adamic Adar': async (a: string): Promise<number[]> => {
+    'Adamic Adar': async (a: string): Promise<ResultMap> => {
       const Na = this.neighbors(a) as string[]
-      const results: number[] = []
+      const results: ResultMap = {}
 
       this.nodes().forEach((to) => {
         const Nb = this.neighbors(to) as string[]
@@ -94,27 +96,24 @@ export default class MyGraph extends Graph {
           const neighbours: number[] = Nab.map(
             (node) => (this.successors(node) as string[]).length
           )
-          results.push(
-            roundNumber(
-              sum(neighbours.map((neighbour) => 1 / Math.log(neighbour)))
-            )
+          results[to] = roundNumber(
+            sum(neighbours.map((neighbour) => 1 / Math.log(neighbour)))
           )
         } else {
-          results.push(Infinity)
+          results[to] = Infinity
         }
       })
       return results
     },
 
-    'Common Neighbours': async (a: string): Promise<number[]> => {
+    'Common Neighbours': async (a: string): Promise<ResultMap> => {
       const Na = this.neighbors(a) as string[]
-      const results: number[] = []
+      const results: ResultMap = {}
 
       this.nodes().forEach((to) => {
         const Nb = (this.neighbors(to) ?? []) as string[]
-        results.push(nodeIntersection(Na, Nb).length)
+        results[to] = nodeIntersection(Na, Nb).length
       })
-      // return new Promise<number[]>(results);
       return results
     },
 
@@ -146,7 +145,9 @@ export default class MyGraph extends Graph {
           if (!linkFile) {
             return false
           }
-          return linkFile.basename === ownBasename && linkFile.extension === 'md'
+          return (
+            linkFile.basename === ownBasename && linkFile.extension === 'md'
+          )
         })
 
         const cachedRead = await this.app.vault.cachedRead(file)
@@ -219,11 +220,14 @@ export default class MyGraph extends Graph {
           cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0
 
         allLinks.forEach((link) => {
-          const linkFile = mdCache.getFirstLinkpathDest(getLinkpath(link.link), file.path)
+          const linkFile = mdCache.getFirstLinkpathDest(
+            getLinkpath(link.link),
+            file.path
+          )
           if (!linkFile || linkFile.extension !== 'md') return
 
           const linkPath = linkFile.basename
-          if (linkPath === ownBasename)  return
+          if (linkPath === ownBasename) return
 
           // Initialize to 0 if not set yet
           if (!(linkPath in preCocitations)) {
@@ -410,27 +414,26 @@ export default class MyGraph extends Graph {
     // },
   }
 
-  async getData(
-    subtype: Subtype,
-    from: string
-  ): Promise<number[] | CoCitationMap> {
-    console.log({ subtype, from })
-    const i = this.node(from)
-    if (i === undefined) {
-      return new Array(this.nodes().length)
-    }
-    // Check for symmetric measures
-    // TODO: Adapt this for co-citations
-    if (subtype !== 'Co-Citations') {
-      if ((this.data[subtype]?.[i] as number[])?.[0] !== undefined) {
-        return this.data[subtype][i]
-      } else {
-        this.data[subtype][i] = await this.algs[subtype](from)
-        return this.data[subtype][i]
-      }
-    }
-    return this.algs[subtype](from)
-  }
+  // async getData(
+  //   subtype: Subtype,
+  //   from: string
+  // ): Promise<ResultMap | CoCitationMap> {
+  //   const i = this.node(from)
+  //   if (i === undefined) {
+  //     return new Array(this.nodes().length)
+  //   }
+  //   // Check for symmetric measures
+  //   // TODO: Adapt this for co-citations
+  //   if (subtype !== 'Co-Citations') {
+  //     if ((this.data[subtype]?.[i] as number[])?.[0] !== undefined) {
+  //       return this.data[subtype][i]
+  //     } else {
+  //       this.data[subtype][i] = await this.algs[subtype](from)
+  //       return this.data[subtype][i]
+  //     }
+  //   }
+  //   return this.algs[subtype](from)
+  // }
 
   updateEdgeLabel(from: string, to: string, key: string, newValue: any) {
     const newLabel = this.edge(from, to)
