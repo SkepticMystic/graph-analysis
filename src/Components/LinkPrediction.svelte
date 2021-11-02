@@ -32,13 +32,12 @@
   $: promisePredictionArr =
     !currNode || !plugin.g
       ? null
-      : plugin.g.getData(subtype, currNode).then((measures) =>
+      : plugin.g.algs[subtype](currNode).then((measures) =>
           plugin.g
             .nodes()
             .map((to) => {
-              const i = plugin.g.node(to)
               return {
-                measure: measures[i],
+                measure: measures[to],
                 linked: linkedQ(resolvedLinks, currNode, to),
                 to,
               }

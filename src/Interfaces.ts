@@ -19,8 +19,12 @@ export type Subtype =
   | 'Co-Citations'
 // | 'Closeness'
 
-export type GraphData = {
-  [matrix in Subtype]: number[][] | CoCitationMap[]
+// export type GraphData = {
+//   [matrix in Subtype]: ResultMap[] | CoCitationMap[]
+// }
+
+export interface ResultMap {
+  [to: string]: number
 }
 
 export interface CoCitation {

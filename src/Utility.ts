@@ -30,6 +30,8 @@ export const dropPath = (path: string) => {
   return path.split('/').last()
 }
 
+export const dropMD = (str: string) => str.split('.md').slice(0, -1).join('')
+
 export const nxnArray = (n: number): undefined[][] =>
   [...Array(n)].map((e) => Array(n))
 
