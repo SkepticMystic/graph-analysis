@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.6](https://github.com/SkepticMystic/graph-analysis/compare/0.2.5...0.2.6) (2021-11-03)
+
+
+### Bug Fixes
+
+* :bug: Check if Jaccard.denom === 0 ([341dff4](https://github.com/SkepticMystic/graph-analysis/commit/341dff4dc666614744754f106aac6a8403b31a2e))
+
 ### [0.2.5](https://github.com/SkepticMystic/graph-analysis/compare/0.2.4...0.2.5) (2021-11-03)
 
 ### [0.2.4](https://github.com/SkepticMystic/graph-analysis/compare/0.2.3...0.2.4) (2021-11-03)
