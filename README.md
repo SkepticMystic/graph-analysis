@@ -151,3 +151,10 @@ Information on co-citations can mostly be found on
 [Wikipedia](https://en.wikipedia.org/wiki/Co-citation). In particular, we
 implement a variation of
 [Co-citatition Proximity Analysis](https://en.wikipedia.org/wiki/Co-citation_Proximity_Analysis).
+
+
+## Buy Us a Coffee
+
+SkepticMystic: [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G454TZF)
+
+Emile: [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Emile)
