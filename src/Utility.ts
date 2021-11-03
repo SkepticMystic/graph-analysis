@@ -199,7 +199,7 @@ export function getPromiseResults(
   subtype: Subtype,
   resolvedLinks: ResolvedLinks
 ) {
-  if (!currNode) return null
+  if (!plugin.g || !currNode) return null
 
   const resultsPromise = plugin.g.algs[subtype](currNode).then((results) =>
     plugin.g

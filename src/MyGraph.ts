@@ -45,26 +45,6 @@ export default class MyGraph extends Graph {
     return this
   }
 
-  // // Separate caches for each measure
-  // data: GraphData = {
-  //   'Adamic Adar': [],
-  //   'Common Neighbours': [],
-  //   Jaccard: [],
-  //   'Co-Citations': [],
-  //   // 'Closeness': []
-  // }
-
-  // async initData(): Promise<void> {
-  //   const n = this.nodes().length
-  //   Object.keys(this.data).forEach((subtype: Subtype) => {
-  //     this.data[subtype] = nxnArray(n)
-  //   })
-  // }
-
-  // neighTest() {
-  //   return this.neighbors('transactionalism')
-  // }
-
   algs: {
     [subtype in Subtype]: AnalysisAlg<ResultMap> | AnalysisAlg<CoCitationMap>
   } = {
