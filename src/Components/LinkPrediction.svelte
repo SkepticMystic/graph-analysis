@@ -11,7 +11,13 @@
   } from 'src/constants'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { debug, dropPath, hoverPreview, openMenu } from 'src/Utility'
+  import {
+    debug,
+    dropPath,
+    getPromiseResults,
+    hoverPreview,
+    openMenu,
+  } from 'src/Utility'
   import { onMount } from 'svelte'
 
   export let app: App
@@ -29,21 +35,12 @@
 
   let { resolvedLinks } = app.metadataCache
 
-  $: promisePredictionArr =
-    !currNode || !plugin.g
-      ? null
-      : plugin.g.algs[subtype](currNode).then((measures) =>
-          plugin.g
-            .nodes()
-            .map((to) => {
-              return {
-                measure: measures[to],
-                linked: linkedQ(resolvedLinks, currNode, to, false),
-                to,
-              }
-            })
-            .sort((a, b) => (a.measure > b.measure ? -1 : 1))
-        )
+  $: promisePredictionArr = getPromiseResults(
+    plugin,
+    currNode,
+    subtype,
+    resolvedLinks
+  )
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()

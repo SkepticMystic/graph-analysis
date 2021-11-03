@@ -1,7 +1,9 @@
 import { App, EditorRange, MarkdownView, Menu, Notice, TFile } from 'obsidian'
+import { linkedQ, ResolvedLinks } from 'obsidian-community-lib'
+import type GraphAnalysisPlugin from 'src/main'
 import type AnalysisView from 'src/AnalysisView'
 import { DECIMALS } from 'src/constants'
-import type { GraphAnalysisSettings } from 'src/Interfaces'
+import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
 
 export const sum = (arr: number[]) => {
   if (arr.length === 0) {
@@ -189,4 +191,29 @@ export function jumpToSelection(app: App, line: number, sentence: string) {
   } else if (view && view.getMode() === 'preview') {
     // Handle preview mode
   }
+}
+
+export function getPromiseResults(
+  plugin: GraphAnalysisPlugin,
+  currNode: string,
+  subtype: Subtype,
+  resolvedLinks: ResolvedLinks
+) {
+  if (!currNode) return null
+
+  const resultsPromise = plugin.g.algs[subtype](currNode).then((results) =>
+    plugin.g
+      .nodes()
+      .map((to) => {
+        const result = results[to] as { measure: number; extra: any }
+        return {
+          measure: result.measure,
+          linked: linkedQ(resolvedLinks, currNode, to, false),
+          to,
+          extra: result.extra,
+        }
+      })
+      .sort((a, b) => (a.measure > b.measure ? -1 : 1))
+  )
+  return resultsPromise
 }
