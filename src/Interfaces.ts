@@ -24,7 +24,7 @@ export type Subtype =
 // }
 
 export interface ResultMap {
-  [to: string]: number
+  [to: string]: { measure: number; extra: any }
 }
 
 export interface CoCitation {

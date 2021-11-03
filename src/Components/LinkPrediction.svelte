@@ -89,7 +89,11 @@
     {#await promisePredictionArr then sortedPredictions}
       {#each sortedPredictions as node}
         {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
-          <tr class={node.linked ? LINKED : NOT_LINKED}>
+          <tr
+            class={node.linked ? LINKED : NOT_LINKED}
+            aria-label={node.extra.join('\n')}
+            aria-label-position="left"
+          >
             <td
               class="internal-link {TD_NODE}"
               on:click={(e) => openOrSwitch(app, node.to, e)}

@@ -74,12 +74,12 @@ export default class MyGraph extends Graph {
       this.nodes().forEach((to) => {
         const Nb = (this.neighbors(to) as string[]) ?? []
         const Nab = intersection(Na, Nb)
-        const result = roundNumber(
+        const measure = roundNumber(
           Nab.length / (Na.length + Nb.length - Nab.length),
           DECIMALS
         )
 
-        results[to] = result
+        results[to] = { measure, extra: Nab }
       })
       return results
     },
@@ -96,11 +96,12 @@ export default class MyGraph extends Graph {
           const neighbours: number[] = Nab.map(
             (node) => (this.successors(node) as string[]).length
           )
-          results[to] = roundNumber(
+          const measure = roundNumber(
             sum(neighbours.map((neighbour) => 1 / Math.log(neighbour)))
           )
+          results[to] = { measure, extra: Nab }
         } else {
-          results[to] = Infinity
+          results[to] = { measure: Infinity, extra: Nab }
         }
       })
       return results
@@ -112,7 +113,9 @@ export default class MyGraph extends Graph {
 
       this.nodes().forEach((to) => {
         const Nb = (this.neighbors(to) ?? []) as string[]
-        results[to] = intersection(Na, Nb).length
+        const Nab = intersection(Na, Nb)
+        const measure = Nab.length
+        results[to] = { measure, extra: Nab }
       })
       return results
     },
