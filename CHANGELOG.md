@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3](https://github.com/SkepticMystic/graph-analysis/compare/0.2.2...0.2.3) (2021-11-03)
+
+
+### Features
+
+* :sparkles: Show common neighbours tooltip on hover ([718b31a](https://github.com/SkepticMystic/graph-analysis/commit/718b31a438017df42cd639d42fba3c8fc9a882d7))
+
+
+### Bug Fixes
+
+* :bug: Check if !plugin.g in getPromiseResults ([d306e8f](https://github.com/SkepticMystic/graph-analysis/commit/d306e8fdbb0791407da8d881c4b8762850907ec6))
+* :bug: Remember current analysis type when refreshing from cmd ([64ff1ae](https://github.com/SkepticMystic/graph-analysis/commit/64ff1ae348fdcf406ea07dd1cd643d9eb16e9c99))
+
 ### [0.2.2](https://github.com/SkepticMystic/graph-analysis/compare/0.2.1...0.2.2) (2021-11-02)
 
 
