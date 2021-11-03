@@ -54,10 +54,9 @@ export default class MyGraph extends Graph {
       this.nodes().forEach((to) => {
         const Nb = (this.neighbors(to) as string[]) ?? []
         const Nab = intersection(Na, Nb)
-        const measure = roundNumber(
-          Nab.length / (Na.length + Nb.length - Nab.length),
-          DECIMALS
-        )
+        const denom = Na.length + Nb.length - Nab.length
+        let measure = Infinity
+        if (denom != 0) measure = roundNumber(Nab.length / denom, DECIMALS)
 
         results[to] = { measure, extra: Nab }
       })
