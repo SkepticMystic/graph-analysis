@@ -88,7 +88,7 @@
         {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
           <tr
             class={node.linked ? LINKED : NOT_LINKED}
-            aria-label={node.extra.join('\n')}
+            aria-label={node.extra.map(dropPath).join('\n')}
             aria-label-position="left"
           >
             <td
