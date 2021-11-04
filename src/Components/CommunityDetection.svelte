@@ -13,8 +13,14 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
-  let its = 30
-  const iterationsArr = Array(100)
+  let currFile = app.workspace.getActiveFile()
+  $: currNode = currFile?.path.split('.md', 1)[0]
+  app.workspace.on('active-leaf-change', () => {
+    currFile = app.workspace.getActiveFile()
+  })
+
+  let its = 5
+  const iterationsArr = Array(15)
     .fill(0)
     .map((i, j) => j + 1)
 
@@ -32,7 +38,9 @@
         }
       )
 
-  onMount(() => {})
+  onMount(() => {
+    currFile = app.workspace.getActiveFile()
+  })
 </script>
 
 <div class="GA-CCs">
@@ -54,7 +62,11 @@
                 on:contextmenu={(e) =>
                   openMenu(e, app, { toCopy: comm.comm.join('\n') })}
               >
-                <span class="top-row">
+                <span
+                  class="top-row {comm.comm.includes(currNode)
+                    ? 'currComm'
+                    : ''}"
+                >
                   <span>
                     {i}
                   </span>
@@ -133,5 +145,9 @@
   }
   span.analysis-measure:hover {
     background-color: var(--interactive-accent);
+  }
+
+  .currComm {
+    color: var(--text-accent);
   }
 </style>
