@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/SkepticMystic/graph-analysis/compare/0.2.7...0.3.0) (2021-11-04)
+
+
+### Features
+
+* **commDetection:** :sparkles: Customisable iterations ([67b33ce](https://github.com/SkepticMystic/graph-analysis/commit/67b33ce0b01c628d255adb8799a7013b5baf6e12))
+* **commDetection:** :sparkles: Label Propagation Analysis! ([cd14f11](https://github.com/SkepticMystic/graph-analysis/commit/cd14f11efbca13b97d7402a8cf5808cecc8adae7))
+* Improved performance of label propagation ([fcfaebf](https://github.com/SkepticMystic/graph-analysis/commit/fcfaebfab16edc852abc0197299c53b0f738ab65))
+* More iterations allowed for label propagation ([090b9ab](https://github.com/SkepticMystic/graph-analysis/commit/090b9abe082573a42625862fda35a9ab5e5529f2))
+
+
+### Bug Fixes
+
+* **commDetection:** :bug: A node shouldn't update all it's neighbours in one go ([c9fe8d9](https://github.com/SkepticMystic/graph-analysis/commit/c9fe8d9cddb340a4b256a611543665f8843e6a01))
+
 ### [0.2.7](https://github.com/SkepticMystic/graph-analysis/compare/0.2.6...0.2.7) (2021-11-04)
 
 
