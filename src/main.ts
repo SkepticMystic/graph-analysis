@@ -51,6 +51,16 @@ export default class GraphAnalysisPlugin extends Plugin {
       },
     })
 
+    this.addCommand({
+      id: 'label-prop',
+      name: 'Label Propagation',
+      callback: async () => {
+        const currNode = this.app.workspace.getActiveFile().basename
+        const comms = await this.g.algs['Label Propagation'](currNode)
+        console.log(comms)
+      },
+    })
+
     this.addSettingTab(new SampleSettingTab(this.app, this))
 
     this.registerView(

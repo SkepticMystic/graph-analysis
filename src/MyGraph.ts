@@ -8,11 +8,12 @@ import type {
   AnalysisAlg,
   CoCitation,
   CoCitationMap,
+  Communities,
   ResolvedLinks,
   ResultMap,
   Subtype,
 } from 'src/Interfaces'
-import { dropMD, roundNumber, sum } from 'src/Utility'
+import { dropMD, getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
 
 export default class MyGraph extends Graph {
   resolvedLinks: ResolvedLinks
@@ -46,7 +47,7 @@ export default class MyGraph extends Graph {
   }
 
   algs: {
-    [subtype in Subtype]: AnalysisAlg<ResultMap> | AnalysisAlg<CoCitationMap>
+    [subtype in Subtype]: AnalysisAlg<ResultMap | CoCitationMap | Communities>
   } = {
     Jaccard: async (a: string): Promise<ResultMap> => {
       const Na = (this.neighbors(a) as string[]) ?? []
@@ -372,6 +373,43 @@ export default class MyGraph extends Graph {
         )
       }
       return results
+    },
+
+    'Label Propagation': async (a: string): Promise<Communities> => {
+      console.log('running')
+      const labeledNodes: { [node: string]: number } = {}
+      this.nodes().forEach((node, i) => {
+        labeledNodes[node] = i
+      })
+
+      // for (let i = 0; i < 10; i++) {
+      this.nodes().forEach((node) => {
+        const neighbours = this.neighbors(node) as string[]
+        console.log({ neighbours })
+        if (neighbours.length) {
+          const neighbourLabels = neighbours.map(
+            (neighbour) => labeledNodes[neighbour]
+          )
+          const counts = getCounts(neighbourLabels)
+          const maxKey = getMaxKey(counts)
+
+          neighbours.forEach(
+            (neighbour) => (labeledNodes[neighbour] = Number.parseInt(maxKey))
+          )
+        }
+      })
+      // }
+      const communities: Communities = {}
+      Object.entries(labeledNodes).forEach((labeledNode: [string, number]) => {
+        const [node, label] = labeledNode
+        if (communities[label] === undefined) {
+          communities[label] = [node]
+        } else {
+          communities[label].push(node)
+        }
+      })
+      console.log('ended')
+      return communities
     },
 
     // 'Closeness': (a: string) => {

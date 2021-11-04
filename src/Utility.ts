@@ -217,3 +217,15 @@ export function getPromiseResults(
   )
   return resultsPromise
 }
+
+export function getCounts(arr: number[]) {
+  const counts: { [item: string]: number } = {}
+  for (const num of arr) {
+    counts[num] = counts[num] ? counts[num] + 1 : 1
+  }
+  return counts
+}
+
+export function getMaxKey(obj: Record<string, number>) {
+  return Object.keys(obj).reduce((a, b) => (obj[a] > obj[b] ? a : b))
+}

@@ -10,19 +10,23 @@ export interface ResolvedLinks {
 
 export type Analyses =
   // "Centrality" |
-  'Similarity' | 'Link Prediction' | 'Co-Citations'
+  'Similarity' | 'Link Prediction' | 'Co-Citations' | 'Community Detection'
 
 export type Subtype =
   | 'Adamic Adar'
   | 'Common Neighbours'
   | 'Jaccard'
   | 'Co-Citations'
+  | 'Label Propagation'
 // | 'Closeness'
 
 // export type GraphData = {
 //   [matrix in Subtype]: ResultMap[] | CoCitationMap[]
 // }
 
+export interface Communities {
+  [group: string]: string[]
+}
 export interface ResultMap {
   [to: string]: { measure: number; extra: any }
 }
