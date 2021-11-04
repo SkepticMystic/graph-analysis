@@ -13,7 +13,6 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
-
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path.split('.md', 1)[0]
   app.workspace.on('active-leaf-change', () => {
@@ -55,7 +54,7 @@
   </div>
   {#if promiseSortedComms}
     {#await promiseSortedComms then sortedComms}
-      {#each sortedComms as comm, i}
+      {#each sortedComms as comm}
         {#if comm.comm.length > 1}
           <div class="GA-CC">
             <details>
@@ -69,7 +68,7 @@
                     : ''}"
                 >
                   <span>
-                    {i}
+                    {comm.label}
                   </span>
                   <span class={TD_MEASURE}>{comm.comm.length}</span>
                 </span>

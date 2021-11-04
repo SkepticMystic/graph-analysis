@@ -379,13 +379,13 @@ export default class MyGraph extends Graph {
       a: string,
       options: { iterations: number }
     ): Promise<Communities> => {
-      let labeledNodes: { [node: string]: number } = {}
+      let labeledNodes: { [node: string]: string } = {}
       this.nodes().forEach((node, i) => {
-        labeledNodes[node] = i
+        labeledNodes[node] = node
       })
 
       for (let i = 0; i < options.iterations; i++) {
-        const newLabeledNodes: {[node: string]: number} = {}
+        const newLabeledNodes: { [node: string]: string } = {}
         this.nodes().forEach((node) => {
           const neighbours = this.neighbors(node) as string[]
 
@@ -397,14 +397,14 @@ export default class MyGraph extends Graph {
             const maxKey = getMaxKey(counts)
             // console.log({neighbours,neighbourLabels, counts, maxKey})
 
-            newLabeledNodes[node] = Number.parseInt(maxKey)
+            newLabeledNodes[node] = maxKey
           }
         })
         labeledNodes = newLabeledNodes
       }
 
       const communities: Communities = {}
-      Object.entries(labeledNodes).forEach((labeledNode: [string, number]) => {
+      Object.entries(labeledNodes).forEach((labeledNode: [string, string]) => {
         const [node, label] = labeledNode
         if (communities[label] === undefined) {
           communities[label] = [node]

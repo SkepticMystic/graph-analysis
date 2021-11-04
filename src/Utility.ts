@@ -237,7 +237,7 @@ export function getPromiseResults(
   return resultsPromise
 }
 
-export function getCounts(arr: number[]) {
+export function getCounts(arr: any[]) {
   const counts: { [item: string]: number } = {}
   for (const num of arr) {
     counts[num] = counts[num] ? counts[num] + 1 : 1
