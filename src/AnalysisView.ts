@@ -9,7 +9,7 @@ import Similarity from './Components/Similarity.svelte'
 export default class AnalysisView extends ItemView {
   private plugin: GraphAnalysisPlugin
   analysisSelector: HTMLSelectElement
-  // private view: Analysis;
+  private component: CoCitations | LinkPrediction | Similarity
 
   constructor(leaf: WorkspaceLeaf, plugin: GraphAnalysisPlugin) {
     super(leaf)
@@ -63,6 +63,7 @@ export default class AnalysisView extends ItemView {
       }
     )
 
+    this.component?.$destroy()
     const componentDiv = contentEl.createDiv()
 
     const drawComponent = (type: Analyses, componentDiv: HTMLDivElement) => {
@@ -86,13 +87,13 @@ export default class AnalysisView extends ItemView {
         //     new Centrality(componentInfo)
         //     break
         case 'Co-Citations':
-          new CoCitations(componentInfo)
+          this.component = new CoCitations(componentInfo)
           break
         case 'Link Prediction':
-          new LinkPrediction(componentInfo)
+          this.component = new LinkPrediction(componentInfo)
           break
         case 'Similarity':
-          new Similarity(componentInfo)
+          this.component = new Similarity(componentInfo)
           break
       }
     }
