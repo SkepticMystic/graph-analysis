@@ -21,7 +21,7 @@
   })
 
   let its = 20
-  const iterationsArr = Array(15)
+  const iterationsArr = Array(50)
     .fill(0)
     .map((i, j) => j + 1)
 
