@@ -12,12 +12,13 @@ export const DECIMALS = 4
 
 export const VIEW_TYPE_GRAPH_ANALYSIS = 'graph-analysis'
 
-export const ANALYSIS_TYPES: Analyses[] = [
+export const ANALYSIS_TYPES = [
   // 'Centrality',
   'Link Prediction',
   'Similarity',
   'Co-Citations',
-]
+  'Community Detection',
+] as const
 
 export const LINKED = 'analysis-linked'
 export const NOT_LINKED = 'analysis-not-linked'

@@ -5,6 +5,7 @@ import type GraphAnalysisPlugin from 'src/main'
 import CoCitations from './Components/CoCitations.svelte'
 import LinkPrediction from './Components/LinkPrediction.svelte'
 import Similarity from './Components/Similarity.svelte'
+import CommunityDetection from './Components/CommunityDetection.svelte'
 
 export default class AnalysisView extends ItemView {
   private plugin: GraphAnalysisPlugin
@@ -94,6 +95,9 @@ export default class AnalysisView extends ItemView {
           break
         case 'Similarity':
           this.component = new Similarity(componentInfo)
+          break
+        case 'Community Detection':
+          this.component = new CommunityDetection(componentInfo)
           break
       }
     }

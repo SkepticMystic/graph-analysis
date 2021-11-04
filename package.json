@@ -37,7 +37,7 @@
     "@tsconfig/svelte": "^2.0.1",
     "graphlib": "^2.1.8",
     "lodash.isequal": "^4.5.0",
-    "obsidian-community-lib": "0.1.1",
+    "obsidian-community-lib": "1.0.1",
     "sbd": "^1.0.19",
     "standard-version": "^9.3.2",
     "svelte": "3.35.0"

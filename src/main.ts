@@ -56,7 +56,9 @@ export default class GraphAnalysisPlugin extends Plugin {
       name: 'Label Propagation',
       callback: async () => {
         const currNode = this.app.workspace.getActiveFile().basename
+        console.time('Label Prop')
         const comms = await this.g.algs['Label Propagation'](currNode)
+        console.timeEnd('Label Prop')
         console.log(comms)
       },
     })

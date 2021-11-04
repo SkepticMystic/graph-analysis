@@ -1,5 +1,5 @@
 import { App, EditorRange, MarkdownView, Menu, Notice, TFile } from 'obsidian'
-import { linkedQ, ResolvedLinks } from 'obsidian-community-lib'
+import { copy, linkedQ, ResolvedLinks } from 'obsidian-community-lib'
 import type GraphAnalysisPlugin from 'src/main'
 import type AnalysisView from 'src/AnalysisView'
 import { DECIMALS } from 'src/constants'
@@ -106,46 +106,65 @@ export const createOrUpdateYaml = async (
   }
 }
 
-export function openMenu(event: MouseEvent, app: App) {
+export function openMenu(
+  event: MouseEvent,
+  app: App,
+  copyObj: { toCopy: string } = undefined
+) {
   const tdEl = event.target
   const menu = new Menu(app)
-  menu.addItem((item) =>
-    item
-      .setTitle('Create Link: Current')
-      .setIcon('documents')
-      .onClick((e) => {
-        try {
-          const currFile = app.workspace.getActiveFile()
+
+  if (copyObj) {
+    menu.addItem((item) =>
+      item
+        .setTitle('Copy community')
+        .setIcon('graph')
+        .onClick(async () => {
+          await copy(copyObj.toCopy)
+        })
+    )
+  } else {
+    menu.addItem((item) =>
+      item
+        .setTitle('Create Link: Current')
+        .setIcon('documents')
+        .onClick((e) => {
+          try {
+            const currFile = app.workspace.getActiveFile()
+            // @ts-ignore
+            const targetStr = tdEl.innerText
+            createOrUpdateYaml('key', targetStr, currFile, app)
+
+            new Notice('Write Successful')
+          } catch (error) {
+            new Notice('Write failed')
+          }
+        })
+    )
+
+    menu.addItem((item) =>
+      item
+        .setTitle('Create Link: Target')
+        .setIcon('documents')
+        .onClick((e) => {
+          const currStr = app.workspace.getActiveFile().basename
+
+          const { target } = event
           // @ts-ignore
-          const targetStr = tdEl.innerText
-          createOrUpdateYaml('key', targetStr, currFile, app)
-
-          new Notice('Write Successful')
-        } catch (error) {
-          new Notice('Write failed')
-        }
-      })
-  )
-
-  menu.addItem((item) =>
-    item
-      .setTitle('Create Link: Target')
-      .setIcon('documents')
-      .onClick((e) => {
-        const currStr = app.workspace.getActiveFile().basename
-
-        const { target } = event
-        // @ts-ignore
-        const targetStr = target.innerText
-        const targetFile = app.metadataCache.getFirstLinkpathDest(targetStr, '')
-        if (!targetFile) {
-          new Notice(`${targetStr} does not exist in your vault yet`)
-          return
-        } else {
-          createOrUpdateYaml('key', currStr, targetFile, app)
-        }
-      })
-  )
+          const targetStr = target.innerText
+          const targetFile = app.metadataCache.getFirstLinkpathDest(
+            targetStr,
+            ''
+          )
+          if (!targetFile) {
+            new Notice(`${targetStr} does not exist in your vault yet`)
+            return
+          } else {
+            createOrUpdateYaml('key', currStr, targetFile, app)
+          }
+        })
+    )
+  }
   menu.showAtMouseEvent(event)
 }
 

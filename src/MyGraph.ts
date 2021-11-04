@@ -382,23 +382,23 @@ export default class MyGraph extends Graph {
         labeledNodes[node] = i
       })
 
-      // for (let i = 0; i < 10; i++) {
-      this.nodes().forEach((node) => {
-        const neighbours = this.neighbors(node) as string[]
-        console.log({ neighbours })
-        if (neighbours.length) {
-          const neighbourLabels = neighbours.map(
-            (neighbour) => labeledNodes[neighbour]
-          )
-          const counts = getCounts(neighbourLabels)
-          const maxKey = getMaxKey(counts)
+      for (let i = 0; i < 30; i++) {
+        this.nodes().forEach((node) => {
+          const neighbours = this.neighbors(node) as string[]
 
-          neighbours.forEach(
-            (neighbour) => (labeledNodes[neighbour] = Number.parseInt(maxKey))
-          )
-        }
-      })
-      // }
+          if (neighbours.length) {
+            const neighbourLabels = neighbours.map(
+              (neighbour) => labeledNodes[neighbour]
+            )
+            const counts = getCounts(neighbourLabels)
+            const maxKey = getMaxKey(counts)
+
+            neighbours.forEach(
+              (neighbour) => (labeledNodes[neighbour] = Number.parseInt(maxKey))
+            )
+          }
+        })
+      }
       const communities: Communities = {}
       Object.entries(labeledNodes).forEach((labeledNode: [string, number]) => {
         const [node, label] = labeledNode

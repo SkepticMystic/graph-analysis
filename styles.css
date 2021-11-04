@@ -12,12 +12,14 @@ table.graph-analysis-table td {
 }
 
 td.internal-link,
+div.internal-link,
 span.internal-link {
   color: var(--text-accent);
   text-decoration-line: none !important;
 }
 
 td.internal-link:hover,
+div.internal-link:hover,
 span.internal-link:hover {
   color: var(--text-accent-hover, var(--text-accent));
 }

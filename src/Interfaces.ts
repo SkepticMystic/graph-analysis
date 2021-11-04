@@ -1,5 +1,6 @@
 import type { Graph } from 'graphlib'
 import type { EditorPosition, EditorSelection } from 'obsidian'
+import type { ANALYSIS_TYPES } from 'src/constants'
 import type MyGraph from 'src/MyGraph'
 
 export interface ResolvedLinks {
@@ -8,9 +9,7 @@ export interface ResolvedLinks {
   }
 }
 
-export type Analyses =
-  // "Centrality" |
-  'Similarity' | 'Link Prediction' | 'Co-Citations' | 'Community Detection'
+export type Analyses = typeof ANALYSIS_TYPES[number]
 
 export type Subtype =
   | 'Adamic Adar'
@@ -19,10 +18,6 @@ export type Subtype =
   | 'Co-Citations'
   | 'Label Propagation'
 // | 'Closeness'
-
-// export type GraphData = {
-//   [matrix in Subtype]: ResultMap[] | CoCitationMap[]
-// }
 
 export interface Communities {
   [group: string]: string[]
