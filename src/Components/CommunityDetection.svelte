@@ -78,7 +78,7 @@
                   <div
                     class="internal-link {TD_NODE}"
                     on:click={async (e) => {
-                      await openOrSwitch(app, member + '.md', e)
+                      await openOrSwitch(app, member, e)
                     }}
                     on:mouseover={(e) => {
                       hoverPreview(e, view, member)

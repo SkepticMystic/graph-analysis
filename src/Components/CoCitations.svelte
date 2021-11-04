@@ -1,13 +1,9 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { linkedQ, openOrSwitch } from 'obsidian-community-lib'
+  import { isLinked, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import type {
-    CoCitationMap,
-    CoCitationRes,
-    GraphAnalysisSettings,
-  } from 'src/Interfaces'
+  import type { CoCitationRes, GraphAnalysisSettings } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
@@ -42,7 +38,7 @@
                 return {
                   measure: cocitation.measure,
                   coCitations: cocitation.coCitations,
-                  linked: linkedQ(resolvedLinks, currNode, to, false),
+                  linked: isLinked(resolvedLinks, currNode, to, false),
                   to,
                 }
               })
@@ -93,7 +89,7 @@
                   <div class="CC-item">
                     <span
                       class="
-                      {linkedQ(resolvedLinks, currNode, coCite.source, false)
+                      {isLinked(resolvedLinks, currNode, coCite.source, false)
                         ? LINKED
                         : NOT_LINKED} internal-link {TD_NODE}"
                       on:click={async (e) => {

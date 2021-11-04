@@ -3,9 +3,9 @@ import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from 'src/constants'
 import type { Analyses } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
 import CoCitations from './Components/CoCitations.svelte'
+import CommunityDetection from './Components/CommunityDetection.svelte'
 import LinkPrediction from './Components/LinkPrediction.svelte'
 import Similarity from './Components/Similarity.svelte'
-import CommunityDetection from './Components/CommunityDetection.svelte'
 
 export default class AnalysisView extends ItemView {
   private plugin: GraphAnalysisPlugin

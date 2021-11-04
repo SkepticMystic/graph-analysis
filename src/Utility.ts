@@ -1,5 +1,5 @@
 import { App, EditorRange, MarkdownView, Menu, Notice, TFile } from 'obsidian'
-import { copy, linkedQ, ResolvedLinks } from 'obsidian-community-lib'
+import { copy, isLinked, ResolvedLinks } from 'obsidian-community-lib'
 import type GraphAnalysisPlugin from 'src/main'
 import type AnalysisView from 'src/AnalysisView'
 import { DECIMALS } from 'src/constants'
@@ -227,7 +227,7 @@ export function getPromiseResults(
         const result = results[to] as { measure: number; extra: any }
         return {
           measure: result.measure,
-          linked: linkedQ(resolvedLinks, currNode, to, false),
+          linked: isLinked(resolvedLinks, currNode, to, false),
           to,
           extra: result.extra,
         }
@@ -247,8 +247,7 @@ export function getCounts(arr: any[]) {
 
 export function getMaxKey(obj: Record<string, number>) {
   // Using random resolving of equality
-  return Object.keys(obj).reduce((a, b) => (
-    obj[a] === obj[b] ?
-      (Math.random() < 0.5 ? a : b) :
-      (obj[a] > obj[b]) ? a : b))
+  return Object.keys(obj).reduce((a, b) =>
+    obj[a] === obj[b] ? (Math.random() < 0.5 ? a : b) : obj[a] > obj[b] ? a : b
+  )
 }
