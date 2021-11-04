@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/SkepticMystic/graph-analysis/compare/0.3.1...0.3.2) (2021-11-04)
+
+
+### Features
+
+* **commDetection:** :sparkles: Label as group name! ([243fd05](https://github.com/SkepticMystic/graph-analysis/commit/243fd05458b01ef311ef0105944b91d5516e7456))
+
 ### [0.3.1](https://github.com/SkepticMystic/graph-analysis/compare/0.3.0...0.3.1) (2021-11-04)
 
 ## [0.3.0](https://github.com/SkepticMystic/graph-analysis/compare/0.2.7...0.3.0) (2021-11-04)
