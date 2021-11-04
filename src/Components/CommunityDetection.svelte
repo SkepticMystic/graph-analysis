@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { App } from 'obsidian'
   import { hoverPreview, openOrSwitch } from 'obsidian-community-lib'
-  import { openMenu } from 'src/Utility'
+  import { dropPath, openMenu } from 'src/Utility'
   import type AnalysisView from 'src/AnalysisView'
   import { TD_MEASURE, TD_NODE } from 'src/constants'
   import type { GraphAnalysisSettings } from 'src/Interfaces'
@@ -68,7 +68,7 @@
                     : ''}"
                 >
                   <span>
-                    {comm.label}
+                    {dropPath(comm.label)}
                   </span>
                   <span class={TD_MEASURE}>{comm.comm.length}</span>
                 </span>
@@ -84,7 +84,7 @@
                       hoverPreview(e, view, member)
                     }}
                   >
-                    {member}
+                    {dropPath(member)}
                   </div>
                 {/each}
               </div>
