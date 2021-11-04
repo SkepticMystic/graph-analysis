@@ -375,14 +375,17 @@ export default class MyGraph extends Graph {
       return results
     },
 
-    'Label Propagation': async (a: string): Promise<Communities> => {
+    'Label Propagation': async (
+      a: string,
+      options: { iterations: number }
+    ): Promise<Communities> => {
       console.log('running')
       const labeledNodes: { [node: string]: number } = {}
       this.nodes().forEach((node, i) => {
         labeledNodes[node] = i
       })
 
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < options.iterations; i++) {
         this.nodes().forEach((node) => {
           const neighbours = this.neighbors(node) as string[]
 

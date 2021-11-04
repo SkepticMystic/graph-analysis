@@ -42,7 +42,7 @@ export interface CoCitationMap {
   [linkName: string]: CoCitationRes
 }
 
-export type AnalysisAlg<T> = (a: string) => Promise<T>
+export type AnalysisAlg<T> = (a: string, options?: {}) => Promise<T>
 
 export interface GraphAnalysisSettings {
   noInfinity: boolean

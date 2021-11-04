@@ -13,22 +13,37 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
+  let its = 30
+  const iterationsArr = Array(100)
+    .fill(0)
+    .map((i, j) => j + 1)
+
   $: promiseSortedComms = !plugin.g
     ? null
-    : plugin.g.algs['Label Propagation']('').then((comms) => {
-        let sortedComms = Object.keys(comms)
-          .map((label) => {
-            let comm = comms[label] as unknown as string[]
-            return { label, comm }
-          })
-          .sort((a, b) => (a.comm.length > b.comm.length ? -1 : 1))
-        return sortedComms
-      })
+    : plugin.g.algs['Label Propagation']('', { iterations: its }).then(
+        (comms) => {
+          let sortedComms = Object.keys(comms)
+            .map((label) => {
+              let comm = comms[label] as unknown as string[]
+              return { label, comm }
+            })
+            .sort((a, b) => (a.comm.length > b.comm.length ? -1 : 1))
+          return sortedComms
+        }
+      )
 
   onMount(() => {})
 </script>
 
 <div class="GA-CCs">
+  <div>
+    <label for="iterations">Iterations: </label>
+    <select class="dropdown GA-DD" bind:value={its} name="iterations">
+      {#each iterationsArr as it}
+        <option>{it}</option>
+      {/each}
+    </select>
+  </div>
   {#if promiseSortedComms}
     {#await promiseSortedComms then sortedComms}
       {#each sortedComms as comm, i}
@@ -51,11 +66,9 @@
                   <div
                     class="internal-link {TD_NODE}"
                     on:click={async (e) => {
-                      console.log({ member })
                       await openOrSwitch(app, member + '.md', e)
                     }}
                     on:mouseover={(e) => {
-                      console.log({ member })
                       hoverPreview(e, view, member)
                     }}
                   >
