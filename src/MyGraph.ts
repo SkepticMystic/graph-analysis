@@ -379,12 +379,13 @@ export default class MyGraph extends Graph {
       a: string,
       options: { iterations: number }
     ): Promise<Communities> => {
-      const labeledNodes: { [node: string]: number } = {}
+      let labeledNodes: { [node: string]: number } = {}
       this.nodes().forEach((node, i) => {
         labeledNodes[node] = i
       })
 
       for (let i = 0; i < options.iterations; i++) {
+        const newLabeledNodes: {[node: string]: number} = {}
         this.nodes().forEach((node) => {
           const neighbours = this.neighbors(node) as string[]
 
@@ -394,10 +395,12 @@ export default class MyGraph extends Graph {
             )
             const counts = getCounts(neighbourLabels)
             const maxKey = getMaxKey(counts)
+            // console.log({neighbours,neighbourLabels, counts, maxKey})
 
-            labeledNodes[node] = Number.parseInt(maxKey)
+            newLabeledNodes[node] = Number.parseInt(maxKey)
           }
         })
+        labeledNodes = newLabeledNodes
       }
 
       const communities: Communities = {}

@@ -246,5 +246,9 @@ export function getCounts(arr: number[]) {
 }
 
 export function getMaxKey(obj: Record<string, number>) {
-  return Object.keys(obj).reduce((a, b) => (obj[a] > obj[b] ? a : b))
+  // Using random resolving of equality
+  return Object.keys(obj).reduce((a, b) => (
+    obj[a] === obj[b] ?
+      (Math.random() < 0.5 ? a : b) :
+      (obj[a] > obj[b]) ? a : b))
 }

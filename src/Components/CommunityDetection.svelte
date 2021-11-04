@@ -13,7 +13,7 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
-  let its = 30
+  let its = 20
   const iterationsArr = Array(100)
     .fill(0)
     .map((i, j) => j + 1)
