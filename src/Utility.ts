@@ -232,7 +232,15 @@ export function getPromiseResults(
           extra: result.extra,
         }
       })
-      .sort((a, b) => (a.measure > b.measure ? -1 : 1))
+      .sort((a, b) => {
+        return a.measure === b.measure
+          ? a.extra.length > b.extra.length
+            ? -1
+            : 1
+          : a.measure > b.measure
+          ? -1
+          : 1
+      })
   )
   return resultsPromise
 }
