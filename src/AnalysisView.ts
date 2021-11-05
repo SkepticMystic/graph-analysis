@@ -70,7 +70,7 @@ export default class AnalysisView extends ItemView {
     this.component?.$destroy()
     const componentDiv = contentEl.createDiv()
 
-    const drawComponent = (type: Analyses, componentDiv: HTMLDivElement) => {
+    const drawComponent = (anl: Analyses, componentDiv: HTMLDivElement) => {
       componentDiv.empty()
 
       const componentInfo = {
@@ -80,9 +80,10 @@ export default class AnalysisView extends ItemView {
           plugin: this.plugin,
           settings,
           view: this,
+          anl,
         },
       }
-      switch (type) {
+      switch (anl) {
         // case 'Centrality':
         //     new Centrality(componentInfo)
         //     break

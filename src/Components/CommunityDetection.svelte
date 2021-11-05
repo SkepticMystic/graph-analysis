@@ -1,24 +1,19 @@
 <script lang="ts">
   import type { App } from 'obsidian'
   import { hoverPreview, isLinked, openOrSwitch } from 'obsidian-community-lib'
-  import { dropPath, openMenu } from 'src/Utility'
   import type AnalysisView from 'src/AnalysisView'
-  import {
-    COMM_DETECTION_TYPES,
-    LINKED,
-    NOT_LINKED,
-    TD_MEASURE,
-    TD_NODE,
-  } from 'src/constants'
-  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
+  import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
+  import type { Analyses, GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
+  import { dropPath, openMenu } from 'src/Utility'
   import { onMount } from 'svelte'
-  import InfoIcon from './InfoIcon.svelte'
+  import SubtypeOptions from './SubtypeOptions.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
+  export let anl: Analyses
 
   let { resolvedLinks } = app.metadataCache
 
@@ -54,20 +49,7 @@
   })
 </script>
 
-<div>
-  <span>
-    <label for="Alg">Alg:</label>
-    <select bind:value={currSubtype} name="Alg" class="dropdown GA-DD">
-      {#each COMM_DETECTION_TYPES as subtype}
-        <option value={subtype.subtype}>{subtype.subtype}</option>
-      {/each}
-    </select>
-    <InfoIcon
-      desc={COMM_DETECTION_TYPES.find((type) => type.subtype === currSubtype)
-        .desc}
-    />
-  </span>
-</div>
+<SubtypeOptions bind:currSubtype {anl} />
 
 <div class="GA-CCs">
   <div>

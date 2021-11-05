@@ -1,16 +1,9 @@
 <script lang="ts">
   import type { App } from 'obsidian'
   import { openOrSwitch } from 'obsidian-community-lib'
-import InfoIcon from './InfoIcon.svelte';
   import type AnalysisView from 'src/AnalysisView'
-  import {
-    LINKED,
-    LINK_PREDICTION_TYPES,
-    NOT_LINKED,
-    TD_MEASURE,
-    TD_NODE,
-  } from 'src/constants'
-  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
+  import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
+  import type { Analyses, GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
@@ -20,11 +13,13 @@ import InfoIcon from './InfoIcon.svelte';
     openMenu,
   } from 'src/Utility'
   import { onMount } from 'svelte'
+  import SubtypeOptions from './SubtypeOptions.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
+  export let anl: Analyses
 
   let currSubtype: Subtype = 'Adamic Adar'
 
@@ -51,36 +46,7 @@ import InfoIcon from './InfoIcon.svelte';
   let { noInfinity, noZero } = settings
 </script>
 
-<div>
-  <label for="Alg">Alg:</label>
-  <select bind:value={currSubtype} name="Alg" class="dropdown GA-DD">
-    {#each LINK_PREDICTION_TYPES as subtype}
-      <option value={subtype.subtype} aria-label={subtype.desc}
-        >{subtype.subtype}</option
-      >
-    {/each}
-  </select>
-  <InfoIcon
-      desc={LINK_PREDICTION_TYPES.find((type) => type.subtype === currSubtype)
-        .desc}
-    />
-
-  <label for="Infinity">∞?</label>
-  <input
-    name="Infinity"
-    type="checkbox"
-    checked={noInfinity}
-    on:change={() => (noInfinity = !noInfinity)}
-  />
-
-  <label for="Zero">0?</label>
-  <input
-    name="Zero"
-    type="checkbox"
-    checked={noZero}
-    on:change={() => (noZero = !noZero)}
-  />
-</div>
+<SubtypeOptions bind:currSubtype bind:noInfinity bind:noZero {anl} />
 
 <table class="graph-analysis-table markdown-preview-view">
   <thead>
