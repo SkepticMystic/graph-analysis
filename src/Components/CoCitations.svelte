@@ -88,10 +88,7 @@
                 {#each node.coCitations as coCite}
                   <div class="CC-item">
                     <span
-                      class="
-                      {isLinked(resolvedLinks, currNode, coCite.source, false)
-                        ? LINKED
-                        : NOT_LINKED} internal-link {TD_NODE}"
+                      class="internal-link {TD_NODE}"
                       on:click={async (e) => {
                         await openOrSwitch(app, coCite.source, e)
                       }}
