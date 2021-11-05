@@ -17,6 +17,7 @@
 
   let { resolvedLinks } = app.metadataCache
 
+  let ascOrder = false
   let currSubtype: Subtype = 'Label Propagation'
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path.split('.md', 1)[0]
@@ -38,7 +39,15 @@
               let comm = comms[label] as unknown as string[]
               return { label, comm }
             })
-            .sort((a, b) => (a.comm.length > b.comm.length ? -1 : 1))
+            .sort((a, b) =>
+              a.comm.length > b.comm.length
+                ? ascOrder
+                  ? 1
+                  : -1
+                : ascOrder
+                ? -1
+                : 1
+            )
           return sortedComms
         }
       )
@@ -49,7 +58,7 @@
   })
 </script>
 
-<SubtypeOptions bind:currSubtype {anl} />
+<SubtypeOptions bind:currSubtype {anl} bind:ascOrder />
 
 <div class="GA-CCs">
   <div>

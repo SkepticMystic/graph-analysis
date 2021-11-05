@@ -216,10 +216,13 @@ export function getPromiseResults(
   plugin: GraphAnalysisPlugin,
   currNode: string,
   subtype: Subtype,
-  resolvedLinks: ResolvedLinks
+  resolvedLinks: ResolvedLinks,
+  ascOrder = false
 ) {
   if (!plugin.g || !currNode) return null
 
+  const greater = ascOrder ? 1 : -1
+  const lesser = ascOrder ? -1 : 1
   const resultsPromise = plugin.g.algs[subtype](currNode).then((results) =>
     plugin.g
       .nodes()
@@ -235,11 +238,11 @@ export function getPromiseResults(
       .sort((a, b) => {
         return a.measure === b.measure
           ? a.extra.length > b.extra.length
-            ? -1
-            : 1
+            ? greater
+            : lesser
           : a.measure > b.measure
-          ? -1
-          : 1
+          ? greater
+          : lesser
       })
   )
   return resultsPromise

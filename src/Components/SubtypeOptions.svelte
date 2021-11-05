@@ -7,6 +7,7 @@
   export let currSubtype: Subtype
   export let noInfinity: boolean = undefined
   export let noZero: boolean = undefined
+  export let ascOrder: boolean = undefined
 </script>
 
 <div>
@@ -36,5 +37,16 @@
       checked={noZero}
       on:change={() => (noZero = !noZero)}
     />
+  {#if ascOrder !== undefined}
+    <span class="GA-Option-span">
+      <label for="order" aria-label="Ascending/Descending Order">📈</label>
+      <input
+        aria-label={ascOrder ? 'Ascending' : 'Descending'}
+        name="order"
+        type="checkbox"
+        checked={ascOrder}
+        on:change={() => (ascOrder = !ascOrder)}
+      />
+    </span>
   {/if}
 </div>

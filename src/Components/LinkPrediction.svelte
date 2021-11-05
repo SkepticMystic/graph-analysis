@@ -23,11 +23,13 @@
     currFile = app.workspace.getActiveFile()
   })
 
+  let ascOrder = false
   $: promiseSortedResults = getPromiseResults(
     plugin,
     currNode,
     currSubtype,
-    resolvedLinks
+    resolvedLinks,
+    ascOrder
   )
 
   onMount(() => {
@@ -38,7 +40,13 @@
   let { noInfinity, noZero } = settings
 </script>
 
-<SubtypeOptions bind:currSubtype bind:noInfinity bind:noZero {anl} />
+<SubtypeOptions
+  bind:currSubtype
+  bind:noInfinity
+  bind:noZero
+  {anl}
+  bind:ascOrder
+/>
 
 <ResultsMapTable
   {app}
