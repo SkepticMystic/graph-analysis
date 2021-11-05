@@ -1,4 +1,8 @@
-import type { GraphAnalysisSettings, SubtypeDesc } from 'src/Interfaces'
+import type {
+  Analyses,
+  GraphAnalysisSettings,
+  SubtypeDesc,
+} from 'src/Interfaces'
 
 export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
   noInfinity: true,
@@ -29,27 +33,31 @@ export const TD_NODE = 'analysis-node'
 export const COCITES_DESC =
   'So which of your notes are referenced together most often.'
 
-export const CENTRALITY_TYPES: SubtypeDesc = [
-  { subtype: 'Closeness', desc: '<No description given yet>' },
-]
-
-export const LINK_PREDICTION_TYPES: SubtypeDesc = [
-  { subtype: 'Adamic Adar', desc: '<No description given yet>' },
-  {
-    subtype: 'Common Neighbours',
-    desc: 'Tells you how many notes are linked to the current (active) note, and the note in the table.\nHover over a cell in the table to see a list of common neighbours',
-  },
-]
-
-export const SIMILARITY_TYPES: SubtypeDesc = [
-  { subtype: 'Jaccard', desc: '<No description given yet>' },
-]
-export const COMM_DETECTION_TYPES: SubtypeDesc = [
-  {
-    subtype: 'Label Propagation',
-    desc: "Start by giving each node a unique label (its own name). Then, look at each node's neighbours, and change it's label to the most common among it's neighbours. Repeat this process `iterations` number of times. Show the nodes grouped by the last label they had.\n\n'🔗' means that this note is linked to the group name.",
-  },
-]
+export const ANALYSIS_TYPES: {
+  [anl in Analyses]: SubtypeDesc[]
+} = {
+  'Link Prediction': [
+    { subtype: 'Adamic Adar', desc: '<No description given yet>' },
+    {
+      subtype: 'Common Neighbours',
+      desc: 'Tells you how many notes are linked to the current (active) note, and the note in the table.\nHover over a cell in the table to see a list of common neighbours',
+    },
+  ],
+  Similarity: [
+    { subtype: 'Jaccard', desc: '<No description given yet>' },
+    { subtype: 'Overlap', desc: '<No description given yet>' },
+  ],
+  'Co-Citations': [],
+  'Community Detection': [
+    {
+      subtype: 'Label Propagation',
+      desc: "Start by giving each node a unique label (its own name). Then, look at each node's neighbours, and change it's label to the most common among it's neighbours. Repeat this process `iterations` number of times. Show the nodes grouped by the last label they had.\n\n'🔗' means that this note is linked to the group name.",
+    },
+  ],
+  // 'Centrality': [
+  //   { subtype: 'Closeness', desc: '<No description given yet>' },
+  // ]
+}
 
 export const iconSVG = `<path fill="currentColor" stroke="currentColor" d="M88.8,67.5c-3,0-5.7,1.2-7.7,3.1l-12.2-7c0.7-1.9,1.2-3.9,1.2-6.1C70,47.8,62.2,40,52.5,40c-1.3,0-2.6,0.2-3.8,0.5l-5-10.8
 c2.3-2.1,3.8-5,3.8-8.4c0-6.2-5-11.3-11.3-11.3S25,15,25,21.3s5,11.3,11.3,11.3c0.1,0,0.3,0,0.4,0l5.2,11.2
