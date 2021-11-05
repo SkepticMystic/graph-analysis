@@ -71,7 +71,8 @@ export default class MyGraph extends Graph {
         const Nab = intersection(Na, Nb)
         let measure =
           Na.length !== 0 && Nb.length !== 0
-            ? roundNumber(Nab.length / Math.min(Na.length, Nb.length))
+            ? // The square weights the final result by the number of nodes in the overlap
+              roundNumber(Nab.length ** 2 / Math.min(Na.length, Nb.length))
             : Infinity
 
         results[to] = { measure, extra: Nab }
