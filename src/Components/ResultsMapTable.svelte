@@ -55,3 +55,18 @@
     {/await}
   {/if}
 </table>
+
+<style>
+  table.graph-analysis-table {
+    border-collapse: collapse;
+  }
+  table.graph-analysis-table,
+  table.graph-analysis-table tr,
+  table.graph-analysis-table td {
+    border: 1px solid var(--background-modifier-border);
+  }
+
+  table.graph-analysis-table td {
+    padding: 2px;
+  }
+</style>

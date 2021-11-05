@@ -22,31 +22,37 @@
   />
 
   {#if noInfinity !== undefined && noZero !== undefined}
-    <label for="Infinity">∞</label>
+    <!-- <label for="Infinity">∞</label>
     <input
       name="Infinity"
       type="checkbox"
       checked={noInfinity}
       on:change={() => (noInfinity = !noInfinity)}
-    />
+    /> -->
 
-    <label for="Zero">0</label>
-    <input
-      name="Zero"
-      type="checkbox"
-      checked={noZero}
-      on:change={() => (noZero = !noZero)}
-    />
+    <span
+      class="GA-Option-span"
+      aria-label={noZero ? 'Show Zeros' : 'Hide Zeros '}
+      on:click={() => (noZero = !noZero)}
+    >
+      {noZero ? '∅' : '0'}
+    </span>
+  {/if}
   {#if ascOrder !== undefined}
-    <span class="GA-Option-span">
-      <label for="order" aria-label="Ascending/Descending Order">📈</label>
-      <input
-        aria-label={ascOrder ? 'Ascending' : 'Descending'}
-        name="order"
-        type="checkbox"
-        checked={ascOrder}
-        on:change={() => (ascOrder = !ascOrder)}
-      />
+    <span
+      class="GA-Option-span"
+      aria-label={ascOrder ? 'ascending' : 'descending '}
+      on:click={() => (ascOrder = !ascOrder)}
+    >
+      {ascOrder ? '📈' : '📉'}
     </span>
   {/if}
 </div>
+
+<style>
+  .GA-Option-span {
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 5px;
+    padding: 2px;
+  }
+</style>
