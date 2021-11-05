@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/SkepticMystic/graph-analysis/compare/0.3.4...0.4.0) (2021-11-05)
+
+
+### Features
+
+* :sparkles: Break ties by Nab.length ([edd0db2](https://github.com/SkepticMystic/graph-analysis/commit/edd0db22d70d4964805c28d4e2c0876a40d5baaa))
+* :sparkles: Overlap similarity ([5de7fc6](https://github.com/SkepticMystic/graph-analysis/commit/5de7fc6049145faac426e3d144ffdbdb00ad649e))
+* :sparkles: Sort results ([2ba706a](https://github.com/SkepticMystic/graph-analysis/commit/2ba706a8a1bb63f5bc486e67b6336f5ac41632a5))
+
 ### [0.3.4](https://github.com/SkepticMystic/graph-analysis/compare/0.3.3...0.3.4) (2021-11-05)
 
 
