@@ -9,9 +9,9 @@ export interface ResolvedLinks {
 }
 
 export type SubtypeDesc = {
-  subtype: string
+  subtype: Subtype
   desc: string
-}[]
+}
 
 export type Analyses =
   | 'Link Prediction'
@@ -25,6 +25,7 @@ export type Subtype =
   | 'Jaccard'
   | 'Co-Citations'
   | 'Label Propagation'
+  | 'Overlap'
 // | 'Closeness'
 
 export interface Communities {

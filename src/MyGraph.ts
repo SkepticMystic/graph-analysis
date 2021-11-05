@@ -56,8 +56,23 @@ export default class MyGraph extends Graph {
         const Nb = (this.neighbors(to) as string[]) ?? []
         const Nab = intersection(Na, Nb)
         const denom = Na.length + Nb.length - Nab.length
-        let measure = Infinity
-        if (denom != 0) measure = roundNumber(Nab.length / denom, DECIMALS)
+        let measure = denom !== 0 ? roundNumber(Nab.length / denom) : Infinity
+
+        results[to] = { measure, extra: Nab }
+      })
+      return results
+    },
+
+    Overlap: async (a: string): Promise<ResultMap> => {
+      const Na = (this.neighbors(a) as string[]) ?? []
+      const results: ResultMap = {}
+      this.nodes().forEach((to) => {
+        const Nb = (this.neighbors(to) as string[]) ?? []
+        const Nab = intersection(Na, Nb)
+        let measure =
+          Na.length !== 0 && Nb.length !== 0
+            ? roundNumber(Nab.length / Math.min(Na.length, Nb.length))
+            : Infinity
 
         results[to] = { measure, extra: Nab }
       })
