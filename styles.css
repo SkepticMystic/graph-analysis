@@ -25,12 +25,20 @@ span.internal-link:hover {
 }
 
 tr.analysis-linked td:first-child::before,
-span.analysis-linked::before {
+span.analysis-linked::before,
+div.analysis-linked::before {
   content: '🔗 ';
 }
 tr.analysis-not-linked,
 span.analysis-not-linked {
   /* background-color: yellow; */
+}
+
+.GA-Global {
+  color: red;
+}
+.GA-Global::before {
+  content: '🌍';
 }
 
 td.analysis-measure {

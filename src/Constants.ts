@@ -12,12 +12,12 @@ export const DECIMALS = 4
 
 export const VIEW_TYPE_GRAPH_ANALYSIS = 'graph-analysis'
 
-export const ANALYSIS_TYPES = [
+export const ANALYSES = [
   // 'Centrality',
-  'Link Prediction',
-  'Similarity',
-  'Co-Citations',
-  'Community Detection',
+  { anl: 'Link Prediction', global: false },
+  { anl: 'Similarity', global: false },
+  { anl: 'Co-Citations', global: false },
+  { anl: 'Community Detection', global: true },
 ] as const
 
 export const LINKED = 'analysis-linked'
@@ -47,7 +47,7 @@ export const SIMILARITY_TYPES: SubtypeDesc = [
 export const COMM_DETECTION_TYPES: SubtypeDesc = [
   {
     subtype: 'Label Propagation',
-    desc: "Start by giving each node a unique label (its own name). Then, look at each node's neighbours, and change it's label to the most common among it's neighbours. Repeat this process `iterations` number of times. Show the nodes grouped by the last label they had.",
+    desc: "Start by giving each node a unique label (its own name). Then, look at each node's neighbours, and change it's label to the most common among it's neighbours. Repeat this process `iterations` number of times. Show the nodes grouped by the last label they had.\n\n'🔗' means that this note is linked to the group name.",
   },
 ]
 

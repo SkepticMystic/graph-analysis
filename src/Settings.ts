@@ -1,5 +1,5 @@
 import { App, PluginSettingTab, Setting } from 'obsidian'
-import { ANALYSIS_TYPES } from 'src/constants'
+import { ANALYSES } from 'src/constants'
 import type { Analyses } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
 
@@ -26,8 +26,8 @@ export class SampleSettingTab extends PluginSettingTab {
       .addDropdown((dd) => {
         dd.setValue(settings.defaultAnalysisType)
         const dict = {}
-        ANALYSIS_TYPES.forEach((type) => {
-          dict[type] = type
+        ANALYSES.forEach((type) => {
+          dict[type.anl] = type.anl
         })
         dd.addOptions(dict).onChange(async (option) => {
           settings.defaultAnalysisType = option as Analyses

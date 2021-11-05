@@ -1,9 +1,15 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { hoverPreview, openOrSwitch } from 'obsidian-community-lib'
+  import { hoverPreview, isLinked, openOrSwitch } from 'obsidian-community-lib'
   import { dropPath, openMenu } from 'src/Utility'
   import type AnalysisView from 'src/AnalysisView'
-  import { COMM_DETECTION_TYPES, TD_MEASURE, TD_NODE } from 'src/constants'
+  import {
+    COMM_DETECTION_TYPES,
+    LINKED,
+    NOT_LINKED,
+    TD_MEASURE,
+    TD_NODE,
+  } from 'src/constants'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import { onMount } from 'svelte'
@@ -13,6 +19,8 @@
   export let plugin: GraphAnalysisPlugin
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
+
+  let { resolvedLinks } = app.metadataCache
 
   let currSubtype: Subtype = 'Label Propagation'
   let currFile = app.workspace.getActiveFile()
@@ -94,7 +102,14 @@
               <div class="GA-details">
                 {#each comm.comm as member}
                   <div
-                    class="internal-link {TD_NODE}"
+                    class="internal-link {TD_NODE} {isLinked(
+                      resolvedLinks,
+                      comm.label,
+                      member,
+                      false
+                    )
+                      ? LINKED
+                      : NOT_LINKED}"
                     on:click={async (e) => {
                       await openOrSwitch(app, member, e)
                     }}

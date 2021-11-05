@@ -1,5 +1,5 @@
 import { ItemView, WorkspaceLeaf } from 'obsidian'
-import { ANALYSIS_TYPES, VIEW_TYPE_GRAPH_ANALYSIS } from 'src/constants'
+import { ANALYSES, VIEW_TYPE_GRAPH_ANALYSIS } from 'src/constants'
 import type { Analyses } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
 import CoCitations from './Components/CoCitations.svelte'
@@ -48,10 +48,13 @@ export default class AnalysisView extends ItemView {
 
     const settingsDiv = contentEl.createDiv({ text: 'Type: ' })
     analysisSelector = settingsDiv.createEl('select', {
-      cls: 'dropdown GA-DD',
+      cls: `dropdown GA-DD`,
     })
-    ANALYSIS_TYPES.forEach((type) => {
-      analysisSelector.createEl('option', { value: type, text: type })
+    ANALYSES.forEach((type) => {
+      analysisSelector.createEl('option', {
+        value: type.anl,
+        text: type.anl,
+      })
     })
     const refreshGraphButton = settingsDiv.createEl(
       'button',
@@ -68,10 +71,6 @@ export default class AnalysisView extends ItemView {
     const componentDiv = contentEl.createDiv()
 
     const drawComponent = (type: Analyses, componentDiv: HTMLDivElement) => {
-      if (!ANALYSIS_TYPES.includes(type)) {
-        throw new Error(`${type} is not one of the analysis types`)
-      }
-
       componentDiv.empty()
 
       const componentInfo = {
