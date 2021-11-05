@@ -52,3 +52,18 @@ export function clusteringCoefficient(g: MyGraph, u: string) {
 
   return (2 * triangles) / (deg * (deg - 1))
 }
+
+// find all triangles in the graph
+function findTriangles(g: MyGraph) {
+  const triangles = []
+  g.nodes().forEach((u) => {
+    g.neighbors(u).forEach((v) => {
+      g.neighbors(v).forEach((w) => {
+        if (g.hasEdge(u, v) && g.hasEdge(u, w) && g.hasEdge(v, w)) {
+          triangles.push([u, v, w])
+        }
+      })
+    })
+  })
+  return triangles
+}
