@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.4](https://github.com/SkepticMystic/graph-analysis/compare/0.3.3...0.3.4) (2021-11-05)
+
+
+### Features
+
+* :sparkles: Add info icons to some algs ([6bdb6c3](https://github.com/SkepticMystic/graph-analysis/commit/6bdb6c3cbc82aed3f134e1f6e0524f6c325d3097))
+* :sparkles: triangleCount + clusteringCoefficient ([b3e7bf1](https://github.com/SkepticMystic/graph-analysis/commit/b3e7bf1a4f60fc54be5f9d37a6aa1e49c0af915c))
+* **commDetection:** :sparkles: Show 🔗 if note is linked to group label ([a7b27d4](https://github.com/SkepticMystic/graph-analysis/commit/a7b27d4d3f4c3a9e3bcd2e6fe8f1d48f159b3043))
+
+
+### Bug Fixes
+
+* **coCites:** :bug: Don't show isLinked of coCite.source (it will always be linked) ([4935a6d](https://github.com/SkepticMystic/graph-analysis/commit/4935a6d8049f1e0e940ccc7a2d84c3a17933171e))
+
 ### [0.3.3](https://github.com/SkepticMystic/graph-analysis/compare/0.3.2...0.3.3) (2021-11-04)
 
 ### [0.3.2](https://github.com/SkepticMystic/graph-analysis/compare/0.3.1...0.3.2) (2021-11-04)
