@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
         "coCites",
-        "commDetection"
+        "commDetection",
+        "similarity"
     ]
 }
