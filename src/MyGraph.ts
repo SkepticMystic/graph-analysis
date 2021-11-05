@@ -391,18 +391,20 @@ export default class MyGraph extends Graph {
 
           if (neighbours.length) {
             const neighbourLabels = neighbours.map(
+              // Take the label from the not-yet-updated-labels
               (neighbour) => labeledNodes[neighbour]
             )
             const counts = getCounts(neighbourLabels)
             const maxKey = getMaxKey(counts)
-            // console.log({neighbours,neighbourLabels, counts, maxKey})
 
             newLabeledNodes[node] = maxKey
           }
         })
+        // Update the labels
         labeledNodes = newLabeledNodes
       }
 
+      // Create the communities
       const communities: Communities = {}
       Object.entries(labeledNodes).forEach((labeledNode: [string, string]) => {
         const [node, label] = labeledNode

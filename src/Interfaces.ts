@@ -9,6 +9,11 @@ export interface ResolvedLinks {
   }
 }
 
+export type SubtypeDesc = {
+  subtype: string
+  desc: string
+}[]
+
 export type Analyses = typeof ANALYSIS_TYPES[number]
 
 export type Subtype =

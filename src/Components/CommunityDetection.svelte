@@ -3,16 +3,18 @@
   import { hoverPreview, openOrSwitch } from 'obsidian-community-lib'
   import { dropPath, openMenu } from 'src/Utility'
   import type AnalysisView from 'src/AnalysisView'
-  import { TD_MEASURE, TD_NODE } from 'src/constants'
-  import type { GraphAnalysisSettings } from 'src/Interfaces'
+  import { COMM_DETECTION_TYPES, TD_MEASURE, TD_NODE } from 'src/constants'
+  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import { onMount } from 'svelte'
+  import InfoIcon from './InfoIcon.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
+  let currSubtype: Subtype = 'Label Propagation'
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path.split('.md', 1)[0]
   app.workspace.on('active-leaf-change', () => {
@@ -40,8 +42,24 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
+    currSubtype = 'Label Propagation'
   })
 </script>
+
+<div>
+  <span>
+    <label for="Alg">Alg:</label>
+    <select bind:value={currSubtype} name="Alg" class="dropdown GA-DD">
+      {#each COMM_DETECTION_TYPES as subtype}
+        <option value={subtype.subtype}>{subtype.subtype}</option>
+      {/each}
+    </select>
+    <InfoIcon
+      desc={COMM_DETECTION_TYPES.find((type) => type.subtype === currSubtype)
+        .desc}
+    />
+  </span>
+</div>
 
 <div class="GA-CCs">
   <div>
@@ -97,6 +115,12 @@
 </div>
 
 <style>
+  .icon {
+    color: var(--text-normal);
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+  }
   .GA-CCs {
     display: flex;
     flex-direction: column;

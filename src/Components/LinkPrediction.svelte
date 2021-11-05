@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { App } from 'obsidian'
   import { openOrSwitch } from 'obsidian-community-lib'
+import InfoIcon from './InfoIcon.svelte';
   import type AnalysisView from 'src/AnalysisView'
   import {
     LINKED,
@@ -25,7 +26,7 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
-  let subtype: Subtype = 'Adamic Adar'
+  let currSubtype: Subtype = 'Adamic Adar'
 
   $: currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path.split('.md', 1)[0]
@@ -38,7 +39,7 @@
   $: promisePredictionArr = getPromiseResults(
     plugin,
     currNode,
-    subtype,
+    currSubtype,
     resolvedLinks
   )
 
@@ -52,11 +53,17 @@
 
 <div>
   <label for="Alg">Alg:</label>
-  <select bind:value={subtype} name="Alg" class="dropdown GA-DD">
+  <select bind:value={currSubtype} name="Alg" class="dropdown GA-DD">
     {#each LINK_PREDICTION_TYPES as subtype}
-      <option value={subtype.subtype}>{subtype.subtype}</option>
+      <option value={subtype.subtype} aria-label={subtype.desc}
+        >{subtype.subtype}</option
+      >
     {/each}
   </select>
+  <InfoIcon
+      desc={LINK_PREDICTION_TYPES.find((type) => type.subtype === currSubtype)
+        .desc}
+    />
 
   <label for="Infinity">∞?</label>
   <input

@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { App } from 'obsidian'
   import { openOrSwitch } from 'obsidian-community-lib'
+  import InfoIcon from './InfoIcon.svelte'
   import type AnalysisView from 'src/AnalysisView'
   import {
     LINKED,
@@ -25,7 +26,7 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
 
-  let subtype: Subtype = 'Jaccard'
+  let currSubtype: Subtype = 'Jaccard'
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path.split('.md', 1)[0]
   app.workspace.on('active-leaf-change', () => {
@@ -37,13 +38,13 @@
   $: promiseSortedSimilarities = getPromiseResults(
     plugin,
     currNode,
-    subtype,
+    currSubtype,
     resolvedLinks
   )
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    subtype = 'Jaccard'
+    currSubtype = 'Jaccard'
     debug(settings, { promiseSortedSimilarities })
   })
 
@@ -52,11 +53,14 @@
 
 <div>
   <label for="Alg">Alg:</label>
-  <select bind:value={subtype} name="Alg" class="dropdown GA-DD">
+  <select bind:value={currSubtype} name="Alg" class="dropdown GA-DD">
     {#each SIMILARITY_TYPES as subtype}
       <option value={subtype.subtype}>{subtype.subtype}</option>
     {/each}
   </select>
+  <InfoIcon
+    desc={SIMILARITY_TYPES.find((type) => type.subtype === currSubtype).desc}
+  />
 
   <label for="Infinity">∞?</label>
   <input
