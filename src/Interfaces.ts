@@ -60,6 +60,7 @@ export interface GraphAnalysisSettings {
   defaultAnalysisType: Analyses
   debugMode: boolean
   superDebugMode: boolean
+  exclusionRegex: string
 }
 
 export type AnalysisForAll = (

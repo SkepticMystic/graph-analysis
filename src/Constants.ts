@@ -10,6 +10,7 @@ export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
   defaultAnalysisType: 'Co-Citations',
   debugMode: false,
   superDebugMode: false,
+  exclusionRegex: '',
 }
 
 export const DECIMALS = 4

@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from 'obsidian'
+import { App, Notice, PluginSettingTab, Setting } from 'obsidian'
 import { ANALYSES } from 'src/constants'
 import type { Analyses } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
@@ -54,6 +54,29 @@ export class SampleSettingTab extends PluginSettingTab {
           await plugin.saveSettings()
         })
       )
+
+    new Setting(containerEl)
+      .setName('Exclusion Regex')
+      .setDesc(
+        "If a file name matches this regex, it won't be added to the graph.\nDefault is `(?:)` or `''` (empty string). Either option will allow all notes through the filter (regular Graph Anlaysis behaviour)."
+      )
+      .addText((textComp) => {
+        textComp.setValue(settings.exclusionRegex)
+        textComp.inputEl.onblur = async () => {
+          const value = textComp.getValue()
+          // Test if valid regex and save
+          try {
+            new RegExp(value)
+            settings.exclusionRegex = value
+            await plugin.saveSettings()
+          } catch (e) {
+            // Invalid regex
+            new Notice(
+              `${value} is not a valid regular expression. Make sure you have closed all brackets, and escaped any characters where necessary.`
+            )
+          }
+        }
+      })
 
     containerEl.createEl('h3', { text: 'Debugging Options' })
 

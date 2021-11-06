@@ -3,12 +3,13 @@ import type { App, HeadingCache, ReferenceCache } from 'obsidian'
 import { getLinkpath } from 'obsidian'
 import tokenizer from 'sbd'
 import { DECIMALS } from 'src/constants'
-import { intersection } from 'src/GeneralGraphFn'
+import { clusteringCoefficient, intersection } from 'src/GeneralGraphFn'
 import type {
   AnalysisAlg,
   CoCitation,
   CoCitationMap,
   Communities,
+  GraphAnalysisSettings,
   ResolvedLinks,
   ResultMap,
   Subtype,
@@ -18,31 +19,43 @@ import { dropMD, getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
 export default class MyGraph extends Graph {
   resolvedLinks: ResolvedLinks
   app: App
+  settings: GraphAnalysisSettings
 
-  constructor(resolvedLinks: ResolvedLinks, app: App) {
+  constructor(
+    resolvedLinks: ResolvedLinks,
+    app: App,
+    settings: GraphAnalysisSettings
+  ) {
     super()
     this.resolvedLinks = resolvedLinks
     this.app = app
+    this.settings = settings
   }
 
   nodeMapping: { [name: string]: number } = {}
 
   async initGraph(): Promise<MyGraph> {
+    const { exclusionRegex } = this.settings
+    const regex = new RegExp(exclusionRegex, 'i')
     let i = 0
-    for (const source in this.resolvedLinks) {
-      if (source.split('.').last() === 'md') {
-        const sourceNoMD = dropMD(source)
-        this.setNode(sourceNoMD, i)
+    Object.keys(this.resolvedLinks).forEach((source) => {
+      if (exclusionRegex === '' || !regex.test(source)) {
+        if (source.split('.').last() === 'md') {
+          const sourceNoMD = dropMD(source)
+          this.setNode(sourceNoMD, i)
 
-        i++
-        for (const dest in this.resolvedLinks[source]) {
-          if (dest.split('.').last() === 'md') {
-            const destNoMD = dropMD(dest)
-            this.setEdge(sourceNoMD, destNoMD)
+          i++
+          for (const dest in this.resolvedLinks[source]) {
+            if (exclusionRegex === '' || !regex.test(dest)) {
+              if (dest.split('.').last() === 'md') {
+                const destNoMD = dropMD(dest)
+                this.setEdge(sourceNoMD, destNoMD)
+              }
+            }
           }
         }
       }
-    }
+    })
     return this
   }
 
