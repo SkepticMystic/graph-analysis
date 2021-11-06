@@ -22,6 +22,7 @@ Graph Analysis currently has 3 different analysis types:
 1. Similarity
 2. Link Prediction
 3. Co-Citations
+4. Community Detection
 
 Each implement different algorithms with different purposes.
 
@@ -106,6 +107,23 @@ Where:
 Where:
 
 - `N(x)` is the numbers of neighbours of `x`
+
+### Community Detection
+
+These algorithms try to find groups of similar notes.
+
+#### Label Propagation
+
+Start by giving each node a unique label (its own name). Then, look at each node's neighbours, and change it's label to the most common among it's neighbours. 
+Repeat this process `iterations` number of times. 
+
+At the end, show the nodes grouped by the last label they had.
+
+#### Clustering Coefficient
+
+Gives the ratio of the number of _triagnles_ the `u` is a part of, to the number of triangles it possibly _could have_ been a part of:
+
+![image](https://user-images.githubusercontent.com/70717676/140610147-0a05201f-d9c7-4c0c-b423-6bbeeb81253b.png)
 
 ## Utility Classes
 
