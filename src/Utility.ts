@@ -227,17 +227,20 @@ export function getPromiseResults(
     plugin.g
       .nodes()
       .map((to) => {
-        const result = results[to] as { measure: number; extra: any }
+        const { measure, extra } = results[to] as {
+          measure: number
+          extra: any
+        }
         return {
-          measure: result.measure,
+          measure,
           linked: isLinked(resolvedLinks, currNode, to, false),
           to,
-          extra: result.extra,
+          extra,
         }
       })
       .sort((a, b) => {
         return a.measure === b.measure
-          ? a.extra.length > b.extra.length
+          ? a.extra?.length > b.extra?.length
             ? greater
             : lesser
           : a.measure > b.measure

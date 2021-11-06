@@ -10,7 +10,7 @@ import MyGraph from 'src/MyGraph'
 import { SampleSettingTab } from 'src/Settings'
 import { debug } from './Utility'
 import { openView, wait } from 'obsidian-community-lib'
-import { clusteringCoefficient, triangleCount } from 'src/GeneralGraphFn'
+import { clusteringCoefficient, findTrianglesForNode } from 'src/GeneralGraphFn'
 
 export default class GraphAnalysisPlugin extends Plugin {
   settings: GraphAnalysisSettings
@@ -57,7 +57,7 @@ export default class GraphAnalysisPlugin extends Plugin {
       name: 'cluster-coeff',
       callback: async () => {
         const currNode = this.app.workspace.getActiveFile().basename
-        const triangles = triangleCount(this.g, currNode)
+        const triangles = findTrianglesForNode(this.g, currNode)
         const coef = clusteringCoefficient(this.g, currNode)
         console.log({ triangles, coef })
       },

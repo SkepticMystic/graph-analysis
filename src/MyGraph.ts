@@ -433,6 +433,19 @@ export default class MyGraph extends Graph {
       return communities
     },
 
+    'Clustering Coefficient': async (a: string): Promise<ResultMap> => {
+      const results: ResultMap = {}
+
+      this.nodes().forEach((to: string) => {
+        const { coeff, triangles } = clusteringCoefficient(this, to)
+        results[to] = {
+          measure: coeff,
+          extra: triangles.map((group) => group.join(', ')),
+        }
+      })
+      return results
+    },
+
     // 'Closeness': (a: string) => {
     //     const paths = graphlib.alg.dijkstra(this, a);
     //     const results: number[] = []

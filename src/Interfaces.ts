@@ -26,13 +26,14 @@ export type Subtype =
   | 'Co-Citations'
   | 'Label Propagation'
   | 'Overlap'
+  | 'Clustering Coefficient'
 // | 'Closeness'
 
 export interface Communities {
   [group: string]: string[]
 }
 export interface ResultMap {
-  [to: string]: { measure: number; extra: any }
+  [to: string]: { measure: number; extra: string[] }
 }
 
 export interface CoCitation {

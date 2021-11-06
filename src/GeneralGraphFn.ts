@@ -3,7 +3,7 @@ import * as graphlib from 'graphlib'
 import type MyGraph from 'src/MyGraph'
 
 export function intersection(nodes1: string[], nodes2: string[]) {
-  return nodes1.filter((node1) => nodes2.includes(node1)) ?? []
+  return nodes1?.filter((node1) => nodes2.includes(node1)) ?? []
 }
 
 export function eccentricity(g: MyGraph, a: string) {
@@ -15,54 +15,31 @@ export function eccentricity(g: MyGraph, a: string) {
   return sortedPaths
 }
 
-export function triangleCount(g: MyGraph, u: string) {
-  const esWithU = g.edges().filter((edge) => edge.v === u || edge.w === u)
-  function notU(e: Edge) {
-    return e.v === u ? e.w : e.v
-  }
-  const incidentEdges: Edge[] = []
-  esWithU.forEach((eWithUI, i) => {
-    esWithU.forEach((eWithUJ, j) => {
-      if (
-        i !== j &&
-        (g.hasEdge(notU(eWithUI), notU(eWithUJ)) ||
-          g.hasEdge(notU(eWithUJ), notU(eWithUI)))
-      ) {
-        incidentEdges.push(eWithUI)
-      }
-    })
-  })
-
-  const noDups: Edge[] = []
-  incidentEdges.forEach((e) => {
-    if (noDups.find((ee) => ee.v === e.v && ee.w === e.w)) {
-      return
-    } else {
-      noDups.push(e)
-    }
-  })
-  console.log({ incidentEdges, noDups })
-  return noDups.length / 2
-}
-
 export function clusteringCoefficient(g: MyGraph, u: string) {
-  const triangles = triangleCount(g, u)
+  const triangles = findTrianglesForNode(g, u)
   const deg = (g.neighbors(u) as string[]).length
-  if (deg === 0 || deg === 1) return 0
+  if (deg === 0 || deg === 1) return { coeff: 0, triangles }
 
-  return (2 * triangles) / (deg * (deg - 1))
+  const coeff = (2 * triangles.length) / (deg * (deg - 1))
+  return { coeff, triangles }
 }
 
-// find all triangles in the graph
-function findTriangles(g: MyGraph) {
-  const triangles = []
-  g.nodes().forEach((u) => {
-    g.neighbors(u).forEach((v) => {
-      g.neighbors(v).forEach((w) => {
-        if (g.hasEdge(u, v) && g.hasEdge(u, w) && g.hasEdge(v, w)) {
-          triangles.push([u, v, w])
-        }
-      })
+/**
+ * Find all triangles that node u is part of
+ * @param  {MyGraph} g
+ * @param  {string} u
+ * @returns {[string, string][]}
+ */
+export function findTrianglesForNode(
+  g: MyGraph,
+  u: string
+): [string, string][] {
+  const triangles: [string, string][] = []
+  ;(g.neighbors(u) as string[]).forEach((v) => {
+    ;(g.neighbors(v) as string[]).forEach((w) => {
+      if (g.hasEdge(u, v) && g.hasEdge(u, w) && g.hasEdge(v, w)) {
+        triangles.push([v, w])
+      }
     })
   })
   return triangles

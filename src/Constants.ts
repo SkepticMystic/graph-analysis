@@ -53,6 +53,10 @@ export const ANALYSIS_TYPES: {
       subtype: 'Label Propagation',
       desc: "Start by giving each node a unique label (its own name). Then, look at each node's neighbours, and change it's label to the most common among it's neighbours. Repeat this process `iterations` number of times. Show the nodes grouped by the last label they had.\n\n'🔗' means that this note is linked to the group name.",
     },
+    {
+      subtype: 'Clustering Coefficient',
+      desc: 'Gives the ratio of the number of triangles that `u` is a part of, to the number of triangles it possibly could have been a part of.\n\n**Interpretation**: The probability that this nodes _neighbours_ are connected.',
+    },
   ],
   // 'Centrality': [
   //   { subtype: 'Closeness', desc: '<No description given yet>' },

@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { App } from 'obsidian'
   import { hoverPreview, isLinked, openOrSwitch } from 'obsidian-community-lib'
+  import ResultsMapTable from './ResultsMapTable.svelte'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
   import type { Analyses, GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { dropPath, openMenu } from 'src/Utility'
+  import { dropPath, getPromiseResults, openMenu } from 'src/Utility'
   import { onMount } from 'svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
 
@@ -30,95 +31,107 @@
     .fill(0)
     .map((i, j) => j + 1)
 
-  $: promiseSortedComms = !plugin.g
+  $: promiseSortedResults = !plugin.g
     ? null
-    : plugin.g.algs['Label Propagation']('', { iterations: its }).then(
-        (comms) => {
-          let sortedComms = Object.keys(comms)
-            .map((label) => {
-              let comm = comms[label] as unknown as string[]
-              return { label, comm }
-            })
-            .sort((a, b) =>
-              a.comm.length > b.comm.length
-                ? ascOrder
-                  ? 1
-                  : -1
-                : ascOrder
-                ? -1
-                : 1
-            )
-          return sortedComms
-        }
+    : currSubtype === 'Clustering Coefficient'
+    ? getPromiseResults(
+        plugin,
+        currNode,
+        'Clustering Coefficient',
+        resolvedLinks,
+        ascOrder
       )
+    : plugin.g.algs[currSubtype]('', { iterations: its }).then((comms) => {
+        let sortedComms = Object.keys(comms)
+          .map((label) => {
+            let comm = comms[label] as unknown as string[]
+            return { label, comm }
+          })
+          .sort((a, b) =>
+            a.comm.length > b.comm.length
+              ? ascOrder
+                ? 1
+                : -1
+              : ascOrder
+              ? -1
+              : 1
+          )
+        return sortedComms
+      })
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
     currSubtype = 'Label Propagation'
   })
+
+  let { noZero } = settings
 </script>
 
 <SubtypeOptions bind:currSubtype {anl} bind:ascOrder />
 
-<div class="GA-CCs">
-  <div>
-    <label for="iterations">Iterations: </label>
-    <select class="dropdown GA-DD" bind:value={its} name="iterations">
-      {#each iterationsArr as it}
-        <option>{it}</option>
-      {/each}
-    </select>
-  </div>
-  {#if promiseSortedComms}
-    {#await promiseSortedComms then sortedComms}
-      {#each sortedComms as comm}
-        {#if comm.comm.length > 1}
-          <div class="GA-CC">
-            <details>
-              <summary
-                on:contextmenu={(e) =>
-                  openMenu(e, app, { toCopy: comm.comm.join('\n') })}
-              >
-                <span
-                  class="top-row {comm.comm.includes(currNode)
-                    ? 'currComm'
-                    : ''}"
+{#if currSubtype === 'Clustering Coefficient'}
+  <ResultsMapTable {app} {view} {promiseSortedResults} {currNode} bind:noZero />
+{:else if currSubtype === 'Label Propagation'}
+  <div class="GA-CCs">
+    <div>
+      <label for="iterations">Iterations: </label>
+      <select class="dropdown GA-DD" bind:value={its} name="iterations">
+        {#each iterationsArr as it}
+          <option>{it}</option>
+        {/each}
+      </select>
+    </div>
+    {#if promiseSortedResults}
+      {#await promiseSortedResults then sortedComms}
+        {#each sortedComms as comm}
+          {#if comm.comm.length > 1}
+            <div class="GA-CC">
+              <details>
+                <summary
+                  on:contextmenu={(e) =>
+                    openMenu(e, app, { toCopy: comm.comm.join('\n') })}
                 >
-                  <span>
-                    {dropPath(comm.label)}
-                  </span>
-                  <span class={TD_MEASURE}>{comm.comm.length}</span>
-                </span>
-              </summary>
-              <div class="GA-details">
-                {#each comm.comm as member}
-                  <div
-                    class="internal-link {TD_NODE} {isLinked(
-                      resolvedLinks,
-                      comm.label,
-                      member,
-                      false
-                    )
-                      ? LINKED
-                      : NOT_LINKED}"
-                    on:click={async (e) => {
-                      await openOrSwitch(app, member, e)
-                    }}
-                    on:mouseover={(e) => {
-                      hoverPreview(e, view, member)
-                    }}
+                  <span
+                    class="top-row {comm.comm.includes(currNode)
+                      ? 'currComm'
+                      : ''}"
                   >
-                    {dropPath(member)}
-                  </div>
-                {/each}
-              </div>
-            </details>
-          </div>
-        {/if}
-      {/each}
-    {/await}
-  {/if}
-</div>
+                    <span>
+                      {dropPath(comm.label)}
+                    </span>
+                    <span class={TD_MEASURE}>{comm.comm.length}</span>
+                  </span>
+                </summary>
+                <div class="GA-details">
+                  {#each comm.comm as member}
+                    <div
+                      class="internal-link {TD_NODE} {isLinked(
+                        resolvedLinks,
+                        comm.label,
+                        member,
+                        false
+                      )
+                        ? LINKED
+                        : NOT_LINKED}"
+                      on:click={async (e) => {
+                        await openOrSwitch(app, member, e)
+                      }}
+                      on:mouseover={(e) => {
+                        hoverPreview(e, view, member)
+                      }}
+                    >
+                      {dropPath(member)}
+                    </div>
+                  {/each}
+                </div>
+              </details>
+            </div>
+          {/if}
+        {/each}
+      {/await}
+    {/if}
+  </div>
+{/if}
 
 <style>
   .icon {
