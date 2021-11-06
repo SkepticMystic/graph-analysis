@@ -121,7 +121,7 @@ At the end, show the nodes grouped by the last label they had.
 
 #### Clustering Coefficient
 
-Gives the ratio of the number of _triagnles_ the `u` is a part of, to the number of triangles it possibly _could have_ been a part of:
+Gives the ratio of the number of _triangles_ the `u` is a part of, to the number of triangles it possibly _could have_ been a part of:
 
 ![image](https://user-images.githubusercontent.com/70717676/140610147-0a05201f-d9c7-4c0c-b423-6bbeeb81253b.png)
 
