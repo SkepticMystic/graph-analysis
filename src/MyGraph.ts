@@ -1,6 +1,6 @@
 import { Graph } from 'graphlib'
 import type { App, CacheItem, HeadingCache, ReferenceCache, TagCache } from 'obsidian'
-import { getLinkpath } from 'obsidian'
+import { getAllTags, getLinkpath } from 'obsidian'
 import tokenizer from 'sbd'
 import { DECIMALS } from 'src/constants'
 import { clusteringCoefficient, intersection } from 'src/GeneralGraphFn'
@@ -231,6 +231,10 @@ export default class MyGraph extends Graph {
         maxHeadingLevel =
           cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0
 
+        // Intuition of weight: The least specific heading will give the weight 2 + maxHeadingLevel - minHeadingLevel
+        // We want to weight it 1 factor less.
+        const minScore = 1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel)
+
         const coCiteCandidates: CacheItem[] = [...allLinks]
         if (cache.tags && this.settings.coTags) {
           coCiteCandidates.push(...cache.tags);
@@ -374,19 +378,24 @@ export default class MyGraph extends Graph {
 
 
           // The links appear together in the same document, but not under a shared heading
-          // Intuition of weight: The least specific heading will give the weight 2 + maxHeadingLevel - minHeadingLevel
-          // We want to weight it 1 factor less.
-          const score = 1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel)
           preCocitations[linkPath][0] = Math.max(
             preCocitations[linkPath][0],
-            score
+            minScore
           )
           preCocitations[linkPath][1].push({
-            measure: score,
+            measure: minScore,
             sentence: sentence,
             source: pre,
             line: item.position.start.line,
           })
+        })
+
+        getAllTags(cache).forEach(tag => {
+          if (!(tag in preCocitations)) {
+            // Tag defined in YAML. Gets the lowest score (has no particular position)
+            preCocitations[tag] = [minScore,
+              [{measure: minScore, sentence: ['', '', ''], source: pre, line: 0}]]
+          }
         })
 
         // Add the found weights to the results
