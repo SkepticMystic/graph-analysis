@@ -57,7 +57,7 @@ An example why this is useful is given by @HEmile:
 > between Joe Biden and `China`, I can just look in the co-citations panel and
 > expand the relation to see the story!
 
-![](https://i.imgur.com/tw9xrjq.png)
+![](https://i.imgur.com/udPkuV3.png)
 
 ### Similarity
 
