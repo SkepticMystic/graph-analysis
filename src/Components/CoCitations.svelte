@@ -101,7 +101,7 @@
                       hoverPreview(e, view, dropPath(node.to))
                     }}
                   >
-                    {dropPath(node.to)}</span
+                    {(node.to[0] === '#') ? node.to : dropPath(node.to)}</span
                   >
                   <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
                 </span>
