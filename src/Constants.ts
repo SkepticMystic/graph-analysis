@@ -7,6 +7,7 @@ import type {
 export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
   noInfinity: true,
   noZero: true,
+  coTags: true,
   defaultAnalysisType: 'Co-Citations',
   debugMode: false,
   superDebugMode: false,
