@@ -390,13 +390,15 @@ export default class MyGraph extends Graph {
           })
         })
 
-        getAllTags(cache).forEach(tag => {
-          if (!(tag in preCocitations)) {
-            // Tag defined in YAML. Gets the lowest score (has no particular position)
-            preCocitations[tag] = [minScore,
-              [{measure: minScore, sentence: ['', '', ''], source: pre, line: 0}]]
-          }
-        })
+        if (this.settings.coTags) {
+          getAllTags(cache).forEach(tag => {
+            if (!(tag in preCocitations)) {
+              // Tag defined in YAML. Gets the lowest score (has no particular position)
+              preCocitations[tag] = [minScore,
+                [{ measure: minScore, sentence: ['', '', ''], source: pre, line: 0 }]]
+            }
+          })
+        }
 
         // Add the found weights to the results
         for (let key in preCocitations) {
