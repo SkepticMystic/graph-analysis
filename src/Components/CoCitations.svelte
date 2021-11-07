@@ -87,7 +87,8 @@
                   <span
                     class="{node.linked
                       ? LINKED
-                      : NOT_LINKED} internal-link {TD_NODE}"
+                      : NOT_LINKED} internal-link {TD_NODE}
+                      {node.to[0] === '#' ? 'tag' : ''}"
                     on:click={async (e) => {
                       if (node.to[0] === '#') {
                       } else {
@@ -170,6 +171,10 @@
     border-radius: 3px; 
     padding: 5px; 
   } */
+
+  .tag {
+    border-radius: 15px !important;
+  }
 
   .analysis-node,
   .CC-sentence {
