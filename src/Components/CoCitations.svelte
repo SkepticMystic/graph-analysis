@@ -70,7 +70,12 @@
                       ? LINKED
                       : NOT_LINKED} internal-link {TD_NODE}"
                     on:click={async (e) => {
-                      await openOrSwitch(app, node.to, e)
+                      if (node.to[0] === '#') {
+
+                      }
+                      else {
+                        await openOrSwitch(app, node.to, e)
+                      }
                     }}
                     on:contextmenu={(e) => {
                       openMenu(e, app)

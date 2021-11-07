@@ -1,5 +1,5 @@
 import { Graph } from 'graphlib'
-import type { App, HeadingCache, ReferenceCache } from 'obsidian'
+import type { App, CacheItem, HeadingCache, ReferenceCache, TagCache } from 'obsidian'
 import { getLinkpath } from 'obsidian'
 import tokenizer from 'sbd'
 import { DECIMALS } from 'src/constants'
@@ -231,40 +231,52 @@ export default class MyGraph extends Graph {
         maxHeadingLevel =
           cache.headings && cache.headings.length > 0 ? maxHeadingLevel : 0
 
-        allLinks.forEach((link) => {
-          const linkFile = mdCache.getFirstLinkpathDest(
-            getLinkpath(link.link),
-            file.path
-          )
-          if (!linkFile || linkFile.extension !== 'md') return
+        const coCiteCandidates: CacheItem[] = [...allLinks]
+        if (cache.tags && this.settings.coTags) {
+          coCiteCandidates.push(...cache.tags);
+        }
+        coCiteCandidates.forEach((item) => {
+          let linkPath: string = null
+          if ('link' in item) {
+            const linkFile = mdCache.getFirstLinkpathDest(
+              getLinkpath((item as ReferenceCache).link),
+              file.path
+            )
+            if (!linkFile || linkFile.extension !== 'md') return
 
-          const linkPath = linkFile.basename
-          if (linkPath === ownBasename) return
-
+            linkPath = linkFile.basename
+            if (linkPath === ownBasename) return
+          }
+          else if ('tag' in item) {
+            linkPath = (item as TagCache).tag
+          }
+          else {
+            return
+          }
           // Initialize to 0 if not set yet
           if (!(linkPath in preCocitations)) {
             preCocitations[linkPath] = [0, []]
           }
 
-          const lineContent = content[link.position.start.line]
+          const lineContent = content[item.position.start.line]
           // Check if the link is on the same line
           let hasOwnLine = false
           ownSentences.forEach(([line, start, end, ownLink]) => {
-            if (link.position.start.line === line) {
+            if (item.position.start.line === line) {
               const m1Start = Math.min(
-                link.position.start.col,
+                item.position.start.col,
                 ownLink.position.start.col
               )
               const m1End = Math.min(
-                link.position.end.col,
+                item.position.end.col,
                 ownLink.position.end.col
               )
               const m2Start = Math.max(
-                link.position.start.col,
+                item.position.start.col,
                 ownLink.position.start.col
               )
               const m2End = Math.max(
-                link.position.end.col,
+                item.position.end.col,
                 ownLink.position.end.col
               )
               // Break sentence up between the two links
@@ -277,8 +289,8 @@ export default class MyGraph extends Graph {
               ]
               // Give a higher score if it is also in the same sentence
               if (
-                link.position.start.col >= start &&
-                link.position.end.col <= end
+                item.position.start.col >= start &&
+                item.position.end.col <= end
               ) {
                 // If it's in the same sentence, remove the other sentences
                 sentence[0] = sentence[0].slice(start, sentence[0].length)
@@ -288,7 +300,7 @@ export default class MyGraph extends Graph {
                   sentence: sentence,
                   measure: 1,
                   source: pre,
-                  line: link.position.start.line,
+                  line: item.position.start.line,
                 })
               } else {
                 preCocitations[linkPath][0] = Math.max(
@@ -299,7 +311,7 @@ export default class MyGraph extends Graph {
                   sentence: sentence,
                   measure: 1 / 2,
                   source: pre,
-                  line: link.position.start.line,
+                  line: item.position.start.line,
                 })
               }
               hasOwnLine = true
@@ -308,16 +320,16 @@ export default class MyGraph extends Graph {
           if (hasOwnLine) return
 
           const sentence = [
-            lineContent.slice(0, link.position.start.col),
-            lineContent.slice(link.position.start.col, link.position.end.col),
-            lineContent.slice(link.position.end.col, lineContent.length),
+            lineContent.slice(0, item.position.start.col),
+            lineContent.slice(item.position.start.col, item.position.end.col),
+            lineContent.slice(item.position.end.col, lineContent.length),
           ]
 
           // Check if it is in the same paragraph
           const sameParagraph = ownSections.find(
             (section) =>
-              section.position.start.line <= link.position.start.line &&
-              section.position.end.line >= link.position.end.line
+              section.position.start.line <= item.position.start.line &&
+              section.position.end.line >= item.position.end.line
           )
           if (sameParagraph) {
             preCocitations[linkPath][0] = Math.max(
@@ -328,7 +340,7 @@ export default class MyGraph extends Graph {
               sentence: sentence,
               measure: 1 / 4,
               source: pre,
-              line: link.position.start.line,
+              line: item.position.start.line,
             })
             return
           }
@@ -336,8 +348,8 @@ export default class MyGraph extends Graph {
           // Find the best corresponding heading
           const headingMatches = ownHeadings.filter(
             ([heading, end]) =>
-              heading.position.start.line <= link.position.start.line &&
-              end > link.position.end.line
+              heading.position.start.line <= item.position.start.line &&
+              end > item.position.end.line
           )
           if (headingMatches.length > 0) {
             const bestLevel = Math.max(
@@ -355,10 +367,11 @@ export default class MyGraph extends Graph {
               measure: score,
               sentence: sentence,
               source: pre,
-              line: link.position.start.line,
+              line: item.position.start.line,
             })
             return
           }
+
 
           // The links appear together in the same document, but not under a shared heading
           // Intuition of weight: The least specific heading will give the weight 2 + maxHeadingLevel - minHeadingLevel
@@ -372,24 +385,32 @@ export default class MyGraph extends Graph {
             measure: score,
             sentence: sentence,
             source: pre,
-            line: link.position.start.line,
+            line: item.position.start.line,
           })
         })
 
         // Add the found weights to the results
         for (let key in preCocitations) {
           const file = mdCache.getFirstLinkpathDest(key, '')
+          let name = null
           if (file) {
-            let linkName = file.path.slice(0, file.path.length - 3)
-            let cocitation = preCocitations[key]
-            if (linkName in results) {
-              results[linkName].measure += cocitation[0]
-              results[linkName].coCitations.push(...cocitation[1])
-            } else {
-              results[linkName] = {
-                measure: cocitation[0],
-                coCitations: cocitation[1],
-              }
+            name = file.path.slice(0, file.path.length - 3)
+
+          }
+          else if (key[0] === '#') {
+            name = key
+          }
+          else {
+            continue
+          }
+          let cocitation = preCocitations[key]
+          if (name in results) {
+            results[name].measure += cocitation[0]
+            results[name].coCitations.push(...cocitation[1])
+          } else {
+            results[name] = {
+              measure: cocitation[0],
+              coCitations: cocitation[1],
             }
           }
         }

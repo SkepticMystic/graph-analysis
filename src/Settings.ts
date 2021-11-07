@@ -56,6 +56,16 @@ export class SampleSettingTab extends PluginSettingTab {
       )
 
     new Setting(containerEl)
+      .setName('Include tags (Co-Citations)')
+      .setDesc('Whether to also show the tags that are co-cited in the co-citations algorithm.')
+      .addToggle((toggle) =>
+        toggle.setValue(settings.coTags).onChange(async (value) => {
+          settings.coTags = value
+          await plugin.saveSettings()
+        })
+      )
+
+    new Setting(containerEl)
       .setName('Exclusion Regex')
       .setDesc(
         "If a file name matches this regex, it won't be added to the graph.\nDefault is `(?:)` or `''` (empty string). Either option will allow all notes through the filter (regular Graph Anlaysis behaviour)."
