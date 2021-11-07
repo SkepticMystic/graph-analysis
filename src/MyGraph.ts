@@ -452,7 +452,7 @@ export default class MyGraph extends Graph {
       this.nodes().forEach((to: string) => {
         const { coeff, triangles } = clusteringCoefficient(this, to)
         results[to] = {
-          measure: coeff,
+          measure: roundNumber(coeff),
           extra: triangles.map((group) => group.join(', ')),
         }
       })

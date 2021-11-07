@@ -71,3 +71,19 @@ body.is-mobile .GA-details::before {
     background-color: transparent;
   }
 }
+
+.GA-View ::-webkit-scrollbar {
+  width: 1em;
+  height: 4px;
+  border-radius: 10px;
+  background-color: var(--scrollbar-bg);
+}
+
+.GA-View ::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.GA-View ::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: var(--scrollbar-thumb-bg);
+}

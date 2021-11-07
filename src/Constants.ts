@@ -34,6 +34,16 @@ export const TD_NODE = 'analysis-node'
 export const COCITES_DESC =
   'So which of your notes are referenced together most often.'
 
+export const SUBTYPES = [
+  { subtype: 'Adamic Adar', global: false },
+  { subtype: 'Common Neighbours', global: false },
+  { subtype: 'Jaccard', global: false },
+  { subtype: 'Overlap', global: false },
+  { subtype: 'Label Propagation', global: true },
+  { subtype: 'Clustering Coefficient', global: true },
+  { subtype: 'Co-Citations', global: false },
+]
+
 export const ANALYSIS_TYPES: {
   [anl in Analyses]: SubtypeDesc[]
 } = {

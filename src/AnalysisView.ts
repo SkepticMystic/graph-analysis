@@ -6,6 +6,7 @@ import CoCitations from './Components/CoCitations.svelte'
 import CommunityDetection from './Components/CommunityDetection.svelte'
 import LinkPrediction from './Components/LinkPrediction.svelte'
 import Similarity from './Components/Similarity.svelte'
+import Test from './Components/Test.svelte'
 
 export default class AnalysisView extends ItemView {
   private plugin: GraphAnalysisPlugin
@@ -45,6 +46,7 @@ export default class AnalysisView extends ItemView {
     const { settings } = this.plugin
     const contentEl = this.contentEl
     contentEl.empty()
+    contentEl.addClass('GA-View')
 
     const settingsDiv = contentEl.createDiv({ text: 'Type: ' })
     analysisSelector = settingsDiv.createEl('select', {
@@ -83,6 +85,7 @@ export default class AnalysisView extends ItemView {
           anl,
         },
       }
+      new Test({ target: componentDiv })
       switch (anl) {
         // case 'Centrality':
         //     new Centrality(componentInfo)
