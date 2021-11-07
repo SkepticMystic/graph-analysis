@@ -18,7 +18,7 @@
   export let view: AnalysisView
 </script>
 
-<span>
+<span class="GA-Subtype-Options">
   <InfoIcon
     desc={ANALYSIS_TYPES[anl].find((type) => type.subtype === currSubtype).desc}
   />
@@ -68,10 +68,13 @@
 </span>
 
 <style>
+  .GA-Subtype-Options {
+    margin-left: 10px;
+  }
   .icon {
     color: var(--text-normal);
     display: inline-block;
-    padding-top: 3px !important;
+    padding-top: 5px !important;
     width: 20px;
     height: 20px;
   }
