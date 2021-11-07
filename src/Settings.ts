@@ -58,7 +58,23 @@ export class SampleSettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName('Exclusion Regex')
       .setDesc(
-        "If a file name matches this regex, it won't be added to the graph.\nDefault is `(?:)` or `''` (empty string). Either option will allow all notes through the filter (regular Graph Anlaysis behaviour)."
+        createFragment((el) => {
+          el.createEl('p', {
+            text: "Regex to exclude values from analysis. If a file name matches this regex, it won't be added to the graph.",
+          })
+          const span = el.createSpan()
+          span.createSpan({ text: 'Default is ' })
+          span.createEl('code', { text: '(?:)' })
+          span.createSpan({ text: ' or ' })
+          span.createEl('code', { text: "''" })
+          span.createSpan({
+            text: ' (empty string). Either option will allow all notes through the filter (regular Graph Anlaysis behaviour).',
+          })
+
+          el.createEl('p', {
+            text: 'Remeber that the regex will be tested against the full file path of each note (not just the basename). So you may need to include "folders/" and "\.md" for some regexes.',
+          })
+        })
       )
       .addText((textComp) => {
         textComp.setValue(settings.exclusionRegex)
@@ -69,6 +85,7 @@ export class SampleSettingTab extends PluginSettingTab {
             new RegExp(value)
             settings.exclusionRegex = value
             await plugin.saveSettings()
+            await this.plugin.refreshGraph()
           } catch (e) {
             // Invalid regex
             new Notice(
