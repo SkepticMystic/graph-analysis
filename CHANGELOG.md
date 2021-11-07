@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/SkepticMystic/graph-analysis/compare/0.5.1...0.6.0) (2021-11-07)
+
+
+### Features
+
+* :sparkles: Scrollbar + Individual components ([13dee3d](https://github.com/SkepticMystic/graph-analysis/commit/13dee3d8b309ac54e5321ab65470529208d9272a))
+* **coCites:** :sparkles: Sort coCites ([db12139](https://github.com/SkepticMystic/graph-analysis/commit/db1213921ea72c5d44cfefe551ef21534d4fac88))
+* Find co-cited tags ([a02a0fd](https://github.com/SkepticMystic/graph-analysis/commit/a02a0fd9a47f2ca4b94f1a2b2c880cf85e97397c)), closes [#22](https://github.com/SkepticMystic/graph-analysis/issues/22)
+* Give small co-citation weight to tags defined in YAML ([ef9f014](https://github.com/SkepticMystic/graph-analysis/commit/ef9f0148a6e415528e95b1675e24f0cd65a63f50))
+
+
+### Bug Fixes
+
+* :bug: RefreshGraph when changing exclusionRegex ([6f4367d](https://github.com/SkepticMystic/graph-analysis/commit/6f4367de420a1afae5fb103a10308bde2dd3e77c))
+* Only add co-tags when setting is set to true ([f88123b](https://github.com/SkepticMystic/graph-analysis/commit/f88123b91e648e2cee5e3774e3b49cfa48c342aa))
+
 ### [0.5.1](https://github.com/SkepticMystic/graph-analysis/compare/0.5.0...0.5.1) (2021-11-06)
 
 ## [0.5.0](https://github.com/SkepticMystic/graph-analysis/compare/0.4.0...0.5.0) (2021-11-06)
