@@ -1,35 +1,24 @@
 <script lang="ts">
-  import InfoIcon from './InfoIcon.svelte'
+  import type AnalysisView from 'src/AnalysisView'
   import { ANALYSIS_TYPES } from 'src/constants'
   import type { Analyses, Subtype } from 'src/Interfaces'
+  import type GraphAnalysisPlugin from 'src/main'
+  import InfoIcon from './InfoIcon.svelte'
 
   export let anl: Analyses
   export let currSubtype: Subtype
-  export let noInfinity: boolean = undefined
   export let noZero: boolean = undefined
   export let ascOrder: boolean = undefined
+  export let plugin: GraphAnalysisPlugin
+  export let view: AnalysisView
 </script>
 
-<div>
-  <label for="Alg">Alg:</label>
-  <select bind:value={currSubtype} name="Alg" class="dropdown GA-DD">
-    {#each ANALYSIS_TYPES[anl] as subtype}
-      <option value={subtype.subtype}>{subtype.subtype}</option>
-    {/each}
-  </select>
+<span>
   <InfoIcon
     desc={ANALYSIS_TYPES[anl].find((type) => type.subtype === currSubtype).desc}
   />
 
-  {#if noInfinity !== undefined && noZero !== undefined}
-    <!-- <label for="Infinity">∞</label>
-    <input
-      name="Infinity"
-      type="checkbox"
-      checked={noInfinity}
-      on:change={() => (noInfinity = !noInfinity)}
-    /> -->
-
+  {#if noZero !== undefined}
     <span
       class="GA-Option-span"
       aria-label={noZero ? 'Show Zeros' : 'Hide Zeros '}
@@ -47,7 +36,13 @@
       {ascOrder ? '📈' : '📉'}
     </span>
   {/if}
-</div>
+  <button
+    on:click={async () => {
+      await plugin.refreshGraph()
+      await view.draw()
+    }}>🔁</button
+  >
+</span>
 
 <style>
   .GA-Option-span {

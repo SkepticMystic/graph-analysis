@@ -1,9 +1,9 @@
-<!-- <script lang="ts">
+<script lang="ts">
   import type { App } from 'obsidian'
   import type AnalysisView from 'src/AnalysisView'
-  import type { Analyses, GraphAnalysisSettings, Subtype } from 'src/Interfaces'
+  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { debug, getPromiseResults } from 'src/Utility'
+  import { getCurrNode, getPromiseResults } from 'src/Utility'
   import { onMount } from 'svelte'
   import ResultsMapTable from './ResultsMapTable.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
@@ -12,9 +12,8 @@
   export let plugin: GraphAnalysisPlugin
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
-  export let anl: Analyses
+  export let currSubtype: Subtype
 
-  let currSubtype: Subtype = 'Adamic Adar'
   let { resolvedLinks } = app.metadataCache
 
   $: currFile = app.workspace.getActiveFile()
@@ -34,7 +33,6 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    debug(settings, { promiseSortedResults })
   })
 
   let { noInfinity, noZero } = settings
@@ -42,10 +40,11 @@
 
 <SubtypeOptions
   bind:currSubtype
-  bind:noInfinity
   bind:noZero
-  {anl}
   bind:ascOrder
+  anl="Link Prediction"
+  {plugin}
+  {view}
 />
 
 <ResultsMapTable
@@ -58,4 +57,4 @@
 />
 
 <style>
-</style> -->
+</style>

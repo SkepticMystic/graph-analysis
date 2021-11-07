@@ -1,8 +1,13 @@
 import { Graph } from 'graphlib'
-import type { App, CacheItem, HeadingCache, ReferenceCache, TagCache } from 'obsidian'
+import type {
+  App,
+  CacheItem,
+  HeadingCache,
+  ReferenceCache,
+  TagCache,
+} from 'obsidian'
 import { getAllTags, getLinkpath } from 'obsidian'
 import tokenizer from 'sbd'
-import { DECIMALS } from 'src/constants'
 import { clusteringCoefficient, intersection } from 'src/GeneralGraphFn'
 import type {
   AnalysisAlg,
@@ -237,7 +242,7 @@ export default class MyGraph extends Graph {
 
         const coCiteCandidates: CacheItem[] = [...allLinks]
         if (cache.tags && this.settings.coTags) {
-          coCiteCandidates.push(...cache.tags);
+          coCiteCandidates.push(...cache.tags)
         }
         coCiteCandidates.forEach((item) => {
           let linkPath: string = null
@@ -250,11 +255,9 @@ export default class MyGraph extends Graph {
 
             linkPath = linkFile.basename
             if (linkPath === ownBasename) return
-          }
-          else if ('tag' in item) {
+          } else if ('tag' in item) {
             linkPath = (item as TagCache).tag
-          }
-          else {
+          } else {
             return
           }
           // Initialize to 0 if not set yet
@@ -376,7 +379,6 @@ export default class MyGraph extends Graph {
             return
           }
 
-
           // The links appear together in the same document, but not under a shared heading
           preCocitations[linkPath][0] = Math.max(
             preCocitations[linkPath][0],
@@ -391,11 +393,20 @@ export default class MyGraph extends Graph {
         })
 
         if (this.settings.coTags) {
-          getAllTags(cache).forEach(tag => {
+          getAllTags(cache).forEach((tag) => {
             if (!(tag in preCocitations)) {
               // Tag defined in YAML. Gets the lowest score (has no particular position)
-              preCocitations[tag] = [minScore,
-                [{ measure: minScore, sentence: ['', '', ''], source: pre, line: 0 }]]
+              preCocitations[tag] = [
+                minScore,
+                [
+                  {
+                    measure: minScore,
+                    sentence: ['', '', ''],
+                    source: pre,
+                    line: 0,
+                  },
+                ],
+              ]
             }
           })
         }
@@ -406,12 +417,9 @@ export default class MyGraph extends Graph {
           let name = null
           if (file) {
             name = file.path.slice(0, file.path.length - 3)
-
-          }
-          else if (key[0] === '#') {
+          } else if (key[0] === '#') {
             name = key
-          }
-          else {
+          } else {
             continue
           }
           let cocitation = preCocitations[key]
@@ -512,28 +520,6 @@ export default class MyGraph extends Graph {
     //     return results
     // },
   }
-
-  // async getData(
-  //   subtype: Subtype,
-  //   from: string
-  // ): Promise<ResultMap | CoCitationMap> {
-  //   const i = this.node(from)
-  //   if (i === undefined) {
-  //     return new Array(this.nodes().length)
-  //   }
-  //   // Check for symmetric measures
-  //   // TODO: Adapt this for co-citations
-  //   if (subtype !== 'Co-Citations') {
-  //     if ((this.data[subtype]?.[i] as number[])?.[0] !== undefined) {
-  //       return this.data[subtype][i]
-  //     } else {
-  //       this.data[subtype][i] = await this.algs[subtype](from)
-  //       return this.data[subtype][i]
-  //     }
-  //   }
-  //   return this.algs[subtype](from)
-  // }
-
   updateEdgeLabel(from: string, to: string, key: string, newValue: any) {
     const newLabel = this.edge(from, to)
     newLabel[key] = newValue

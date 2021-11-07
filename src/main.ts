@@ -1,16 +1,16 @@
 import { addIcon, Notice, Plugin, WorkspaceLeaf } from 'obsidian'
+import { openView, wait } from 'obsidian-community-lib'
 import AnalysisView from 'src/AnalysisView'
 import {
   DEFAULT_SETTINGS,
   iconSVG,
   VIEW_TYPE_GRAPH_ANALYSIS,
 } from 'src/constants'
-import type { Analyses, GraphAnalysisSettings } from 'src/Interfaces'
+import { clusteringCoefficient, findTrianglesForNode } from 'src/GeneralGraphFn'
+import type { GraphAnalysisSettings } from 'src/Interfaces'
 import MyGraph from 'src/MyGraph'
 import { SampleSettingTab } from 'src/Settings'
 import { debug } from './Utility'
-import { openView, wait } from 'obsidian-community-lib'
-import { clusteringCoefficient, findTrianglesForNode } from 'src/GeneralGraphFn'
 
 export default class GraphAnalysisPlugin extends Plugin {
   settings: GraphAnalysisSettings
@@ -48,7 +48,7 @@ export default class GraphAnalysisPlugin extends Plugin {
         const openView = this.app.workspace.getLeavesOfType(
           VIEW_TYPE_GRAPH_ANALYSIS
         )[0].view as AnalysisView
-        openView.draw(openView.analysisSelector.value as Analyses)
+        openView.draw()
       },
     })
 

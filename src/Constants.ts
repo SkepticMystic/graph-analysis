@@ -1,6 +1,7 @@
 import type {
   Analyses,
   GraphAnalysisSettings,
+  Subtype,
   SubtypeDesc,
 } from 'src/Interfaces'
 
@@ -8,7 +9,7 @@ export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
   noInfinity: true,
   noZero: true,
   coTags: true,
-  defaultAnalysisType: 'Co-Citations',
+  defaultSubtypeType: 'Co-Citations',
   debugMode: false,
   superDebugMode: false,
   exclusionRegex: '',
@@ -18,24 +19,13 @@ export const DECIMALS = 4
 
 export const VIEW_TYPE_GRAPH_ANALYSIS = 'graph-analysis'
 
-export const ANALYSES = [
-  // 'Centrality',
-  { anl: 'Link Prediction', global: false },
-  { anl: 'Similarity', global: false },
-  { anl: 'Co-Citations', global: false },
-  { anl: 'Community Detection', global: true },
-] as const
-
 export const LINKED = 'analysis-linked'
 export const NOT_LINKED = 'analysis-not-linked'
 
 export const TD_MEASURE = 'analysis-measure'
 export const TD_NODE = 'analysis-node'
 
-export const COCITES_DESC =
-  'So which of your notes are referenced together most often.'
-
-export const SUBTYPES = [
+export const SUBTYPES: { subtype: Subtype; global: boolean }[] = [
   { subtype: 'Adamic Adar', global: false },
   { subtype: 'Common Neighbours', global: false },
   { subtype: 'Jaccard', global: false },
@@ -59,7 +49,12 @@ export const ANALYSIS_TYPES: {
     { subtype: 'Jaccard', desc: '<No description given yet>' },
     { subtype: 'Overlap', desc: '<No description given yet>' },
   ],
-  'Co-Citations': [],
+  'Co-Citations': [
+    {
+      subtype: 'Co-Citations',
+      desc: 'See which of your notes are referenced together most often.',
+    },
+  ],
   'Community Detection': [
     {
       subtype: 'Label Propagation',
@@ -70,9 +65,6 @@ export const ANALYSIS_TYPES: {
       desc: 'Gives the ratio of the number of triangles that `u` is a part of, to the number of triangles it possibly could have been a part of.\n\n**Interpretation**: The probability that this nodes _neighbours_ are connected.',
     },
   ],
-  // 'Centrality': [
-  //   { subtype: 'Closeness', desc: '<No description given yet>' },
-  // ]
 }
 
 export const iconSVG = `<path fill="currentColor" stroke="currentColor" d="M88.8,67.5c-3,0-5.7,1.2-7.7,3.1l-12.2-7c0.7-1.9,1.2-3.9,1.2-6.1C70,47.8,62.2,40,52.5,40c-1.3,0-2.6,0.2-3.8,0.5l-5-10.8

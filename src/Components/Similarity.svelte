@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import type { App } from 'obsidian'
   import type AnalysisView from 'src/AnalysisView'
   import type { Analyses, GraphAnalysisSettings, Subtype } from 'src/Interfaces'
@@ -16,7 +16,7 @@
 
   let currSubtype: Subtype = 'Jaccard'
   let currFile = app.workspace.getActiveFile()
-  $: currNode = currFile?.path.split('.md', 1)[0]
+  $: currNode = getCurrNode(currFile)
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
   })
@@ -59,4 +59,4 @@
 />
 
 <style>
-</style>
+</style> -->

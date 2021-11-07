@@ -3,25 +3,32 @@
   import { isLinked, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import type { CoCitationRes, GraphAnalysisSettings } from 'src/Interfaces'
+  import type {
+    CoCitationRes,
+    GraphAnalysisSettings,
+    Subtype,
+  } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
     dropPath,
+    getCurrNode,
     hoverPreview,
     jumpToSelection,
     openMenu,
     roundNumber,
   } from 'src/Utility'
   import { onMount } from 'svelte'
+  import SubtypeOptions from './SubtypeOptions.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
+  export let currSubtype: Subtype
 
   let currFile = app.workspace.getActiveFile()
-  $: currNode = currFile?.path.split('.md', 1)[0]
+  $: currNode = getCurrNode(currFile)
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
   })
@@ -56,6 +63,8 @@
   })
 </script>
 
+<SubtypeOptions anl="Co-Citations" {currSubtype} {plugin} {view} />
+
 <div class="GA-CCs">
   {#if promiseSortedCoCites}
     {#await promiseSortedCoCites then sortedCoCites}
@@ -71,9 +80,7 @@
                       : NOT_LINKED} internal-link {TD_NODE}"
                     on:click={async (e) => {
                       if (node.to[0] === '#') {
-
-                      }
-                      else {
+                      } else {
                         await openOrSwitch(app, node.to, e)
                       }
                     }}

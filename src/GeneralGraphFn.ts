@@ -1,4 +1,3 @@
-import type { Edge } from 'graphlib'
 import * as graphlib from 'graphlib'
 import type MyGraph from 'src/MyGraph'
 

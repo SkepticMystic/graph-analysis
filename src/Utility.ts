@@ -37,26 +37,6 @@ export const dropMD = (str: string) => str.split('.md').slice(0, -1).join('')
 export const nxnArray = (n: number): undefined[][] =>
   [...Array(n)].map((e) => Array(n))
 
-// export function hoverPreview(
-//   event: MouseEvent,
-//   view: AnalysisView,
-//   to?: string
-// ): void {
-//   const targetEl = event.target as HTMLElement
-//   let linkText = to
-//   if (!linkText) {
-//     linkText = targetEl.innerText
-//   }
-
-//   view.app.workspace.trigger('hover-link', {
-//     event,
-//     source: view.getViewType(),
-//     hoverParent: view,
-//     targetEl,
-//     linkText,
-//   })
-// }
-
 export function hoverPreview(
   event: MouseEvent,
   view: AnalysisView,
@@ -264,4 +244,8 @@ export function getMaxKey(obj: Record<string, number>) {
   return Object.keys(obj).reduce((a, b) =>
     obj[a] === obj[b] ? (Math.random() < 0.5 ? a : b) : obj[a] > obj[b] ? a : b
   )
+}
+
+export function getCurrNode(currFile: TFile) {
+  return currFile?.path.split('.md', 1)[0]
 }

@@ -1,6 +1,6 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian'
-import { ANALYSES } from 'src/constants'
-import type { Analyses } from 'src/Interfaces'
+import { ANALYSIS_TYPES } from 'src/constants'
+import type { Subtype } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
 
 export class SampleSettingTab extends PluginSettingTab {
@@ -24,13 +24,15 @@ export class SampleSettingTab extends PluginSettingTab {
       .setName('Default Analysis Type')
       .setDesc('Which analysis type to show on startup')
       .addDropdown((dd) => {
-        dd.setValue(settings.defaultAnalysisType)
+        dd.setValue(settings.defaultSubtypeType)
         const dict = {}
-        ANALYSES.forEach((type) => {
-          dict[type.anl] = type.anl
+        Object.values(ANALYSIS_TYPES).forEach((subtypeDescs) => {
+          subtypeDescs.forEach((subDesc) => {
+            dict[subDesc.subtype] = subDesc.subtype
+          })
         })
         dd.addOptions(dict).onChange(async (option) => {
-          settings.defaultAnalysisType = option as Analyses
+          settings.defaultSubtypeType = option as Subtype
           await plugin.saveSettings()
         })
       })
@@ -57,7 +59,9 @@ export class SampleSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Include tags (Co-Citations)')
-      .setDesc('Whether to also show the tags that are co-cited in the co-citations algorithm.')
+      .setDesc(
+        'Whether to also show the tags that are co-cited in the co-citations algorithm.'
+      )
       .addToggle((toggle) =>
         toggle.setValue(settings.coTags).onChange(async (value) => {
           settings.coTags = value
@@ -82,7 +86,7 @@ export class SampleSettingTab extends PluginSettingTab {
           })
 
           el.createEl('p', {
-            text: 'Remeber that the regex will be tested against the full file path of each note (not just the basename). So you may need to include "folders/" and "\.md" for some regexes.',
+            text: 'Remeber that the regex will be tested against the full file path of each note (not just the basename). So you may need to include "folders/" and ".md" for some regexes.',
           })
         })
       )

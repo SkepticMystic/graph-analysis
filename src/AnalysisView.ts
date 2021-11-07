@@ -1,17 +1,13 @@
 import { ItemView, WorkspaceLeaf } from 'obsidian'
-import { ANALYSES, VIEW_TYPE_GRAPH_ANALYSIS } from 'src/constants'
-import type { Analyses } from 'src/Interfaces'
+import { VIEW_TYPE_GRAPH_ANALYSIS } from 'src/constants'
+import type { Subtype } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
-import CoCitations from './Components/CoCitations.svelte'
-import CommunityDetection from './Components/CommunityDetection.svelte'
-import LinkPrediction from './Components/LinkPrediction.svelte'
-import Similarity from './Components/Similarity.svelte'
-import Test from './Components/Test.svelte'
+import AnalysisComponent from './Components/AnalysisComponent.svelte'
 
 export default class AnalysisView extends ItemView {
   private plugin: GraphAnalysisPlugin
-  analysisSelector: HTMLSelectElement
-  private component: CoCitations | LinkPrediction | Similarity
+  currSubtype: Subtype
+  private component: AnalysisComponent
 
   constructor(leaf: WorkspaceLeaf, plugin: GraphAnalysisPlugin) {
     super(leaf)
@@ -33,6 +29,7 @@ export default class AnalysisView extends ItemView {
   icon = 'GA-ICON'
 
   async onOpen(): Promise<void> {
+    this.currSubtype = this.plugin.settings.defaultSubtypeType
     await this.draw()
   }
 
@@ -40,76 +37,24 @@ export default class AnalysisView extends ItemView {
     return Promise.resolve()
   }
 
-  async draw(analysisType?: Analyses): Promise<void> {
-    const { app } = this
-    let { analysisSelector } = this
+  async draw(): Promise<void> {
+    const { app, contentEl } = this
     const { settings } = this.plugin
-    const contentEl = this.contentEl
+
     contentEl.empty()
     contentEl.addClass('GA-View')
 
-    const settingsDiv = contentEl.createDiv({ text: 'Type: ' })
-    analysisSelector = settingsDiv.createEl('select', {
-      cls: `dropdown GA-DD`,
-    })
-    ANALYSES.forEach((type) => {
-      analysisSelector.createEl('option', {
-        value: type.anl,
-        text: type.anl,
-      })
-    })
-    const refreshGraphButton = settingsDiv.createEl(
-      'button',
-      { text: '🔁', cls: 'GA-Refresh-Button' },
-      (but) => {
-        but.addEventListener('click', async () => {
-          await this.plugin.refreshGraph()
-          await this.draw(analysisSelector.value as Analyses)
-        })
-      }
-    )
+    // this.component?.$destroy()
 
-    this.component?.$destroy()
-    const componentDiv = contentEl.createDiv()
-
-    const drawComponent = (anl: Analyses, componentDiv: HTMLDivElement) => {
-      componentDiv.empty()
-
-      const componentInfo = {
-        target: componentDiv,
-        props: {
-          app,
-          plugin: this.plugin,
-          settings,
-          view: this,
-          anl,
-        },
-      }
-      new Test({ target: componentDiv })
-      switch (anl) {
-        // case 'Centrality':
-        //     new Centrality(componentInfo)
-        //     break
-        case 'Co-Citations':
-          this.component = new CoCitations(componentInfo)
-          break
-        case 'Link Prediction':
-          this.component = new LinkPrediction(componentInfo)
-          break
-        case 'Similarity':
-          this.component = new Similarity(componentInfo)
-          break
-        case 'Community Detection':
-          this.component = new CommunityDetection(componentInfo)
-          break
-      }
-    }
-    // Default Analysis Type
-    analysisSelector.value = analysisType ?? settings.defaultAnalysisType
-    drawComponent(analysisSelector.value as Analyses, componentDiv)
-
-    analysisSelector.addEventListener('change', () => {
-      drawComponent(analysisSelector.value as Analyses, componentDiv)
+    this.component = new AnalysisComponent({
+      target: contentEl,
+      props: {
+        app,
+        plugin: this.plugin,
+        settings,
+        view: this,
+        currSubtype: this.currSubtype,
+      },
     })
   }
 }

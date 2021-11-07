@@ -27,7 +27,6 @@ export type Subtype =
   | 'Label Propagation'
   | 'Overlap'
   | 'Clustering Coefficient'
-// | 'Closeness'
 
 export interface Communities {
   [group: string]: string[]
@@ -58,7 +57,7 @@ export interface GraphAnalysisSettings {
   noInfinity: boolean
   noZero: boolean
   coTags: boolean
-  defaultAnalysisType: Analyses
+  defaultSubtypeType: Subtype
   debugMode: boolean
   superDebugMode: boolean
   exclusionRegex: string

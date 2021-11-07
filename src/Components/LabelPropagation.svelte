@@ -1,12 +1,11 @@
-<!-- <script lang="ts">
+<script lang="ts">
   import type { App } from 'obsidian'
   import { hoverPreview, isLinked, openOrSwitch } from 'obsidian-community-lib'
-  import ResultsMapTable from './ResultsMapTable.svelte'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import type { Analyses, GraphAnalysisSettings, Subtype } from 'src/Interfaces'
+  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { dropPath, getPromiseResults, openMenu } from 'src/Utility'
+  import { dropPath, getCurrNode, openMenu } from 'src/Utility'
   import { onMount } from 'svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
 
@@ -14,12 +13,11 @@
   export let plugin: GraphAnalysisPlugin
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
-  export let anl: Analyses
+  export let currSubtype: Subtype
 
   let { resolvedLinks } = app.metadataCache
 
   let ascOrder = false
-  let currSubtype: Subtype = 'Label Propagation'
   let currFile = app.workspace.getActiveFile()
   $: currNode = getCurrNode(currFile)
   app.workspace.on('active-leaf-change', () => {
@@ -33,14 +31,6 @@
 
   $: promiseSortedResults = !plugin.g
     ? null
-    : currSubtype === 'Clustering Coefficient'
-    ? getPromiseResults(
-        plugin,
-        currNode,
-        'Clustering Coefficient',
-        resolvedLinks,
-        ascOrder
-      )
     : plugin.g.algs[currSubtype]('', { iterations: its }).then((comms) => {
         let sortedComms = Object.keys(comms)
           .map((label) => {
@@ -61,77 +51,73 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    currSubtype = 'Label Propagation'
   })
-
-  let { noZero } = settings
 </script>
 
-<SubtypeOptions bind:currSubtype {anl} bind:ascOrder />
-
-{#if currSubtype === 'Clustering Coefficient'}
-  <ResultsMapTable {app} {view} {promiseSortedResults} {currNode} bind:noZero />
-{:else if currSubtype === 'Label Propagation'}
-  <div class="GA-CCs">
-    <div>
+<div class="GA-CCs">
+  <div>
+    <span>
+      <SubtypeOptions
+        bind:currSubtype
+        bind:ascOrder
+        anl="Community Detection"
+        {plugin}
+        {view}
+      />
       <label for="iterations">Iterations: </label>
       <select class="dropdown GA-DD" bind:value={its} name="iterations">
         {#each iterationsArr as it}
           <option>{it}</option>
         {/each}
       </select>
-    </div>
-    {#if promiseSortedResults}
-      {#await promiseSortedResults then sortedComms}
-        {#each sortedComms as comm}
-          {#if comm.comm.length > 1}
-            <div class="GA-CC">
-              <details>
-                <summary
-                  on:contextmenu={(e) =>
-                    openMenu(e, app, { toCopy: comm.comm.join('\n') })}
-                >
-                  <span
-                    class="top-row {comm.comm.includes(currNode)
-                      ? 'currComm'
-                      : ''}"
-                  >
-                    <span>
-                      {dropPath(comm.label)}
-                    </span>
-                    <span class={TD_MEASURE}>{comm.comm.length}</span>
-                  </span>
-                </summary>
-                <div class="GA-details">
-                  {#each comm.comm as member}
-                    <div
-                      class="internal-link {TD_NODE} {isLinked(
-                        resolvedLinks,
-                        comm.label,
-                        member,
-                        false
-                      )
-                        ? LINKED
-                        : NOT_LINKED}"
-                      on:click={async (e) => {
-                        await openOrSwitch(app, member, e)
-                      }}
-                      on:mouseover={(e) => {
-                        hoverPreview(e, view, member)
-                      }}
-                    >
-                      {dropPath(member)}
-                    </div>
-                  {/each}
-                </div>
-              </details>
-            </div>
-          {/if}
-        {/each}
-      {/await}
-    {/if}
+    </span>
   </div>
-{/if}
+  {#if promiseSortedResults}
+    {#await promiseSortedResults then sortedComms}
+      {#each sortedComms as comm}
+        {#if comm.comm.length > 1}
+          <div class="GA-CC">
+            <details>
+              <summary
+                on:contextmenu={(e) =>
+                  openMenu(e, app, { toCopy: comm.comm.join('\n') })}
+              >
+                <span
+                  class="top-row {comm.comm.includes(currNode)
+                    ? 'currComm'
+                    : ''}"
+                >
+                  <span>
+                    {dropPath(comm.label)}
+                  </span>
+                  <span class={TD_MEASURE}>{comm.comm.length}</span>
+                </span>
+              </summary>
+              <div class="GA-details">
+                {#each comm.comm as member}
+                  <div
+                    class="internal-link {TD_NODE} 
+                    {isLinked(resolvedLinks, comm.label, member, false)
+                      ? LINKED
+                      : NOT_LINKED}"
+                    on:click={async (e) => {
+                      await openOrSwitch(app, member, e)
+                    }}
+                    on:mouseover={(e) => {
+                      hoverPreview(e, view, member)
+                    }}
+                  >
+                    {dropPath(member)}
+                  </div>
+                {/each}
+              </div>
+            </details>
+          </div>
+        {/if}
+      {/each}
+    {/await}
+  {/if}
+</div>
 
 <style>
   .icon {
@@ -147,10 +133,10 @@
   }
 
   /* .GA-CC {
-      border: 1px solid var(--background-modifier-border);
-      border-radius: 3px; 
-      padding: 5px; 
-    } */
+        border: 1px solid var(--background-modifier-border);
+        border-radius: 3px; 
+        padding: 5px; 
+      } */
 
   .GA-details {
     padding-left: 20px;
@@ -193,4 +179,4 @@
   .currComm {
     color: var(--text-accent);
   }
-</style> -->
+</style>
