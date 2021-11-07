@@ -27,7 +27,9 @@
   export let view: AnalysisView
   export let currSubtype: Subtype
 
+  let ascOrder = false
   let currFile = app.workspace.getActiveFile()
+
   $: currNode = getCurrNode(currFile)
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
@@ -39,6 +41,8 @@
       ? null
       : plugin.g.algs['Co-Citations'](currNode)
           .then((ccMap) => {
+            const greater = ascOrder ? 1 : -1
+            const lesser = ascOrder ? -1 : 1
             let sortedCoCites = Object.keys(ccMap)
               .map((to) => {
                 let cocitation = ccMap[to] as unknown as CoCitationRes
@@ -49,7 +53,7 @@
                   to,
                 }
               })
-              .sort((a, b) => (a.measure > b.measure ? -1 : 1))
+              .sort((a, b) => (a.measure > b.measure ? greater : lesser))
             return sortedCoCites
           })
           .then((res) => {
@@ -63,7 +67,13 @@
   })
 </script>
 
-<SubtypeOptions anl="Co-Citations" {currSubtype} {plugin} {view} />
+<SubtypeOptions
+  anl="Co-Citations"
+  bind:ascOrder
+  {currSubtype}
+  {plugin}
+  {view}
+/>
 
 <div class="GA-CCs">
   {#if promiseSortedCoCites}
