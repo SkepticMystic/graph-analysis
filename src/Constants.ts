@@ -26,18 +26,24 @@ export const TD_MEASURE = 'analysis-measure'
 export const TD_NODE = 'analysis-node'
 
 export const SUBTYPES: { subtype: Subtype; global: boolean }[] = [
+  { subtype: 'Co-Citations', global: false },
   { subtype: 'Adamic Adar', global: false },
   { subtype: 'Common Neighbours', global: false },
   { subtype: 'Jaccard', global: false },
-  { subtype: 'Overlap', global: false },
   { subtype: 'Label Propagation', global: true },
+  { subtype: 'Overlap', global: false },
   { subtype: 'Clustering Coefficient', global: true },
-  { subtype: 'Co-Citations', global: false },
 ]
 
 export const ANALYSIS_TYPES: {
   [anl in Analyses]: SubtypeDesc[]
 } = {
+  'Co-Citations': [
+    {
+      subtype: 'Co-Citations',
+      desc: 'See which of your notes are referenced together most often.',
+    },
+  ],
   'Link Prediction': [
     { subtype: 'Adamic Adar', desc: '<No description given yet>' },
     {
@@ -48,12 +54,6 @@ export const ANALYSIS_TYPES: {
   Similarity: [
     { subtype: 'Jaccard', desc: '<No description given yet>' },
     { subtype: 'Overlap', desc: '<No description given yet>' },
-  ],
-  'Co-Citations': [
-    {
-      subtype: 'Co-Citations',
-      desc: 'See which of your notes are referenced together most often.',
-    },
   ],
   'Community Detection': [
     {
