@@ -14,5 +14,6 @@
     width: 20px;
     height: 20px;
     display: inline-block;
+    padding-top: 3px !important;
   }
 </style>
