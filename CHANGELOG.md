@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.4](https://github.com/SkepticMystic/graph-analysis/compare/0.6.3...0.6.4) (2021-11-07)
+
+
+### Bug Fixes
+
+* Nested tags do not appear correctly in co-citations ([1f65e96](https://github.com/SkepticMystic/graph-analysis/commit/1f65e96486b814276a30e0b143ef1966f0d56c95))
+
 ### [0.6.3](https://github.com/SkepticMystic/graph-analysis/compare/0.6.2...0.6.3) (2021-11-07)
 
 ### [0.6.2](https://github.com/SkepticMystic/graph-analysis/compare/0.6.1...0.6.2) (2021-11-07)
