@@ -88,8 +88,7 @@
                   <span
                     class="{node.linked
                       ? LINKED
-                      : NOT_LINKED} internal-link {TD_NODE}
-                      {node.to[0] === '#' ? 'tag' : ''}"
+                      : NOT_LINKED} internal-link {TD_NODE}"
                     on:click={async (e) => {
                       if (node.to[0] === '#') {
                       } else {
@@ -103,13 +102,18 @@
                       hoverPreview(e, view, dropPath(node.to))
                     }}
                   >
-                    {#if node.linked}
-                      <span class="GA-Link-Icon">
-                        <FaLink />
-                      </span>
+                    {#if node.to[0] === '#'}
+                      <!-- svelte-ignore a11y-missing-attribute -->
+                      <a class="tag">{node.to}</a>
+                    {:else}
+                      {#if node.linked}
+                        <span class="GA-Link-Icon">
+                          <FaLink />
+                        </span>
+                      {/if}
+                      {dropPath(node.to)}
                     {/if}
-                    {node.to[0] === '#' ? node.to : dropPath(node.to)}</span
-                  >
+                  </span>
                   <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
                 </span>
               </summary>
