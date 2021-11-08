@@ -4,7 +4,7 @@
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
   import { dropPath, openMenu } from 'src/Utility'
-
+  import FaLink from 'svelte-icons/fa/FaLink.svelte'
   export let app: App
   export let view: AnalysisView
   export let promiseSortedResults: Promise<
@@ -46,6 +46,11 @@
               }}
               on:mouseover={(e) => hoverPreview(e, view, dropPath(node.to))}
             >
+              {#if node.linked}
+                <span class="GA-Link-Icon">
+                  <FaLink />
+                </span>
+              {/if}
               {dropPath(node.to)}
             </td>
             <td class={TD_MEASURE}>{node.measure}</td>

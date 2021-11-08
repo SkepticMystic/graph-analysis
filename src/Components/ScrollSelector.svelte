@@ -7,7 +7,12 @@
   export let view: AnalysisView
 </script>
 
-<div class="scrollContainer">
+<div
+  class="scrollContainer"
+  on:mouseover={function () {
+    this.ariaLabel = '`Shift + Scroll` to scroll sideways'
+  }}
+>
   <div class="container">
     {#each SUBTYPES as subtype}
       <button
@@ -20,7 +25,7 @@
         }}
       >
         {#if subtype.global}
-          <span class="icon">
+          <span class="GA-Link-Icon">
             <FaGlobeAfrica />
           </span>
         {/if}
@@ -31,14 +36,6 @@
 </div>
 
 <style>
-  .icon {
-    color: var(--text-normal);
-    width: 13px;
-    height: 13px;
-    display: inline-block;
-    padding-top: 2px !important;
-  }
-
   .container {
     overflow: auto;
     white-space: nowrap;

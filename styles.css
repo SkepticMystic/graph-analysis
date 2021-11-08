@@ -14,11 +14,18 @@ span.internal-link:hover {
 tr.analysis-linked td:first-child::before,
 span.analysis-linked::before,
 div.analysis-linked::before {
-  content: '🔗 ';
 }
 tr.analysis-not-linked,
 span.analysis-not-linked {
   /* background-color: yellow; */
+}
+
+.GA-Link-Icon {
+  color: var(--text-normal);
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  padding-top: 2px !important;
 }
 
 .GA-Global {

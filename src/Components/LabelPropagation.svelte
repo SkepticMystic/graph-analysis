@@ -8,6 +8,7 @@
   import { dropPath, getCurrNode, openMenu } from 'src/Utility'
   import { onMount } from 'svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
+  import FaLink from 'svelte-icons/fa/FaLink.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -107,6 +108,11 @@
                       hoverPreview(e, view, member)
                     }}
                   >
+                    {#if isLinked(resolvedLinks, comm.label, member, false)}
+                      <span class="GA-Link-Icon">
+                        <FaLink />
+                      </span>
+                    {/if}
                     {dropPath(member)}
                   </div>
                 {/each}
@@ -120,12 +126,6 @@
 </div>
 
 <style>
-  .icon {
-    color: var(--text-normal);
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-  }
   .GA-CCs {
     display: flex;
     flex-direction: column;

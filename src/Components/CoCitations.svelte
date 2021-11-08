@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import type { App } from 'obsidian'
   import { isLinked, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
@@ -102,7 +103,12 @@
                       hoverPreview(e, view, dropPath(node.to))
                     }}
                   >
-                    {(node.to[0] === '#') ? node.to : dropPath(node.to)}</span
+                    {#if node.linked}
+                      <span class="GA-Link-Icon">
+                        <FaLink />
+                      </span>
+                    {/if}
+                    {node.to[0] === '#' ? node.to : dropPath(node.to)}</span
                   >
                   <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
                 </span>
@@ -120,7 +126,8 @@
                       }}
                       on:mouseover={(e) =>
                         hoverPreview(e, view, dropPath(coCite.source))}
-                      >{dropPath(coCite.source)}</span
+                    >
+                      {dropPath(coCite.source)}</span
                     >
                     <span class={TD_MEASURE}
                       >{roundNumber(coCite.measure, 3)}</span
