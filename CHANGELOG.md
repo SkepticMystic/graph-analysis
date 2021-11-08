@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.5](https://github.com/SkepticMystic/graph-analysis/compare/0.6.4...0.6.5) (2021-11-08)
+
 ### [0.6.4](https://github.com/SkepticMystic/graph-analysis/compare/0.6.3...0.6.4) (2021-11-07)
 
 
