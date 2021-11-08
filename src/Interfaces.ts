@@ -56,6 +56,7 @@ export type AnalysisAlg<T> = (a: string, options?: {}) => Promise<T>
 export interface GraphAnalysisSettings {
   noInfinity: boolean
   noZero: boolean
+  allFileExtensions: boolean
   coTags: boolean
   defaultSubtypeType: Subtype
   debugMode: boolean

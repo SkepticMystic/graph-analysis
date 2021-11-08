@@ -32,7 +32,9 @@ export const dropPath = (path: string) => {
   return path.split('/').last()
 }
 
-export const dropMD = (str: string) => str.split('.md').slice(0, -1).join('')
+export const dropExt = (str: string) => str.split('.').slice(0, -1).join('.')
+
+export const presentPath = (path: string) => dropExt(dropPath(path))
 
 export const nxnArray = (n: number): undefined[][] =>
   [...Array(n)].map((e) => Array(n))
@@ -51,6 +53,19 @@ export function hoverPreview(
     targetEl,
     linktext: to,
   })
+}
+
+export function looserIsLinked(
+  resolvedLinks: ResolvedLinks,
+  from: string,
+  to: string,
+  directed: boolean = true
+) {
+  const fromTo = resolvedLinks[from]?.hasOwnProperty(to)
+  if (!fromTo && !directed) {
+    const toFrom = resolvedLinks[to]?.hasOwnProperty(from)
+    return toFrom
+  } else return fromTo
 }
 
 /**
@@ -244,8 +259,4 @@ export function getMaxKey(obj: Record<string, number>) {
   return Object.keys(obj).reduce((a, b) =>
     obj[a] === obj[b] ? (Math.random() < 0.5 ? a : b) : obj[a] > obj[b] ? a : b
   )
-}
-
-export function getCurrNode(currFile: TFile) {
-  return currFile?.path.split('.md', 1)[0]
 }

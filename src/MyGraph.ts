@@ -19,7 +19,7 @@ import type {
   ResultMap,
   Subtype,
 } from 'src/Interfaces'
-import { dropMD, getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
+import { getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
 
 export default class MyGraph extends Graph {
   resolvedLinks: ResolvedLinks
@@ -43,24 +43,22 @@ export default class MyGraph extends Graph {
     const { exclusionRegex } = this.settings
     const regex = new RegExp(exclusionRegex, 'i')
     let i = 0
-    Object.keys(this.resolvedLinks).forEach((source) => {
+    for (const source in this.resolvedLinks) {
       if (exclusionRegex === '' || !regex.test(source)) {
-        if (source.split('.').last() === 'md') {
-          const sourceNoMD = dropMD(source)
-          this.setNode(sourceNoMD, i)
-
+        if (source.endsWith(this.settings.allFileExtensions ? '' : 'md')) {
+          this.setNode(source, i)
           i++
+
           for (const dest in this.resolvedLinks[source]) {
             if (exclusionRegex === '' || !regex.test(dest)) {
-              if (dest.split('.').last() === 'md') {
-                const destNoMD = dropMD(dest)
-                this.setEdge(sourceNoMD, destNoMD)
+              if (dest.endsWith(this.settings.allFileExtensions ? '' : 'md')) {
+                this.setEdge(source, dest)
               }
             }
           }
         }
       }
-    })
+    }
     return this
   }
 
@@ -142,14 +140,11 @@ export default class MyGraph extends Graph {
       for (const preI in pres) {
         const pre = pres[preI]
         const file = mdCache.getFirstLinkpathDest(pre, '')
-        if (!file) {
-          continue
-        }
+        if (!file) continue
+
         const cache = mdCache.getFileCache(file)
 
         const preCocitations: { [name: string]: [number, CoCitation[]] } = {}
-        let spl = a.split('/')
-        let ownBasename = spl[spl.length - 1]
         const allLinks = [...cache.links]
         if (cache.embeds) {
           allLinks.push(...cache.embeds)
@@ -159,20 +154,20 @@ export default class MyGraph extends Graph {
             getLinkpath(link.link),
             file.path
           )
-          if (!linkFile) {
-            return false
-          }
-          return (
-            linkFile.basename === ownBasename && linkFile.extension === 'md'
-          )
+          if (!linkFile) return false
+
+          const extensionQ =
+            this.settings.allFileExtensions || linkFile.extension === 'md'
+          return linkFile.path === a && extensionQ
         })
 
         const cachedRead = await this.app.vault.cachedRead(file)
-        const content = cachedRead.split('\n')
+        const lines = cachedRead.split('\n')
+
         // Find the sentence the link is in
         const ownSentences: [number, number, number, ReferenceCache][] =
           ownLinks.map((link) => {
-            let line = content[link.position.end.line]
+            let line = lines[link.position.end.line]
             const sentences = tokenizer.sentences(line, {
               preserve_whitespace: true,
             })
@@ -246,26 +241,34 @@ export default class MyGraph extends Graph {
         }
         coCiteCandidates.forEach((item) => {
           let linkPath: string = null
+          const linkFile = mdCache.getFirstLinkpathDest(
+            getLinkpath((item as ReferenceCache)?.link ?? '') ?? '',
+            file.path
+          )
           if ('link' in item) {
-            const linkFile = mdCache.getFirstLinkpathDest(
-              getLinkpath((item as ReferenceCache).link),
-              file.path
+            if (
+              !linkFile ||
+              // If you don't want to check all extensions AND the extension is not .md, return
+              // The negation is, if you want to check all files, OR the extension is .md, then don't return yet
+              (!this.settings.allFileExtensions && linkFile.extension !== 'md')
             )
-            if (!linkFile || linkFile.extension !== 'md') return
+              return
 
-            linkPath = linkFile.basename
-            if (linkPath === ownBasename) return
+            // Something is happening here where imgs aren't being added to preCocitations...
+            // I think it's because only the basename is being added as a key, but the whole path is needed when accessing it for `results`
+
+            linkPath = linkFile.path
+            if (linkPath === a) return
           } else if ('tag' in item) {
             linkPath = (item as TagCache).tag
-          } else {
-            return
-          }
+          } else return
+
           // Initialize to 0 if not set yet
           if (!(linkPath in preCocitations)) {
             preCocitations[linkPath] = [0, []]
           }
 
-          const lineContent = content[item.position.start.line]
+          const lineContent = lines[item.position.start.line]
           // Check if the link is on the same line
           let hasOwnLine = false
           ownSentences.forEach(([line, start, end, ownLink]) => {
@@ -396,6 +399,7 @@ export default class MyGraph extends Graph {
           getAllTags(cache).forEach((tag) => {
             if (!(tag in preCocitations)) {
               // Tag defined in YAML. Gets the lowest score (has no particular position)
+
               preCocitations[tag] = [
                 minScore,
                 [
@@ -416,8 +420,10 @@ export default class MyGraph extends Graph {
           const file = mdCache.getFirstLinkpathDest(key, '')
           let name = null
           if (file) {
-            name = file.path.slice(0, file.path.length - 3)
+            name = file.path
+            // .slice(0, file.path.length - 3)
           } else if (key[0] === '#') {
+            console.log({ key })
             name = key
           } else {
             continue

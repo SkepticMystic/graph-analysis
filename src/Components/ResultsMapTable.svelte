@@ -3,8 +3,10 @@
   import { hoverPreview, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import { dropPath, openMenu } from 'src/Utility'
+  import { dropPath, openMenu, presentPath } from 'src/Utility'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
+  import ExtensionIcon from './ExtensionIcon.svelte'
+
   export let app: App
   export let view: AnalysisView
   export let promiseSortedResults: Promise<
@@ -33,7 +35,7 @@
         {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
           <tr
             class={node.linked ? LINKED : NOT_LINKED}
-            aria-label={node.extra.map(dropPath).join('\n')}
+            aria-label={node.extra.map(presentPath).join('\n')}
             aria-label-position="left"
           >
             <td
@@ -51,7 +53,10 @@
                   <FaLink />
                 </span>
               {/if}
-              {dropPath(node.to)}
+              {#if !node.to.endsWith('.md')}
+                <ExtensionIcon path={node.to} />
+              {/if}
+              {presentPath(node.to)}
             </td>
             <td class={TD_MEASURE}>{node.measure}</td>
           </tr>

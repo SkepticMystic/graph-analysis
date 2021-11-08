@@ -1,7 +1,6 @@
 <script lang="ts">
-  import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import type { App } from 'obsidian'
-  import { isLinked, openOrSwitch } from 'obsidian-community-lib'
+  import { openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
   import type {
@@ -13,13 +12,16 @@
   import {
     debug,
     dropPath,
-    getCurrNode,
     hoverPreview,
     jumpToSelection,
+    looserIsLinked,
     openMenu,
+    presentPath,
     roundNumber,
   } from 'src/Utility'
   import { onMount } from 'svelte'
+  import FaLink from 'svelte-icons/fa/FaLink.svelte'
+  import ExtensionIcon from './ExtensionIcon.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
 
   export let app: App
@@ -28,14 +30,13 @@
   export let view: AnalysisView
   export let currSubtype: Subtype
 
-  let ascOrder = false
   let currFile = app.workspace.getActiveFile()
-
-  $: currNode = getCurrNode(currFile)
+  $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
   })
 
+  let ascOrder = false
   let { resolvedLinks } = app.metadataCache
   $: promiseSortedCoCites =
     !currNode || !plugin.g
@@ -50,7 +51,7 @@
                 return {
                   measure: cocitation.measure,
                   coCitations: cocitation.coCitations,
-                  linked: isLinked(resolvedLinks, currNode, to, false),
+                  linked: looserIsLinked(resolvedLinks, to, currNode, false),
                   to,
                 }
               })
@@ -111,7 +112,11 @@
                           <FaLink />
                         </span>
                       {/if}
-                      {dropPath(node.to)}
+                      {#if !node.to.endsWith('.md')}
+                        <ExtensionIcon path={node.to} />
+                      {/if}
+
+                      {presentPath(node.to)}
                     {/if}
                   </span>
                   <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
@@ -131,11 +136,11 @@
                       on:mouseover={(e) =>
                         hoverPreview(e, view, dropPath(coCite.source))}
                     >
-                      {dropPath(coCite.source)}</span
+                      {presentPath(coCite.source)}</span
                     >
-                    <span class={TD_MEASURE}
-                      >{roundNumber(coCite.measure, 3)}</span
-                    >
+                    <span class={TD_MEASURE}>
+                      {roundNumber(coCite.measure, 3)}
+                    </span>
                   </div>
                   <div
                     class="CC-sentence"
@@ -217,7 +222,7 @@
     padding-left: 40px;
     color: var(--text-muted);
   }
-  .top-row span + span {
+  .top-row > span + span {
     float: right;
   }
 

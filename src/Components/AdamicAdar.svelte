@@ -3,7 +3,7 @@
   import type AnalysisView from 'src/AnalysisView'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { debug, getCurrNode, getPromiseResults } from 'src/Utility'
+  import { debug, getPromiseResults } from 'src/Utility'
   import { onMount } from 'svelte'
   import ResultsMapTable from './ResultsMapTable.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
@@ -17,7 +17,7 @@
   let { resolvedLinks } = app.metadataCache
 
   let currFile = app.workspace.getActiveFile()
-  $: currNode = getCurrNode(currFile)
+  $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
   })
@@ -30,7 +30,6 @@
     resolvedLinks,
     ascOrder
   )
-
   onMount(() => {
     currFile = app.workspace.getActiveFile()
     debug(settings, { promiseSortedResults })

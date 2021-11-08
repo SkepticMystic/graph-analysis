@@ -5,10 +5,11 @@
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { dropPath, getCurrNode, openMenu } from 'src/Utility'
+  import { openMenu, presentPath } from 'src/Utility'
   import { onMount } from 'svelte'
-  import SubtypeOptions from './SubtypeOptions.svelte'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
+  import ExtensionIcon from './ExtensionIcon.svelte'
+  import SubtypeOptions from './SubtypeOptions.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -20,7 +21,7 @@
 
   let ascOrder = false
   let currFile = app.workspace.getActiveFile()
-  $: currNode = getCurrNode(currFile)
+  $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
   })
@@ -52,6 +53,7 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
+    currNode = currFile.path
   })
 </script>
 
@@ -89,7 +91,7 @@
                     : ''}"
                 >
                   <span>
-                    {dropPath(comm.label)}
+                    {presentPath(comm.label)}
                   </span>
                   <span class={TD_MEASURE}>{comm.comm.length}</span>
                 </span>
@@ -113,7 +115,10 @@
                         <FaLink />
                       </span>
                     {/if}
-                    {dropPath(member)}
+                    {#if !member.endsWith('.md')}
+                      <ExtensionIcon path={member} />
+                    {/if}
+                    {presentPath(member)}
                   </div>
                 {/each}
               </div>

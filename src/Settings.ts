@@ -58,6 +58,18 @@ export class SampleSettingTab extends PluginSettingTab {
       )
 
     new Setting(containerEl)
+      .setName('Include All File Extensions')
+      .setDesc(
+        'Whether to also show files with non-md extensions in the analyses.'
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(settings.allFileExtensions).onChange(async (value) => {
+          settings.allFileExtensions = value
+          await plugin.saveSettings()
+        })
+      )
+
+    new Setting(containerEl)
       .setName('Include tags (Co-Citations)')
       .setDesc(
         'Whether to also show the tags that are co-cited in the co-citations algorithm.'
