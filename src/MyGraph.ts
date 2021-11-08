@@ -15,24 +15,17 @@ import type {
   CoCitationMap,
   Communities,
   GraphAnalysisSettings,
-  ResolvedLinks,
   ResultMap,
   Subtype,
 } from 'src/Interfaces'
 import { getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
 
 export default class MyGraph extends Graph {
-  resolvedLinks: ResolvedLinks
   app: App
   settings: GraphAnalysisSettings
 
-  constructor(
-    resolvedLinks: ResolvedLinks,
-    app: App,
-    settings: GraphAnalysisSettings
-  ) {
+  constructor(app: App, settings: GraphAnalysisSettings) {
     super()
-    this.resolvedLinks = resolvedLinks
     this.app = app
     this.settings = settings
   }
@@ -40,16 +33,17 @@ export default class MyGraph extends Graph {
   nodeMapping: { [name: string]: number } = {}
 
   async initGraph(): Promise<MyGraph> {
+    const { resolvedLinks, unresolvedLinks } = this.app.metadataCache
     const { exclusionRegex } = this.settings
     const regex = new RegExp(exclusionRegex, 'i')
     let i = 0
-    for (const source in this.resolvedLinks) {
+    for (const source in resolvedLinks) {
       if (exclusionRegex === '' || !regex.test(source)) {
         if (source.endsWith(this.settings.allFileExtensions ? '' : 'md')) {
           this.setNode(source, i)
           i++
 
-          for (const dest in this.resolvedLinks[source]) {
+          for (const dest in resolvedLinks[source]) {
             if (exclusionRegex === '' || !regex.test(dest)) {
               if (dest.endsWith(this.settings.allFileExtensions ? '' : 'md')) {
                 this.setEdge(source, dest)
@@ -59,6 +53,21 @@ export default class MyGraph extends Graph {
         }
       }
     }
+
+    for (const source in unresolvedLinks) {
+      if (exclusionRegex === '' || !regex.test(source)) {
+        this.setNode(source, i)
+        i++
+
+        for (const dest in unresolvedLinks[source]) {
+          const destMD = dest + '.md'
+          if (exclusionRegex === '' || !regex.test(destMD)) {
+            this.setEdge(source, destMD, 'Unresolved')
+          }
+        }
+      }
+    }
+    console.log(this.edges().filter((e) => this.edge(e) === 'Unresolved'))
     return this
   }
 
@@ -98,8 +107,11 @@ export default class MyGraph extends Graph {
 
     'Adamic Adar': async (a: string): Promise<ResultMap> => {
       const Na = this.neighbors(a) as string[]
+      const Nofb = this.neighbors('b.md')
       const results: ResultMap = {}
-
+      // Find all edges containing a
+      const edges = this.edges().filter((e) => e.v === a || e.w === a)
+      console.log({ Na, Nofb })
       this.nodes().forEach((to) => {
         const Nb = this.neighbors(to) as string[]
         const Nab = intersection(Na, Nb)

@@ -3,7 +3,13 @@
   import { hoverPreview, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import { dropPath, openMenu, presentPath } from 'src/Utility'
+  import {
+    dropExt,
+    dropPath,
+    isResolved,
+    openMenu,
+    presentPath,
+  } from 'src/Utility'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
 
@@ -39,7 +45,10 @@
             aria-label-position="left"
           >
             <td
-              class="internal-link {TD_NODE}"
+              class="internal-link {TD_NODE} 
+              {node.linked || !isResolved(app, currNode, dropExt(node.to))
+                ? ''
+                : 'is-unresolved'}"
               on:click={async (e) => {
                 await openOrSwitch(app, node.to, e)
               }}

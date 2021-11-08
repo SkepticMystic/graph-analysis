@@ -68,6 +68,10 @@ export function looserIsLinked(
   } else return fromTo
 }
 
+export function isResolved(app: App, from: string, to: string) {
+  return app.metadataCache.unresolvedLinks[from]?.hasOwnProperty(to)
+}
+
 /**
  * Adds or updates the given yaml `key` to `value` in the given TFile
  * @param  {string} key

@@ -5,7 +5,7 @@
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { openMenu, presentPath } from 'src/Utility'
+  import { dropExt, isResolved, openMenu, presentPath } from 'src/Utility'
   import { onMount } from 'svelte'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
@@ -102,7 +102,11 @@
                     class="internal-link {TD_NODE} 
                     {isLinked(resolvedLinks, comm.label, member, false)
                       ? LINKED
-                      : NOT_LINKED}"
+                      : NOT_LINKED}
+                      {isLinked(resolvedLinks, comm.label, member, false) ||
+                    !isResolved(app, currNode, dropExt(member))
+                      ? ''
+                      : 'is-unresolved'}"
                     on:click={async (e) => {
                       await openOrSwitch(app, member, e)
                     }}
@@ -137,6 +141,9 @@
     padding-left: 10px;
   }
 
+  .is-unresolved {
+    color: var(--text-muted);
+  }
   /* .GA-CC {
         border: 1px solid var(--background-modifier-border);
         border-radius: 3px; 
