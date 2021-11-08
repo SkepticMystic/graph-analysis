@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/SkepticMystic/graph-analysis/compare/0.6.6...0.7.0) (2021-11-08)
+
+
+### Features
+
+* :sparkles: Allow all file extensions to be added to the graph + file icons! ([78ff464](https://github.com/SkepticMystic/graph-analysis/commit/78ff464772acff32f6455c2b7c77e8866c040504))
+
 ### [0.6.6](https://github.com/SkepticMystic/graph-analysis/compare/0.6.5...0.6.6) (2021-11-08)
 
 ### [0.6.5](https://github.com/SkepticMystic/graph-analysis/compare/0.6.4...0.6.5) (2021-11-08)
