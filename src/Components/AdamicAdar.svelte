@@ -24,6 +24,7 @@
 
   let ascOrder = false
   $: promiseSortedResults = getPromiseResults(
+    app,
     plugin,
     currNode,
     currSubtype,

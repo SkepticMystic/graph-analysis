@@ -24,6 +24,7 @@
   })
 
   $: promiseSortedResults = getPromiseResults(
+    app,
     plugin,
     currNode,
     currSubtype,

@@ -23,6 +23,7 @@
   let { resolvedLinks } = app.metadataCache
   let ascOrder = false
   $: promiseSortedResults = getPromiseResults(
+    app,
     plugin,
     currNode,
     currSubtype,

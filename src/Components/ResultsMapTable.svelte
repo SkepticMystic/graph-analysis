@@ -3,13 +3,7 @@
   import { hoverPreview, isInVault, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import {
-    dropExt,
-    dropPath,
-    isUnresolved,
-    openMenu,
-    presentPath,
-  } from 'src/Utility'
+  import { dropExt, dropPath, openMenu, presentPath } from 'src/Utility'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
 
@@ -21,6 +15,7 @@
       linked: boolean
       to: string
       extra: any
+      resolved: boolean
     }[]
   >
   export let currNode: string
@@ -46,11 +41,9 @@
           >
             <td
               class="internal-link {TD_NODE} 
-              {node.to.endsWith('.md') && !isInVault(app, dropExt(node.to))
-                ? 'is-unresolved'
-                : ''}"
+              {node.resolved ? '' : 'is-unresolved'}"
               on:click={async (e) => {
-                await openOrSwitch(app, node.to, e)
+                await openOrSwitch(app, dropExt(node.to), e)
               }}
               on:contextmenu={(e) => {
                 openMenu(e, app)

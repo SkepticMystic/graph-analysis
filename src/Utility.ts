@@ -1,9 +1,14 @@
 import { App, EditorRange, MarkdownView, Menu, Notice, TFile } from 'obsidian'
-import { copy, isLinked, ResolvedLinks } from 'obsidian-community-lib'
-import type GraphAnalysisPlugin from 'src/main'
+import {
+  copy,
+  isInVault,
+  isLinked,
+  ResolvedLinks,
+} from 'obsidian-community-lib'
 import type AnalysisView from 'src/AnalysisView'
 import { DECIMALS } from 'src/constants'
 import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
+import type GraphAnalysisPlugin from 'src/main'
 
 export const sum = (arr: number[]) => {
   if (arr.length === 0) {
@@ -212,6 +217,7 @@ export function jumpToSelection(app: App, line: number, sentence: string) {
 }
 
 export function getPromiseResults(
+  app: App,
   plugin: GraphAnalysisPlugin,
   currNode: string,
   subtype: Subtype,
@@ -234,6 +240,7 @@ export function getPromiseResults(
           measure,
           linked: isLinked(resolvedLinks, currNode, to, false),
           to,
+          resolved: !to.endsWith('.md') || isInVault(app, to),
           extra,
         }
       })
