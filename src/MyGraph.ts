@@ -253,24 +253,25 @@ export default class MyGraph extends Graph {
         }
         coCiteCandidates.forEach((item) => {
           let linkPath: string = null
-          const linkFile = mdCache.getFirstLinkpathDest(
-            getLinkpath((item as ReferenceCache)?.link ?? '') ?? '',
-            file.path
-          )
           if ('link' in item) {
-            if (
-              !linkFile ||
-              // If you don't want to check all extensions AND the extension is not .md, return
-              // The negation is, if you want to check all files, OR the extension is .md, then don't return yet
-              (!this.settings.allFileExtensions && linkFile.extension !== 'md')
+            const linkFile = mdCache.getFirstLinkpathDest(
+              getLinkpath((item as ReferenceCache)?.link ?? '') ?? '',
+              file.path
             )
+            if (!linkFile) {
+              linkPath = (item as ReferenceCache).link
+            }
+            // If you don't want to check all extensions AND the extension is not .md, return
+            // The negation is, if you want to check all files, OR the extension is .md, then don't return yet
+            else if (!this.settings.allFileExtensions && linkFile.extension !== 'md') {
               return
-
-            // Something is happening here where imgs aren't being added to preCocitations...
-            // I think it's because only the basename is being added as a key, but the whole path is needed when accessing it for `results`
-
-            linkPath = linkFile.path
-            if (linkPath === a) return
+            }
+            else {
+              // Something is happening here where imgs aren't being added to preCocitations...
+              // I think it's because only the basename is being added as a key, but the whole path is needed when accessing it for `results`
+              linkPath = linkFile.path
+              if (linkPath === a) return
+            }
           } else if ('tag' in item) {
             linkPath = (item as TagCache).tag
           } else return
@@ -431,14 +432,16 @@ export default class MyGraph extends Graph {
         for (let key in preCocitations) {
           const file = mdCache.getFirstLinkpathDest(key, '')
           let name = null
+          let resolved = true
           if (file) {
             name = file.path
             // .slice(0, file.path.length - 3)
           } else if (key[0] === '#') {
-            console.log({ key })
             name = key
           } else {
-            continue
+            // Unresolved link
+            name = key
+            resolved = false
           }
           let cocitation = preCocitations[key]
           if (name in results) {
@@ -448,12 +451,13 @@ export default class MyGraph extends Graph {
             results[name] = {
               measure: cocitation[0],
               coCitations: cocitation[1],
+              resolved: resolved
             }
           }
         }
       }
 
-      results[a] = { measure: 0, coCitations: [] }
+      results[a] = { measure: 0, coCitations: [], resolved: false}
       for (const key in results) {
         results[key].coCitations = results[key].coCitations.sort((a, b) =>
           a.measure > b.measure ? -1 : 1
@@ -482,9 +486,7 @@ export default class MyGraph extends Graph {
               (neighbour) => labeledNodes[neighbour]
             )
             const counts = getCounts(neighbourLabels)
-            const maxKey = getMaxKey(counts)
-
-            newLabeledNodes[node] = maxKey
+            newLabeledNodes[node] = getMaxKey(counts)
           }
         })
         // Update the labels
