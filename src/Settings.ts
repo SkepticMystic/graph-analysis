@@ -82,6 +82,16 @@ export class SampleSettingTab extends PluginSettingTab {
       )
 
     new Setting(containerEl)
+      .setName('Include Unresolved Links')
+      .setDesc('Whether to also show links that have not yet been created.')
+      .addToggle((toggle) =>
+        toggle.setValue(settings.addUnresolved).onChange(async (value) => {
+          settings.addUnresolved = value
+          await plugin.saveSettings()
+        })
+      )
+
+    new Setting(containerEl)
       .setName('Exclusion Regex')
       .setDesc(
         createFragment((el) => {

@@ -57,6 +57,7 @@ export interface GraphAnalysisSettings {
   noInfinity: boolean
   noZero: boolean
   allFileExtensions: boolean
+  addUnresolved: boolean
   coTags: boolean
   defaultSubtypeType: Subtype
   debugMode: boolean

@@ -54,20 +54,21 @@ export default class MyGraph extends Graph {
       }
     }
 
-    for (const source in unresolvedLinks) {
-      if (exclusionRegex === '' || !regex.test(source)) {
-        this.setNode(source, i)
-        i++
+    if (this.settings.addUnresolved) {
+      for (const source in unresolvedLinks) {
+        if (exclusionRegex === '' || !regex.test(source)) {
+          this.setNode(source, i)
+          i++
 
-        for (const dest in unresolvedLinks[source]) {
-          const destMD = dest + '.md'
-          if (exclusionRegex === '' || !regex.test(destMD)) {
-            this.setEdge(source, destMD, 'Unresolved')
+          for (const dest in unresolvedLinks[source]) {
+            const destMD = dest + '.md'
+            if (exclusionRegex === '' || !regex.test(destMD)) {
+              this.setEdge(source, destMD, 'Unresolved')
+            }
           }
         }
       }
     }
-    console.log(this.edges().filter((e) => this.edge(e) === 'Unresolved'))
     return this
   }
 
