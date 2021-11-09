@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/SkepticMystic/graph-analysis/compare/0.7.0...0.8.0) (2021-11-09)
+
+
+### Features
+
+* :sparkles: Allow unresolved links for all algs except coCites (for now) ([779e928](https://github.com/SkepticMystic/graph-analysis/commit/779e928712bd6c3ac9c393f3e6faf2b775407aa6))
+* :sparkles: Option to addUnresolved links to graph or not ([386aeb1](https://github.com/SkepticMystic/graph-analysis/commit/386aeb10023a536e3add270da858e4aacf5f6211))
+* Co-citations now also shows unresolved links ([d420b4a](https://github.com/SkepticMystic/graph-analysis/commit/d420b4a55a1455243be07b581c2cf99f7b0b893a))
+* Unresolved links are added to cocites only when option is true ([e04fb80](https://github.com/SkepticMystic/graph-analysis/commit/e04fb805f4f09f9f80e166bd923c24e7aabc2e45))
+
+
+### Bug Fixes
+
+* :bug: Give .is-unresolved to unresolved links ([ad8b5bd](https://github.com/SkepticMystic/graph-analysis/commit/ad8b5bdb114045a83c686575a4ed0564c5d4511c))
+* **coCites:** :bug: Create unresolvedLink ([cc60074](https://github.com/SkepticMystic/graph-analysis/commit/cc60074b7bda25e7a1460dbb56a81bad88a4b7b2))
+
 ## [0.7.0](https://github.com/SkepticMystic/graph-analysis/compare/0.6.6...0.7.0) (2021-11-08)
 
 
