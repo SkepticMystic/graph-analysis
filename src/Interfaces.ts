@@ -44,6 +44,7 @@ export interface CoCitation {
 
 export interface CoCitationRes {
   measure: number
+  resolved: boolean
   coCitations: CoCitation[]
 }
 

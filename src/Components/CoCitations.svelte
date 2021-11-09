@@ -47,11 +47,12 @@
             const lesser = ascOrder ? -1 : 1
             let sortedCoCites = Object.keys(ccMap)
               .map((to) => {
-                let cocitation = ccMap[to] as unknown as CoCitationRes
+                let cocitation = ccMap[to] as CoCitationRes
                 return {
                   measure: cocitation.measure,
                   coCitations: cocitation.coCitations,
                   linked: looserIsLinked(resolvedLinks, to, currNode, false),
+                  resolved: cocitation.resolved,
                   to,
                 }
               })
@@ -89,10 +90,14 @@
                   <span
                     class="{node.linked
                       ? LINKED
-                      : NOT_LINKED} internal-link {TD_NODE}"
+                      : NOT_LINKED} internal-link {TD_NODE} {node.resolved ? '' : 'is-unresolved'}"
                     on:click={async (e) => {
                       if (node.to[0] === '#') {
-                      } else {
+                      }
+                      else if (!node.resolved) {
+                        // Create file
+                      }
+                      else {
                         await openOrSwitch(app, node.to, e)
                       }
                     }}
@@ -115,8 +120,11 @@
                       {#if !node.to.endsWith('.md')}
                         <ExtensionIcon path={node.to} />
                       {/if}
-
-                      {presentPath(node.to)}
+                      {#if node.resolved}
+                        {presentPath(node.to)}
+                      {:else}
+                        {node.to}
+                      {/if}
                     {/if}
                   </span>
                   <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
