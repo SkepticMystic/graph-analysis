@@ -438,13 +438,14 @@ export default class MyGraph extends Graph {
           let resolved = true
           if (file) {
             name = file.path
-            // .slice(0, file.path.length - 3)
           } else if (key[0] === '#') {
             name = key
-          } else {
-            // Unresolved link
+          } else if (this.settings.addUnresolved) {
             name = key
             resolved = false
+          }
+          else {
+            continue
           }
           let cocitation = preCocitations[key]
           if (name in results) {
