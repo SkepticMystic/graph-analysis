@@ -47,12 +47,14 @@
             const lesser = ascOrder ? -1 : 1
             let sortedCoCites = Object.keys(ccMap)
               .map((to) => {
-                let cocitation = ccMap[to] as CoCitationRes
+                let { coCitations, measure, resolved } = ccMap[
+                  to
+                ] as CoCitationRes
                 return {
-                  measure: cocitation.measure,
-                  coCitations: cocitation.coCitations,
+                  measure,
+                  coCitations,
                   linked: looserIsLinked(resolvedLinks, to, currNode, false),
-                  resolved: cocitation.resolved,
+                  resolved,
                   to,
                 }
               })
@@ -90,14 +92,14 @@
                   <span
                     class="{node.linked
                       ? LINKED
-                      : NOT_LINKED} internal-link {TD_NODE} {node.resolved ? '' : 'is-unresolved'}"
+                      : NOT_LINKED} internal-link {TD_NODE} {node.resolved
+                      ? ''
+                      : 'is-unresolved'}"
                     on:click={async (e) => {
                       if (node.to[0] === '#') {
-                      }
-                      else if (!node.resolved) {
+                      } else if (!node.resolved) {
                         // Create file
-                      }
-                      else {
+                      } else {
                         await openOrSwitch(app, node.to, e)
                       }
                     }}

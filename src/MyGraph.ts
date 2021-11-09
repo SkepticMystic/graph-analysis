@@ -264,10 +264,12 @@ export default class MyGraph extends Graph {
             }
             // If you don't want to check all extensions AND the extension is not .md, return
             // The negation is, if you want to check all files, OR the extension is .md, then don't return yet
-            else if (!this.settings.allFileExtensions && linkFile.extension !== 'md') {
+            else if (
+              !this.settings.allFileExtensions &&
+              linkFile.extension !== 'md'
+            ) {
               return
-            }
-            else {
+            } else {
               // Something is happening here where imgs aren't being added to preCocitations...
               // I think it's because only the basename is being added as a key, but the whole path is needed when accessing it for `results`
               linkPath = linkFile.path
@@ -452,13 +454,13 @@ export default class MyGraph extends Graph {
             results[name] = {
               measure: cocitation[0],
               coCitations: cocitation[1],
-              resolved: resolved
+              resolved,
             }
           }
         }
       }
 
-      results[a] = { measure: 0, coCitations: [], resolved: false}
+      results[a] = { measure: 0, coCitations: [], resolved: false }
       for (const key in results) {
         results[key].coCitations = results[key].coCitations.sort((a, b) =>
           a.measure > b.measure ? -1 : 1
