@@ -93,8 +93,6 @@
                     class="{node.linked ? LINKED : NOT_LINKED} {TD_NODE}"
                     on:click={async (e) => {
                       if (node.to[0] === '#') {
-                      } else if (!node.resolved) {
-                        // Create file
                       } else {
                         await openOrSwitch(app, node.to, e)
                       }
