@@ -1,11 +1,16 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { hoverPreview, isLinked, openOrSwitch } from 'obsidian-community-lib'
+  import {
+    hoverPreview,
+    isInVault,
+    isLinked,
+    openOrSwitch,
+  } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { dropExt, isResolved, openMenu, presentPath } from 'src/Utility'
+  import { dropExt, isUnresolved, openMenu, presentPath } from 'src/Utility'
   import { onMount } from 'svelte'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
@@ -103,10 +108,10 @@
                     {isLinked(resolvedLinks, comm.label, member, false)
                       ? LINKED
                       : NOT_LINKED}
-                      {isLinked(resolvedLinks, comm.label, member, false) ||
-                    !isResolved(app, currNode, dropExt(member))
-                      ? ''
-                      : 'is-unresolved'}"
+                      {member.endsWith('.md') &&
+                    !isInVault(app, dropExt(member))
+                      ? 'is-unresolved'
+                      : ''}"
                     on:click={async (e) => {
                       await openOrSwitch(app, member, e)
                     }}

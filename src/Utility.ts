@@ -68,7 +68,7 @@ export function looserIsLinked(
   } else return fromTo
 }
 
-export function isResolved(app: App, from: string, to: string) {
+export function isUnresolved(app: App, from: string, to: string) {
   return app.metadataCache.unresolvedLinks[from]?.hasOwnProperty(to)
 }
 

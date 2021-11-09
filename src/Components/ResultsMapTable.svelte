@@ -1,12 +1,12 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { hoverPreview, openOrSwitch } from 'obsidian-community-lib'
+  import { hoverPreview, isInVault, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
   import {
     dropExt,
     dropPath,
-    isResolved,
+    isUnresolved,
     openMenu,
     presentPath,
   } from 'src/Utility'
@@ -46,9 +46,9 @@
           >
             <td
               class="internal-link {TD_NODE} 
-              {node.linked || !isResolved(app, currNode, dropExt(node.to))
-                ? ''
-                : 'is-unresolved'}"
+              {node.to.endsWith('.md') && !isInVault(app, dropExt(node.to))
+                ? 'is-unresolved'
+                : ''}"
               on:click={async (e) => {
                 await openOrSwitch(app, node.to, e)
               }}
