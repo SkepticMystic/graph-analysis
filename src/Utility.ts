@@ -61,15 +61,20 @@ export function hoverPreview(
 }
 
 export function looserIsLinked(
-  resolvedLinks: ResolvedLinks,
+  app: App,
   from: string,
   to: string,
   directed: boolean = true
 ) {
-  const fromTo = resolvedLinks[from]?.hasOwnProperty(to)
+  const { resolvedLinks, unresolvedLinks } = app.metadataCache
+  const fromTo =
+    resolvedLinks[from]?.hasOwnProperty(to) ||
+    unresolvedLinks[from]?.hasOwnProperty(dropExt(to))
   if (!fromTo && !directed) {
-    const toFrom = resolvedLinks[to]?.hasOwnProperty(from)
-    return toFrom
+    return (
+      resolvedLinks[to]?.hasOwnProperty(from) ||
+      unresolvedLinks[to]?.hasOwnProperty(dropExt(from))
+    )
   } else return fromTo
 }
 

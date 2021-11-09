@@ -441,10 +441,9 @@ export default class MyGraph extends Graph {
           } else if (key[0] === '#') {
             name = key
           } else if (this.settings.addUnresolved) {
-            name = key
+            name = key + '.md'
             resolved = false
-          }
-          else {
+          } else {
             continue
           }
           let cocitation = preCocitations[key]

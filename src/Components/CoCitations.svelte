@@ -53,7 +53,7 @@
                 return {
                   measure,
                   coCitations,
-                  linked: looserIsLinked(resolvedLinks, to, currNode, false),
+                  linked: looserIsLinked(app, to, currNode, false),
                   resolved,
                   to,
                 }
@@ -90,11 +90,7 @@
               <summary>
                 <span class="{node.to} top-row">
                   <span
-                    class="{node.linked
-                      ? LINKED
-                      : NOT_LINKED} internal-link {TD_NODE} {node.resolved
-                      ? ''
-                      : 'is-unresolved'}"
+                    class="{node.linked ? LINKED : NOT_LINKED} {TD_NODE}"
                     on:click={async (e) => {
                       if (node.to[0] === '#') {
                       } else if (!node.resolved) {
@@ -122,11 +118,13 @@
                       {#if !node.to.endsWith('.md')}
                         <ExtensionIcon path={node.to} />
                       {/if}
-                      {#if node.resolved}
+                      <span
+                        class="internal-link {node.resolved
+                          ? ''
+                          : 'is-unresolved'}"
+                      >
                         {presentPath(node.to)}
-                      {:else}
-                        {node.to}
-                      {/if}
+                      </span>
                     {/if}
                   </span>
                   <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
@@ -197,6 +195,10 @@
     border-radius: 3px; 
     padding: 5px; 
   } */
+
+  .is-unresolved {
+    color: var(--text-muted);
+  }
 
   .tag {
     border-radius: 15px !important;

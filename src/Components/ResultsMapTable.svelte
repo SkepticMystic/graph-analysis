@@ -81,4 +81,8 @@
   table.graph-analysis-table td {
     padding: 2px;
   }
+
+  .is-unresolved {
+    color: var(--text-muted);
+  }
 </style>
