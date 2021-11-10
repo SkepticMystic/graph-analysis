@@ -15,7 +15,8 @@
 </script>
 
 <span class="GA-Link-Icon">
-  {#if path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.svg') || path.endsWith('.gif')}
+  {#if path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('jpeg')
+    || path.endsWith('.svg') || path.endsWith('.gif') || path.endsWith('webp')}
     <FaFileImage />
   {:else if path.endsWith('.html')}
     <DiHtml5 />
@@ -27,7 +28,7 @@
     <FaFilePdf />
   {:else if path.endsWith('.txt')}
     <FaStickyNote />
-  {:else if path.endsWith('.mp3')}
+  {:else if path.endsWith('.mp3') || path.endsWith('opus')}
     <FaFileAudio />
   {:else if path.endsWith('.mp4') || path.endsWith('.webm')}
     <FaFileVideo />
