@@ -29,8 +29,8 @@
     align-self: center;
   }
   .GA-img img {
-    max-width: 50%;
-    max-height: 50%;
+    max-width: 25%;
+    max-height: 25%;
   }
   .GA-img img:hover {
     max-width: 100%;
