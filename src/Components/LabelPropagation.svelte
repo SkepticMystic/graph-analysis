@@ -13,6 +13,7 @@
   import type GraphAnalysisPlugin from 'src/main'
   import {
     dropExt,
+    getExt,
     getImgBufferPromise,
     isImg,
     openMenu,
@@ -108,17 +109,19 @@
                   <span class={TD_MEASURE}>{comm.comm.length}</span>
                 </span>
               </summary>
-              <div class="GA-details">
+              <div class="GA-details ">
                 {#each comm.comm as member}
                   <div
-                    class="internal-link {TD_NODE} 
+                    class="{TD_NODE} 
                     {isLinked(resolvedLinks, comm.label, member, false)
                       ? LINKED
                       : NOT_LINKED}
                       {member.endsWith('.md') &&
                     !isInVault(app, dropExt(member))
                       ? 'is-unresolved'
-                      : ''}"
+                      : ''} 
+                      {'GA-' + getExt(member)}
+                      "
                     on:click={async (e) => {
                       await openOrSwitch(app, member, e)
                     }}
@@ -134,8 +137,8 @@
                     {#if !member.endsWith('.md')}
                       <ExtensionIcon path={member} />
                     {/if}
-                    {presentPath(member)}
-                    {#if isImg(member)}
+                    <span class="internal-link">{presentPath(member)}</span>
+                    {#if isImg(member) && plugin.settings.showImgThumbnails}
                       <ImgThumbnail img={getImgBufferPromise(app, member)} />
                     {/if}
                   </div>

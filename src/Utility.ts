@@ -42,6 +42,7 @@ export const dropPath = (path: string) => {
 }
 
 export const dropExt = (str: string) => str.split('.').slice(0, -1).join('.')
+export const getExt = (path: string) => path.split('.').last()
 
 export const presentPath = (path: string) => dropExt(dropPath(path))
 
@@ -257,7 +258,10 @@ export function getPromiseResults(
           to,
           resolved,
           extra,
-          img: isImg(to) ? getImgBufferPromise(app, to) : null,
+          img:
+            plugin.settings.showImgThumbnails && isImg(to)
+              ? getImgBufferPromise(app, to)
+              : null,
         }
       })
       .sort((a, b) => {

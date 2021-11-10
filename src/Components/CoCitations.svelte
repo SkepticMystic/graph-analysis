@@ -3,12 +3,19 @@
   import { openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import type { CoCitationRes, GraphAnalysisSettings, Subtype } from 'src/Interfaces'
+  import type {
+    CoCitationRes,
+    GraphAnalysisSettings,
+    Subtype,
+  } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
-    dropPath, getImgBufferPromise,
-    hoverPreview, isImg,
+    dropPath,
+    getExt,
+    getImgBufferPromise,
+    hoverPreview,
+    isImg,
     jumpToSelection,
     looserIsLinked,
     openMenu,
@@ -18,9 +25,8 @@
   import { onMount } from 'svelte'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
-  import SubtypeOptions from './SubtypeOptions.svelte'
   import ImgThumbnail from './ImgThumbnail.svelte'
-
+  import SubtypeOptions from './SubtypeOptions.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -35,7 +41,6 @@
   })
 
   let ascOrder = false
-  let { resolvedLinks } = app.metadataCache
   $: promiseSortedCoCites =
     !currNode || !plugin.g
       ? null
@@ -47,13 +52,16 @@
               .map((to) => {
                 let { coCitations, measure, resolved } = ccMap[
                   to
-                  ] as CoCitationRes
+                ] as CoCitationRes
                 return {
                   measure,
                   coCitations,
                   linked: looserIsLinked(app, to, currNode, false),
                   resolved,
-                  img: isImg(to) ? getImgBufferPromise(app, to) : null,
+                  img:
+                    plugin.settings.showImgThumbnails && isImg(to)
+                      ? getImgBufferPromise(app, to)
+                      : null,
                   to,
                 }
               })
@@ -89,7 +97,8 @@
               <summary>
                 <span class="{node.to} top-row">
                   <span
-                    class="{node.linked ? LINKED : NOT_LINKED} {TD_NODE}"
+                    class="{'GA-' + getExt(node.to)}
+                      {node.linked ? LINKED : NOT_LINKED} {TD_NODE}"
                     on:click={async (e) => {
                       if (node.to[0] === '#') {
                       } else {
@@ -116,12 +125,14 @@
                         <ExtensionIcon path={node.to} />
                       {/if}
                       <span
-                        class="internal-link {node.resolved
-                          ? ''
-                          : 'is-unresolved'}"
+                        class="internal-link 
+                      {node.resolved ? '' : 'is-unresolved'}"
                       >
                         {presentPath(node.to)}
                       </span>
+                      {#if node.img !== null}
+                        <ImgThumbnail img={node.img} />
+                      {/if}
                     {/if}
                   </span>
                   <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
@@ -142,9 +153,6 @@
                         hoverPreview(e, view, dropPath(coCite.source))}
                     >
                       {presentPath(coCite.source)}
-                      {#if node.img !== null}
-                        <ImgThumbnail img={node.img} />
-                      {/if}
                     </span>
                     <span class={TD_MEASURE}>
                       {roundNumber(coCite.measure, 3)}

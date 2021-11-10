@@ -4,7 +4,14 @@
   import type { ComponentResults } from 'src/Interfaces'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import { dropExt, dropPath, openMenu, presentPath } from 'src/Utility'
+  import {
+    dropExt,
+    dropPath,
+    getExt,
+    isImg,
+    openMenu,
+    presentPath,
+  } from 'src/Utility'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
   import ImgThumbnail from './ImgThumbnail.svelte'
@@ -29,7 +36,8 @@
       {#each sortedSimilarities as node}
         {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
           <tr
-            class={node.linked ? LINKED : NOT_LINKED}
+            class="{node.linked ? LINKED : NOT_LINKED} 
+            {'GA-' + getExt(node.to)}"
             aria-label={node.extra.map(presentPath).join('\n')}
             aria-label-position="left"
           >
@@ -53,7 +61,7 @@
                 <ExtensionIcon path={node.to} />
               {/if}
               {presentPath(node.to)}
-              {#if node.img !== null}
+              {#if isImg(node.to)}
                 <ImgThumbnail img={node.img} />
               {/if}
             </td>
@@ -66,7 +74,6 @@
 </table>
 
 <style>
-
   table.graph-analysis-table {
     border-collapse: collapse;
   }
