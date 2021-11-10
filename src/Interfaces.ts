@@ -35,6 +35,15 @@ export interface ResultMap {
   [to: string]: { measure: number; extra: string[] }
 }
 
+export interface ComponentResults {
+  measure: number
+  linked: boolean
+  to: string
+  resolved: boolean
+  extra: any
+  img: Promise<ArrayBuffer>
+}
+
 export interface CoCitation {
   sentence: string[]
   measure: number

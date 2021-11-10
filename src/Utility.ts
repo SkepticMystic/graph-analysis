@@ -7,7 +7,11 @@ import {
 } from 'obsidian-community-lib'
 import type AnalysisView from 'src/AnalysisView'
 import { DECIMALS } from 'src/constants'
-import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
+import type {
+  ComponentResults,
+  GraphAnalysisSettings,
+  Subtype,
+} from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
 
 export const sum = (arr: number[]) => {
@@ -228,7 +232,7 @@ export function getPromiseResults(
   subtype: Subtype,
   resolvedLinks: ResolvedLinks,
   ascOrder = false
-) {
+): Promise<ComponentResults[]> {
   if (!plugin.g || !currNode) return null
 
   const greater = ascOrder ? 1 : -1
@@ -241,12 +245,19 @@ export function getPromiseResults(
           measure: number
           extra: any
         }
+        const resolved = !to.endsWith('.md') || isInVault(app, to)
         return {
           measure,
           linked: isLinked(resolvedLinks, currNode, to, false),
           to,
-          resolved: !to.endsWith('.md') || isInVault(app, to),
+          resolved,
           extra,
+          img:
+            resolved && (to.endsWith('.jpg') || to.endsWith('.png'))
+              ? app.vault.readBinary(
+                  app.metadataCache.getFirstLinkpathDest(to, '')
+                )
+              : null,
         }
       })
       .sort((a, b) => {

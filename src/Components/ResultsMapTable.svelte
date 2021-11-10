@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { hoverPreview, isInVault, openOrSwitch } from 'obsidian-community-lib'
+  import { hoverPreview, openOrSwitch } from 'obsidian-community-lib'
+  import type { ComponentResults } from 'src/Interfaces'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
   import { dropExt, dropPath, openMenu, presentPath } from 'src/Utility'
@@ -9,18 +10,20 @@
 
   export let app: App
   export let view: AnalysisView
-  export let promiseSortedResults: Promise<
-    {
-      measure: number
-      linked: boolean
-      to: string
-      extra: any
-      resolved: boolean
-    }[]
-  >
+  export let promiseSortedResults: Promise<ComponentResults[]>
   export let currNode: string
   export let noZero: boolean
   export let noInfinity: boolean
+
+  function _arrayBufferToBase64(buffer: ArrayBuffer) {
+    var binary = ''
+    var bytes = new Uint8Array(buffer)
+    var len = bytes.byteLength
+    for (var i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i])
+    }
+    return window.btoa(binary)
+  }
 </script>
 
 <table class="graph-analysis-table markdown-preview-view">
@@ -55,10 +58,20 @@
                   <FaLink />
                 </span>
               {/if}
-              {#if !node.to.endsWith('.md')}
+              {#if node.to && !node.to.endsWith('.md')}
                 <ExtensionIcon path={node.to} />
               {/if}
               {presentPath(node.to)}
+              {#if node.img !== null}
+                {#await node.img then src}
+                  <div class="GA-img">
+                    <img
+                      src={'data:image/jpg;base64, ' +
+                        _arrayBufferToBase64(src)}
+                    />
+                  </div>
+                {/await}
+              {/if}
             </td>
             <td class={TD_MEASURE}>{node.measure}</td>
           </tr>
@@ -69,6 +82,10 @@
 </table>
 
 <style>
+  .GA-img img {
+    max-width: 100%;
+    max-height: 100%;
+  }
   table.graph-analysis-table {
     border-collapse: collapse;
   }
@@ -84,5 +101,9 @@
 
   .is-unresolved {
     color: var(--text-muted);
+  }
+
+  .analysis-node {
+    overflow: hidden;
   }
 </style>
