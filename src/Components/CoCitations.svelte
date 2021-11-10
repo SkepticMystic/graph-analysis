@@ -3,16 +3,12 @@
   import { openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
-  import type {
-    CoCitationRes,
-    GraphAnalysisSettings,
-    Subtype,
-  } from 'src/Interfaces'
+  import type { CoCitationRes, GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     debug,
-    dropPath,
-    hoverPreview,
+    dropPath, getImgBufferPromise,
+    hoverPreview, isImg,
     jumpToSelection,
     looserIsLinked,
     openMenu,
@@ -23,6 +19,8 @@
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
+  import ImgThumbnail from './ImgThumbnail.svelte'
+
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -45,21 +43,22 @@
           .then((ccMap) => {
             const greater = ascOrder ? 1 : -1
             const lesser = ascOrder ? -1 : 1
-            let sortedCoCites = Object.keys(ccMap)
+            let sortedCites = Object.keys(ccMap)
               .map((to) => {
                 let { coCitations, measure, resolved } = ccMap[
                   to
-                ] as CoCitationRes
+                  ] as CoCitationRes
                 return {
                   measure,
                   coCitations,
                   linked: looserIsLinked(app, to, currNode, false),
                   resolved,
+                  img: isImg(to) ? getImgBufferPromise(app, to) : null,
                   to,
                 }
               })
               .sort((a, b) => (a.measure > b.measure ? greater : lesser))
-            return sortedCoCites
+            return sortedCites
           })
           .then((res) => {
             debug(settings, { res })
@@ -142,8 +141,11 @@
                       on:mouseover={(e) =>
                         hoverPreview(e, view, dropPath(coCite.source))}
                     >
-                      {presentPath(coCite.source)}</span
-                    >
+                      {presentPath(coCite.source)}
+                      {#if node.img !== null}
+                        <ImgThumbnail img={node.img} />
+                      {/if}
+                    </span>
                     <span class={TD_MEASURE}>
                       {roundNumber(coCite.measure, 3)}
                     </span>
