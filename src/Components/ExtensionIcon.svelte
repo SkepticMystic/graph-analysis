@@ -10,13 +10,13 @@
   import FaFileAudio from 'svelte-icons/fa/FaFileAudio.svelte'
   import FaFileVideo from 'svelte-icons/fa/FaFileVideo.svelte'
   import FaFileCode from 'svelte-icons/fa/FaFileCode.svelte'
+  import FaFile from 'svelte-icons/fa/FaFile.svelte'
 
   export let path: string
 </script>
 
 <span class="GA-Link-Icon">
-  {#if path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('jpeg')
-    || path.endsWith('.svg') || path.endsWith('.gif') || path.endsWith('webp')}
+  {#if path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('jpeg') || path.endsWith('.svg') || path.endsWith('.gif') || path.endsWith('webp')}
     <FaFileImage />
   {:else if path.endsWith('.html')}
     <DiHtml5 />
@@ -38,5 +38,7 @@
     <FaFilePowerpoint />
   {:else if path.endsWith('.js') || path.endsWith('.ts') || path.endsWith('.c') || path.endsWith('.py')}
     <FaFileCode />
+  {:else}
+    <FaFile />
   {/if}
 </span>
