@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/SkepticMystic/graph-analysis/compare/0.8.0...0.9.0) (2021-11-10)
+
+
+### Features
+
+* :sparkles: Show imgs in ResultMapTable components! ([2d9b5fa](https://github.com/SkepticMystic/graph-analysis/commit/2d9b5fa1ee7ab107136224528f785b6abd63e857))
+* Added more extensions to file type icon picker ([226ea9f](https://github.com/SkepticMystic/graph-analysis/commit/226ea9fb1b3805307f573efb391fc2a920ac77be))
+* **labelProp:** :sparkles: Imgs show here too! ([55a606e](https://github.com/SkepticMystic/graph-analysis/commit/55a606edcec1bb1dd90ddeae5588ec6f97c5464b))
+
 ## [0.8.0](https://github.com/SkepticMystic/graph-analysis/compare/0.7.0...0.8.0) (2021-11-09)
 
 
