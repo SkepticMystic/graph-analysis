@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "coCites",
         "commDetection",
-        "similarity"
+        "similarity",
+        "labelProp"
     ]
 }
