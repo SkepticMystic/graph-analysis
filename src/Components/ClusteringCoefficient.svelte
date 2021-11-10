@@ -40,11 +40,11 @@
 </script>
 
 <SubtypeOptions
-  bind:currSubtype
-  anl="Community Detection"
-  bind:ascOrder
   {plugin}
   {view}
+  anl="Community Detection"
+  bind:currSubtype
+  bind:ascOrder
 />
 
 <ResultsMapTable

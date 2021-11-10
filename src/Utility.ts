@@ -226,9 +226,8 @@ export function jumpToSelection(app: App, line: number, sentence: string) {
 }
 
 export function getImgBufferPromise(app: App, fileName: string) {
-  return app.vault.readBinary(
-    app.metadataCache.getFirstLinkpathDest(fileName, '')
-  )
+  const file = app.metadataCache.getFirstLinkpathDest(fileName, '')
+  return file ? app.vault.readBinary(file) : null
 }
 
 export function getPromiseResults(
@@ -258,7 +257,7 @@ export function getPromiseResults(
           to,
           resolved,
           extra,
-          img: resolved && isImg(to) ? getImgBufferPromise(app, to) : null,
+          img: isImg(to) ? getImgBufferPromise(app, to) : null,
         }
       })
       .sort((a, b) => {
