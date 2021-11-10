@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
   noInfinity: true,
   noZero: true,
   allFileExtensions: true,
+  showImgThumbnails: true,
   addUnresolved: true,
   coTags: true,
   defaultSubtypeType: 'Co-Citations',

@@ -70,6 +70,18 @@ export class SampleSettingTab extends PluginSettingTab {
       )
 
     new Setting(containerEl)
+      .setName('Show Thumbnails for Images')
+      .setDesc(
+        'Whether to show small thumbnails for images (if all file extensions are included).'
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(settings.showImgThumbnails).onChange(async (value) => {
+          settings.showImgThumbnails = value
+          await plugin.saveSettings()
+        })
+      )
+
+    new Setting(containerEl)
       .setName('Include tags (Co-Citations)')
       .setDesc(
         'Whether to also show the tags that are co-cited in the co-citations algorithm.'
