@@ -6,7 +6,7 @@ import {
   ResolvedLinks,
 } from 'obsidian-community-lib'
 import type AnalysisView from 'src/AnalysisView'
-import { DECIMALS } from 'src/constants'
+import { DECIMALS, IMG_EXTENSIONS } from 'src/constants'
 import type {
   ComponentResults,
   GraphAnalysisSettings,
@@ -225,6 +225,12 @@ export function jumpToSelection(app: App, line: number, sentence: string) {
   }
 }
 
+export function getImgBufferPromise(app: App, fileName: string) {
+  return app.vault.readBinary(
+    app.metadataCache.getFirstLinkpathDest(fileName, '')
+  )
+}
+
 export function getPromiseResults(
   app: App,
   plugin: GraphAnalysisPlugin,
@@ -252,12 +258,7 @@ export function getPromiseResults(
           to,
           resolved,
           extra,
-          img:
-            resolved && (to.endsWith('.jpg') || to.endsWith('.png'))
-              ? app.vault.readBinary(
-                  app.metadataCache.getFirstLinkpathDest(to, '')
-                )
-              : null,
+          img: resolved && isImg(to) ? getImgBufferPromise(app, to) : null,
         }
       })
       .sort((a, b) => {
@@ -287,3 +288,6 @@ export function getMaxKey(obj: Record<string, number>) {
     obj[a] === obj[b] ? (Math.random() < 0.5 ? a : b) : obj[a] > obj[b] ? a : b
   )
 }
+
+export const isImg = (path: string) =>
+  IMG_EXTENSIONS.includes(path.split('.').last())

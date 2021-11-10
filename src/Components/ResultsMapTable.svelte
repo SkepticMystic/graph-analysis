@@ -7,6 +7,7 @@
   import { dropExt, dropPath, openMenu, presentPath } from 'src/Utility'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
+  import ImgThumbnail from './ImgThumbnail.svelte'
 
   export let app: App
   export let view: AnalysisView
@@ -14,16 +15,6 @@
   export let currNode: string
   export let noZero: boolean
   export let noInfinity: boolean
-
-  function _arrayBufferToBase64(buffer: ArrayBuffer) {
-    var binary = ''
-    var bytes = new Uint8Array(buffer)
-    var len = bytes.byteLength
-    for (var i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i])
-    }
-    return window.btoa(binary)
-  }
 </script>
 
 <table class="graph-analysis-table markdown-preview-view">
@@ -63,14 +54,7 @@
               {/if}
               {presentPath(node.to)}
               {#if node.img !== null}
-                {#await node.img then src}
-                  <div class="GA-img">
-                    <img
-                      src={'data:image/jpg;base64, ' +
-                        _arrayBufferToBase64(src)}
-                    />
-                  </div>
-                {/await}
+                <ImgThumbnail img={node.img} />
               {/if}
             </td>
             <td class={TD_MEASURE}>{node.measure}</td>
@@ -82,22 +66,7 @@
 </table>
 
 <style>
-  .GA-img img {
-    justify-content: center;
-    justify-items: center;
-    align-items: center;
-    align-content: center;
-    justify-self: center;
-    align-self: center;
-  }
-  .GA-img img {
-    max-width: 50%;
-    max-height: 50%;
-  }
-  .GA-img img:hover {
-    max-width: 100%;
-    max-height: 100%;
-  }
+
   table.graph-analysis-table {
     border-collapse: collapse;
   }

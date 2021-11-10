@@ -1,22 +1,23 @@
 <script lang="ts">
-  import FaFileImage from 'svelte-icons/fa/FaFileImage.svelte'
+  import { isImg } from 'src/Utility'
   import DiHtml5 from 'svelte-icons/di/DiHtml5.svelte'
-  import FaFileExcel from 'svelte-icons/fa/FaFileExcel.svelte'
+  import FaFile from 'svelte-icons/fa/FaFile.svelte'
+  import FaFileAudio from 'svelte-icons/fa/FaFileAudio.svelte'
+  import FaFileCode from 'svelte-icons/fa/FaFileCode.svelte'
   import FaFileCsv from 'svelte-icons/fa/FaFileCsv.svelte'
+  import FaFileExcel from 'svelte-icons/fa/FaFileExcel.svelte'
+  import FaFileImage from 'svelte-icons/fa/FaFileImage.svelte'
   import FaFilePdf from 'svelte-icons/fa/FaFilePdf.svelte'
+  import FaFilePowerpoint from 'svelte-icons/fa/FaFilePowerpoint.svelte'
+  import FaFileVideo from 'svelte-icons/fa/FaFileVideo.svelte'
   import FaFileWord from 'svelte-icons/fa/FaFileWord.svelte'
   import FaStickyNote from 'svelte-icons/fa/FaStickyNote.svelte'
-  import FaFilePowerpoint from 'svelte-icons/fa/FaFilePowerpoint.svelte'
-  import FaFileAudio from 'svelte-icons/fa/FaFileAudio.svelte'
-  import FaFileVideo from 'svelte-icons/fa/FaFileVideo.svelte'
-  import FaFileCode from 'svelte-icons/fa/FaFileCode.svelte'
-  import FaFile from 'svelte-icons/fa/FaFile.svelte'
 
   export let path: string
 </script>
 
 <span class="GA-Link-Icon">
-  {#if path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('jpeg') || path.endsWith('.svg') || path.endsWith('.gif') || path.endsWith('webp')}
+  {#if isImg(path)}
     <FaFileImage />
   {:else if path.endsWith('.html')}
     <DiHtml5 />
