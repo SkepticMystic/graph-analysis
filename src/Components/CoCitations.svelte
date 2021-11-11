@@ -29,7 +29,7 @@
   import ImgThumbnail from './ImgThumbnail.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
   import { TFile } from 'obsidian'
-  import InfiniteScrollTest from './InfiniteScrollTest.svelte'
+  import InfiniteScroll from 'svelte-infinite-scroll'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -197,13 +197,12 @@
                                      {/if}
                                         {/each}
 
-        <InfiniteScrollTest hasMore={sortedCoCites.length > visibleData.length}
+        <InfiniteScroll hasMore={sortedCoCites.length > visibleData.length}
                             threshold={100}
                             elementScroll={current_component.parentNode}
                             on:loadMore={() => {
           page++
           newBatch = sortedCoCites.slice(size * page, size * (page + 1) - 1)
-          console.log({visibleData, page})
         }} />
         {visibleData.length} / {sortedCoCites.length}
       {/key}
