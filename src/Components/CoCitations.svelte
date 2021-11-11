@@ -44,14 +44,20 @@
   let newBatch = []
   let visibleData = []
   let page = 0
+  let blockSwitch = false
 
 
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
-    currFile = app.workspace.getActiveFile()
     visibleData = []
     page = 0
+    blockSwitch = true
+    setTimeout(() => {
+      blockSwitch = false
+    }, 100)
+    currFile = app.workspace.getActiveFile()
+    console.log({visibleData, newBatch})
   })
 
   let ascOrder = false
@@ -80,12 +86,13 @@
         })
         .then((res) => {
           newBatch = res.slice(0, size)
+          console.log('here')
           debug(settings, { res })
           return res
           // return { sortedCoCites: res, page, visibleData }
         })
 
-  $: visibleData = [...visibleData, ...newBatch]; console.log({visibleData, newBatch})
+  $: visibleData = [...visibleData, ...newBatch]
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
@@ -201,8 +208,11 @@
                             threshold={100}
                             elementScroll={current_component.parentNode}
                             on:loadMore={() => {
-          page++
-          newBatch = sortedCoCites.slice(size * page, size * (page + 1) - 1)
+          if (!blockSwitch) {
+            page++
+            console.log('there')
+            newBatch = sortedCoCites.slice(size * page, size * (page + 1) - 1)
+          }
         }} />
         {visibleData.length} / {sortedCoCites.length}
       {/key}
