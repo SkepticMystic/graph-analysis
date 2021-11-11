@@ -27,8 +27,9 @@
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
   import ImgThumbnail from './ImgThumbnail.svelte'
-  import InfiniteScrollTest from './InfiniteScrollTest.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
+  import { TFile } from 'obsidian'
+  import InfiniteScroll from 'svelte-infinite-scroll'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -56,15 +57,19 @@
     to: string
   }[] = []
   let page = 0
+  let blockSwitch = false
 
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
-    if (!frozen) {
-      currFile = app.workspace.getActiveFile()
-      visibleData = []
-      page = 0
-    }
+    visibleData = []
+    page = 0
+    blockSwitch = true
+    setTimeout(() => {
+      blockSwitch = false
+    }, 100)
+    currFile = app.workspace.getActiveFile()
+    console.log({visibleData, newBatch})
   })
 
   let ascOrder = false
@@ -80,26 +85,26 @@
                 let { coCitations, measure, resolved } = ccMap[
                   to
                 ] as CoCitationRes
-                return {
-                  measure,
-                  coCitations,
-                  linked: looserIsLinked(app, to, currNode, false),
-                  resolved,
-                  to,
-                }
-              })
-              .sort((a, b) => (a.measure > b.measure ? greater : lesser))
-            return sortedCites
-          })
-          .then((res) => {
-            newBatch = res.slice(0, size)
-            debug(settings, { res })
-            return res
-            // return { sortedCoCites: res, page, visibleData }
-          })
+              return {
+                measure,
+                coCitations,
+                linked: looserIsLinked(app, to, currNode, false),
+                resolved,
+                to,
+              }
+            })
+            .sort((a, b) => (a.measure > b.measure ? greater : lesser))
+          return sortedCites
+        })
+        .then((res) => {
+          newBatch = res.slice(0, size)
+          console.log('here')
+          debug(settings, { res })
+          return res
+          // return { sortedCoCites: res, page, visibleData }
+        })
 
   $: visibleData = [...visibleData, ...newBatch]
-  console.log({ visibleData, newBatch })
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
@@ -215,16 +220,16 @@
           {/if}
         {/each}
 
-        <InfiniteScrollTest
-          hasMore={sortedCoCites.length > visibleData.length}
-          threshold={100}
-          elementScroll={current_component.parentNode}
-          on:loadMore={() => {
+        <InfiniteScroll hasMore={sortedCoCites.length > visibleData.length}
+                            threshold={100}
+                            elementScroll={current_component.parentNode}
+                            on:loadMore={() => {
+          if (!blockSwitch) {
             page++
+            console.log('there')
             newBatch = sortedCoCites.slice(size * page, size * (page + 1) - 1)
-            console.log({ visibleData, page })
-          }}
-        />
+          }
+        }} />
         {visibleData.length} / {sortedCoCites.length}
       {/key}
     {/await}
