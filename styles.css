@@ -11,16 +11,16 @@ span.internal-link:hover {
   color: var(--text-accent-hover, var(--text-accent));
 }
 
-tr.analysis-linked td:first-child::before,
-span.analysis-linked::before,
-div.analysis-linked::before {
+tr.GA-linked td:first-child::before,
+span.GA-linked::before,
+div.GA-linked::before {
 }
-tr.analysis-not-linked,
-span.analysis-not-linked {
+tr.GA-not-linked,
+span.GA-not-linked {
   /* background-color: yellow; */
 }
 
-.GA-Link-Icon {
+.GA-icon {
   color: var(--text-normal);
   width: 13px;
   height: 13px;
@@ -35,10 +35,10 @@ span.analysis-not-linked {
   content: '🌍';
 }
 
-td.analysis-measure {
+td.GA-measure {
   /* display:none */
 }
-td.analysis-node {
+td.GA-node {
   /* background-color: yellow */
 }
 

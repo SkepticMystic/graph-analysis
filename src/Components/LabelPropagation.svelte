@@ -1,19 +1,14 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import {
-    hoverPreview,
-    isInVault,
-    isLinked,
-    openOrSwitch,
-  } from 'obsidian-community-lib'
-  import ImgThumbnail from './ImgThumbnail.svelte'
+  import { hoverPreview, isLinked, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
-  import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
+  import { ICON, MEASURE, NODE } from 'src/Constants'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
-    dropExt,
-    getExt,
+    classExt,
+    classLinked,
+    classResolved,
     getImgBufferPromise,
     isImg,
     openMenu,
@@ -22,6 +17,7 @@
   import { onMount } from 'svelte'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
   import ExtensionIcon from './ExtensionIcon.svelte'
+  import ImgThumbnail from './ImgThumbnail.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
 
   export let app: App
@@ -66,7 +62,6 @@
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    currNode = currFile.path
   })
 </script>
 
@@ -99,46 +94,35 @@
                   openMenu(e, app, { toCopy: comm.comm.join('\n') })}
               >
                 <span
-                  class="top-row {comm.comm.includes(currNode)
-                    ? 'currComm'
-                    : ''}"
+                  class="top-row 
+                  {comm.comm.includes(currNode) ? 'currComm' : ''}"
                 >
                   <span>
                     {presentPath(comm.label)}
                   </span>
-                  <span class={TD_MEASURE}>{comm.comm.length}</span>
+                  <span class={MEASURE}>{comm.comm.length}</span>
                 </span>
               </summary>
               <div class="GA-details ">
                 {#each comm.comm as member}
                   <div
-                    class="{TD_NODE} 
-                    {isLinked(resolvedLinks, comm.label, member, false)
-                      ? LINKED
-                      : NOT_LINKED}
-                      {member.endsWith('.md') &&
-                    !isInVault(app, dropExt(member))
-                      ? 'is-unresolved'
-                      : ''} 
-                      {'GA-' + getExt(member)}
+                    class="
+                    {NODE} 
+                    {classLinked(resolvedLinks, comm.label, member)}
+                    {classResolved(app, member)} 
+                    {classExt(member)}
                       "
-                    on:click={async (e) => {
-                      await openOrSwitch(app, member, e)
-                    }}
-                    on:mouseover={(e) => {
-                      hoverPreview(e, view, member)
-                    }}
+                    on:click={async (e) => await openOrSwitch(app, member, e)}
+                    on:mouseover={(e) => hoverPreview(e, view, member)}
                   >
                     {#if isLinked(resolvedLinks, comm.label, member, false)}
-                      <span class="GA-Link-Icon">
+                      <span class={ICON}>
                         <FaLink />
                       </span>
                     {/if}
-                    {#if !member.endsWith('.md')}
-                      <ExtensionIcon path={member} />
-                    {/if}
+                    <ExtensionIcon path={member} />
                     <span class="internal-link">{presentPath(member)}</span>
-                    {#if isImg(member) && plugin.settings.showImgThumbnails}
+                    {#if plugin.settings.showImgThumbnails && isImg(member)}
                       <ImgThumbnail img={getImgBufferPromise(app, member)} />
                     {/if}
                   </div>
@@ -171,7 +155,7 @@
   .GA-details {
     padding-left: 20px;
   }
-  .analysis-node,
+  .GA-node,
   .CC-sentence {
     font-size: var(--font-size-secondary);
     border: 1px solid transparent;
@@ -195,14 +179,14 @@
     float: right;
   }
 
-  span.analysis-measure {
+  span.GA-measure {
     background-color: var(--background-secondary-alt);
     padding: 2px 4px;
     border-radius: 3px;
     font-size: 12px;
     line-height: 12px;
   }
-  span.analysis-measure:hover {
+  span.GA-measure:hover {
     background-color: var(--interactive-accent);
   }
 

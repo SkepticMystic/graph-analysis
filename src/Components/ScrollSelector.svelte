@@ -1,6 +1,6 @@
 <script lang="ts">
   import type AnalysisView from 'src/AnalysisView'
-  import { SUBTYPES } from 'src/constants'
+  import { ICON, SUBTYPES } from 'src/Constants'
   import type { Subtype } from 'src/Interfaces'
   import FaGlobeAfrica from 'svelte-icons/fa/FaGlobeAfrica.svelte'
   export let currSubtype: Subtype
@@ -25,7 +25,7 @@
         }}
       >
         {#if subtype.global}
-          <span class="GA-Link-Icon">
+          <span class={ICON}>
             <FaGlobeAfrica />
           </span>
         {/if}

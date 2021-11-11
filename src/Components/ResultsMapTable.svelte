@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { App } from 'obsidian'
   import { hoverPreview, openOrSwitch } from 'obsidian-community-lib'
-  import type { ComponentResults } from 'src/Interfaces'
   import type AnalysisView from 'src/AnalysisView'
-  import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
+  import { ICON, LINKED, MEASURE, NOT_LINKED } from 'src/Constants'
+  import type { ComponentResults } from 'src/Interfaces'
   import {
+    classExt,
     dropExt,
     dropPath,
-    getExt,
     isImg,
     openMenu,
     presentPath,
@@ -24,48 +24,48 @@
   export let noInfinity: boolean
 </script>
 
-<table class="graph-analysis-table markdown-preview-view">
+<table class="GA-table markdown-preview-view">
   <thead>
     <tr>
       <th scope="col">Note</th>
-      <th scope="col">Measure</th>
+      <th scope="col">Value</th>
     </tr>
   </thead>
   {#if promiseSortedResults}
     {#await promiseSortedResults then sortedSimilarities}
       {#each sortedSimilarities as node}
         {#if node.to !== currNode && node !== undefined && !(noInfinity && node.measure === Infinity) && !(noZero && node.measure === 0)}
+          <!-- svelte-ignore a11y-unknown-aria-attribute -->
           <tr
             class="{node.linked ? LINKED : NOT_LINKED} 
-            {'GA-' + getExt(node.to)}"
-            aria-label={node.extra.map(presentPath).join('\n')}
-            aria-label-position="left"
+          {classExt(node.to)}"
           >
             <td
-              class="internal-link {TD_NODE} 
-              {node.resolved ? '' : 'is-unresolved'}"
-              on:click={async (e) => {
-                await openOrSwitch(app, dropExt(node.to), e)
-              }}
-              on:contextmenu={(e) => {
-                openMenu(e, app)
-              }}
+              aria-label={node.extra.map(presentPath).join('\n')}
+              aria-label-position="left"
+              on:click={async (e) =>
+                await openOrSwitch(app, dropExt(node.to), e)}
+              on:contextmenu={(e) => openMenu(e, app)}
               on:mouseover={(e) => hoverPreview(e, view, dropPath(node.to))}
             >
               {#if node.linked}
-                <span class="GA-Link-Icon">
+                <span class={ICON}>
                   <FaLink />
                 </span>
               {/if}
-              {#if node.to && !node.to.endsWith('.md')}
-                <ExtensionIcon path={node.to} />
-              {/if}
-              {presentPath(node.to)}
+
+              <ExtensionIcon path={node.to} />
+
+              <span
+                class="internal-link {node.resolved ? '' : 'is-unresolved'}"
+              >
+                {presentPath(node.to)}
+              </span>
               {#if isImg(node.to)}
                 <ImgThumbnail img={node.img} />
               {/if}
             </td>
-            <td class={TD_MEASURE}>{node.measure}</td>
+            <td class={MEASURE}>{node.measure}</td>
           </tr>
         {/if}
       {/each}
@@ -74,16 +74,16 @@
 </table>
 
 <style>
-  table.graph-analysis-table {
+  table.GA-table {
     border-collapse: collapse;
   }
-  table.graph-analysis-table,
-  table.graph-analysis-table tr,
-  table.graph-analysis-table td {
+  table.GA-table,
+  table.GA-table tr,
+  table.GA-table td {
     border: 1px solid var(--background-modifier-border);
   }
 
-  table.graph-analysis-table td {
+  table.GA-table td {
     padding: 2px;
   }
 
@@ -91,7 +91,7 @@
     color: var(--text-muted);
   }
 
-  .analysis-node {
+  .GA-node {
     overflow: hidden;
   }
 </style>

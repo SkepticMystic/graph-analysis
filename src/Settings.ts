@@ -1,5 +1,5 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian'
-import { ANALYSIS_TYPES } from 'src/constants'
+import { ANALYSIS_TYPES } from 'src/Constants'
 import type { Subtype } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
 

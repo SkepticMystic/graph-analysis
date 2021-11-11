@@ -5,7 +5,7 @@ import {
   DEFAULT_SETTINGS,
   iconSVG,
   VIEW_TYPE_GRAPH_ANALYSIS,
-} from 'src/constants'
+} from 'src/Constants'
 import { clusteringCoefficient, findTrianglesForNode } from 'src/GeneralGraphFn'
 import type { GraphAnalysisSettings } from 'src/Interfaces'
 import MyGraph from 'src/MyGraph'

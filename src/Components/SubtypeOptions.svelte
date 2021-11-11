@@ -1,6 +1,6 @@
 <script lang="ts">
   import type AnalysisView from 'src/AnalysisView'
-  import { ANALYSIS_TYPES } from 'src/constants'
+  import { ANALYSIS_TYPES } from 'src/Constants'
   import type { Analyses, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import InfoIcon from './InfoIcon.svelte'
@@ -79,20 +79,6 @@
     height: 20px;
   }
 
-  .small {
-    width: 16px;
-    height: 16px;
-  }
-  .big {
-    width: 20px;
-    height: 20px;
-  }
-
-  .GA-Button {
-    width: fit-content !important;
-    padding: 3px 5px !important;
-    margin-right: 0px;
-  }
   .GA-Option-span {
     padding: 2px;
   }

@@ -6,7 +6,7 @@ import {
   ResolvedLinks,
 } from 'obsidian-community-lib'
 import type AnalysisView from 'src/AnalysisView'
-import { DECIMALS, IMG_EXTENSIONS } from 'src/constants'
+import { DECIMALS, IMG_EXTENSIONS, LINKED, NOT_LINKED } from 'src/Constants'
 import type {
   ComponentResults,
   GraphAnalysisSettings,
@@ -41,8 +41,19 @@ export const dropPath = (path: string) => {
   return path.split('/').last()
 }
 
-export const dropExt = (str: string) => str.split('.').slice(0, -1).join('.')
+export const dropExt = (path: string) =>
+  getExt(path) === '' ? path : path.split('.').slice(0, -1).join('.')
 export const getExt = (path: string) => path.split('.').last()
+
+export const classExt = (path: string) => `GA-${getExt(path)}`
+export const classResolved = (app: App, node: string) =>
+  node.endsWith('.md') && !isInVault(app, dropExt(node)) ? 'is-unresolved' : ''
+export const classLinked = (
+  resolvedLinks: ResolvedLinks,
+  from: string,
+  to: string,
+  directed = false
+) => (isLinked(resolvedLinks, from, to, directed) ? LINKED : NOT_LINKED)
 
 export const presentPath = (path: string) => dropExt(dropPath(path))
 

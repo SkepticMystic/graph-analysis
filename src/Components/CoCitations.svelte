@@ -2,7 +2,7 @@
   import type { App } from 'obsidian'
   import { openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
-  import { LINKED, NOT_LINKED, TD_MEASURE, TD_NODE } from 'src/constants'
+  import { ICON, LINKED, MEASURE, NODE, NOT_LINKED } from 'src/Constants'
   import type {
     CoCitationRes,
     GraphAnalysisSettings,
@@ -10,9 +10,9 @@
   } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
+    classExt,
     debug,
     dropPath,
-    getExt,
     getImgBufferPromise,
     hoverPreview,
     isImg,
@@ -95,38 +95,35 @@
           <div class="GA-CC">
             <details>
               <summary>
-                <span class="{node.to} top-row">
+                <span class="top-row">
                   <span
-                    class="{'GA-' + getExt(node.to)}
-                      {node.linked ? LINKED : NOT_LINKED} {TD_NODE}"
+                    class="
+                      {classExt(node.to)}
+                      {node.linked ? LINKED : NOT_LINKED} 
+                      {NODE}"
                     on:click={async (e) => {
-                      if (node.to[0] === '#') {
-                      } else {
+                      if (node.to[0] !== '#') {
                         await openOrSwitch(app, node.to, e)
                       }
                     }}
-                    on:contextmenu={(e) => {
-                      openMenu(e, app)
-                    }}
-                    on:mouseover={(e) => {
-                      hoverPreview(e, view, dropPath(node.to))
-                    }}
+                    on:contextmenu={(e) => openMenu(e, app)}
+                    on:mouseover={(e) =>
+                      hoverPreview(e, view, dropPath(node.to))}
                   >
                     {#if node.to[0] === '#'}
                       <!-- svelte-ignore a11y-missing-attribute -->
                       <a class="tag">{node.to}</a>
                     {:else}
                       {#if node.linked}
-                        <span class="GA-Link-Icon">
+                        <span class={ICON}>
                           <FaLink />
                         </span>
                       {/if}
-                      {#if !node.to.endsWith('.md')}
-                        <ExtensionIcon path={node.to} />
-                      {/if}
+                      <ExtensionIcon path={node.to} />
                       <span
-                        class="internal-link 
-                      {node.resolved ? '' : 'is-unresolved'}"
+                        class="
+                          internal-link 
+                          {node.resolved ? '' : 'is-unresolved'}"
                       >
                         {presentPath(node.to)}
                       </span>
@@ -135,26 +132,23 @@
                       {/if}
                     {/if}
                   </span>
-                  <span class={TD_MEASURE}>{roundNumber(node.measure, 3)}</span>
+                  <span class={MEASURE}>{roundNumber(node.measure, 3)}</span>
                 </span>
               </summary>
               <div class="GA-details">
                 {#each node.coCitations as coCite}
                   <div class="CC-item">
                     <span
-                      class="internal-link {TD_NODE}"
-                      on:click={async (e) => {
-                        await openOrSwitch(app, coCite.source, e)
-                      }}
-                      on:contextmenu={(e) => {
-                        openMenu(e, app)
-                      }}
+                      class="internal-link {NODE}"
+                      on:click={async (e) =>
+                        await openOrSwitch(app, coCite.source, e)}
+                      on:contextmenu={(e) => openMenu(e, app)}
                       on:mouseover={(e) =>
                         hoverPreview(e, view, dropPath(coCite.source))}
                     >
                       {presentPath(coCite.source)}
                     </span>
-                    <span class={TD_MEASURE}>
+                    <span class={MEASURE}>
                       {roundNumber(coCite.measure, 3)}
                     </span>
                   </div>
@@ -212,7 +206,7 @@
     border-radius: 15px !important;
   }
 
-  .analysis-node,
+  .GA-node,
   .CC-sentence {
     font-size: var(--font-size-secondary);
     border: 1px solid transparent;
@@ -222,14 +216,14 @@
   .CC-sentence:hover {
     background-color: var(--background-secondary-alt);
   }
-  span.analysis-measure {
+  span.GA-measure {
     background-color: var(--background-secondary-alt);
     padding: 2px 4px;
     border-radius: 3px;
     font-size: 12px;
     line-height: 12px;
   }
-  span.analysis-measure:hover {
+  span.GA-measure:hover {
     background-color: var(--interactive-accent);
   }
 

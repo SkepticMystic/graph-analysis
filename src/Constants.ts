@@ -22,11 +22,13 @@ export const DECIMALS = 4
 
 export const VIEW_TYPE_GRAPH_ANALYSIS = 'graph-analysis'
 
-export const LINKED = 'analysis-linked'
-export const NOT_LINKED = 'analysis-not-linked'
+export const LINKED = 'GA-linked'
+export const NOT_LINKED = 'GA-not-linked'
 
-export const TD_MEASURE = 'analysis-measure'
-export const TD_NODE = 'analysis-node'
+export const MEASURE = 'GA-measure'
+export const NODE = 'GA-node'
+
+export const ICON = 'GA-icon'
 
 export const SUBTYPES: { subtype: Subtype; global: boolean }[] = [
   { subtype: 'Co-Citations', global: false },
