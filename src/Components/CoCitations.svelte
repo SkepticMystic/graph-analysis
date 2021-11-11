@@ -36,14 +36,14 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
   export let currSubtype: Subtype
-  export let parentComponent
 
   let size = 50
   // let promiseSortedCoCites: Promise<any>
   let currNode: string
   let current_component: HTMLElement;
-  // let newBatch = []
-  // let visibleData = []
+  let newBatch = []
+  let visibleData = []
+  let page = 0
 
 
   let currFile = app.workspace.getActiveFile()
@@ -77,14 +77,15 @@
           return sortedCites
         })
         .then((res) => {
-          let page = 0
-          let visibleData = res.slice(0, size)
+          // let page = 0
+          // let visibleData = res.slice(0, size)
           debug(settings, { res })
           console.log({ visibleData })
-          return { sortedCoCites: res, page, visibleData }
+          return res
+          // return { sortedCoCites: res, page, visibleData }
         })
 
-  // $: visibleData = [...visibleData, ...newBatch]
+  $: visibleData = [...visibleData, ...newBatch]; console.log({visibleData, newBatch})
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
@@ -102,105 +103,110 @@
 
 <div class="GA-CCs" bind:this={current_component}>
   {#if promiseSortedCoCites}
-    {#await promiseSortedCoCites then {sortedCoCites, visibleData, page}}
-      {#each visibleData as node}
-        {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
-          <div class="GA-CC">
-            <details>
-              <summary>
-                <span class="top-row">
-                  <span
-                    class="
-                      {classExt(node.to)}
-                      {node.linked ? LINKED : NOT_LINKED} 
-                      {NODE}"
-                    on:click={async (e) => {
-                      if (node.to[0] !== '#') {
-                        await openOrSwitch(app, node.to, e)
-                      }
-                    }}
-                    on:contextmenu={(e) => openMenu(e, app)}
-                    on:mouseover={(e) =>
-                      hoverPreview(e, view, dropPath(node.to))}
-                  >
-                    {#if node.to[0] === '#'}
-                      <!-- svelte-ignore a11y-missing-attribute -->
-                      <a class="tag">{node.to}</a>
-                    {:else}
-                      {#if node.linked}
-                        <span class={ICON}>
-                          <FaLink />
-                        </span>
-                      {/if}
-                      <ExtensionIcon path={node.to} />
-                      <span
-                        class="
-                          internal-link 
-                          {node.resolved ? '' : 'is-unresolved'}"
-                      >
-                        {presentPath(node.to)}
-                      </span>
-                      {#if plugin.settings.showImgThumbnails && isImg(node.to)}
-                        <ImgThumbnail img={getImgBufferPromise(app, node.to)} />
-                      {/if}
-                    {/if}
-                  </span>
-                  <span class={MEASURE}>{roundNumber(node.measure, 3)}</span>
-                </span>
-              </summary>
-              <div class="GA-details">
-                {#each node.coCitations as coCite}
-                  <div class="CC-item">
-                    <span
-                      class="internal-link {NODE}"
-                      on:click={async (e) =>
-                        await openOrSwitch(app, coCite.source, e)}
-                      on:contextmenu={(e) => openMenu(e, app)}
-                      on:mouseover={(e) =>
-                        hoverPreview(e, view, dropPath(coCite.source))}
-                    >
-                      {presentPath(coCite.source)}
-                    </span>
-                    <span class={MEASURE}>
-                      {roundNumber(coCite.measure, 3)}
-                    </span>
-                  </div>
-                  <div
-                    class="CC-sentence"
-                    on:click={async (e) => {
-                      await openOrSwitch(app, coCite.source, e)
-                      jumpToSelection(
-                        app,
-                        coCite.line,
-                        coCite.sentence.join('')
-                      )
-                    }}
-                  >
-                    {#if coCite.sentence.length === 3}
-                      <span>{coCite.sentence[0]}</span>
-                      <mark><strong>{coCite.sentence[1]}</strong></mark>
-                      <span>{coCite.sentence[2]}</span>
-                    {:else}
-                      <span>{coCite.sentence[0]}</span>
-                      <mark><strong>{coCite.sentence[1]}</strong></mark>
-                      <span>{coCite.sentence[2]}</span>
-                      <mark><strong>{coCite.sentence[3]}</strong></mark>
-                      <span>{coCite.sentence[4]}</span>
-                    {/if}
-                  </div>
-                {/each}
-              </div>
-            </details>
-          </div>
-        {/if}
-      {/each}
+    {#await promiseSortedCoCites then sortedCoCites}
       {#key sortedCoCites}
+        {visibleData = []}
+        {page = 0}
+        {newBatch = sortedCoCites.slice(0, size)}
+        {console.log(visibleData)}
+        {#each visibleData as node}
+                                     {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
+                                     <div class="GA-CC">
+                                     <details>
+                                     <summary>
+                                     <span class="top-row">
+                                     <span
+                                     class="
+                                     {classExt(node.to)}
+                                     {node.linked ? LINKED : NOT_LINKED}
+                                     {NODE}"
+                                     on:click={async (e) => {
+                                     if (node.to[0] !== '#') {
+                                     await openOrSwitch(app, node.to, e)
+                                     }
+                                     }}
+                                     on:contextmenu={(e) => openMenu(e, app)}
+                                     on:mouseover={(e) =>
+                                     hoverPreview(e, view, dropPath(node.to))}
+                                     >
+                                     {#if node.to[0] === '#'}
+                                     <!-- svelte-ignore a11y-missing-attribute -->
+                                     <a class="tag">{node.to}</a>
+                                     {:else}
+                                     {#if node.linked}
+                                     <span class={ICON}>
+                                     <FaLink />
+                                     </span>
+                                     {/if}
+                                     <ExtensionIcon path={node.to} />
+                                     <span
+                                     class="
+                                     internal-link
+                                     {node.resolved ? '' : 'is-unresolved'}"
+                                     >
+                                     {presentPath(node.to)}
+                                     </span>
+                                     {#if plugin.settings.showImgThumbnails && isImg(node.to)}
+                                     <ImgThumbnail img={getImgBufferPromise(app, node.to)} />
+                                     {/if}
+                                     {/if}
+                                     </span>
+                                     <span class={MEASURE}>{roundNumber(node.measure, 3)}</span>
+                                     </span>
+                                     </summary>
+                                     <div class="GA-details">
+                                     {#each node.coCitations as coCite}
+                                     <div class="CC-item">
+                                     <span
+                                     class="internal-link {NODE}"
+                                     on:click={async (e) =>
+                                     await openOrSwitch(app, coCite.source, e)}
+                                     on:contextmenu={(e) => openMenu(e, app)}
+                                     on:mouseover={(e) =>
+                                     hoverPreview(e, view, dropPath(coCite.source))}
+                                     >
+                                     {presentPath(coCite.source)}
+                                     </span>
+                                     <span class={MEASURE}>
+                                     {roundNumber(coCite.measure, 3)}
+                                     </span>
+                                     </div>
+                                     <div
+                                     class="CC-sentence"
+                                     on:click={async (e) => {
+                                     await openOrSwitch(app, coCite.source, e)
+                                     jumpToSelection(
+                                     app,
+                                     coCite.line,
+                                     coCite.sentence.join('')
+                                     )
+                                     }}
+                                     >
+                                     {#if coCite.sentence.length === 3}
+                                     <span>{coCite.sentence[0]}</span>
+                                     <mark><strong>{coCite.sentence[1]}</strong></mark>
+                                     <span>{coCite.sentence[2]}</span>
+                                     {:else}
+                                     <span>{coCite.sentence[0]}</span>
+                                     <mark><strong>{coCite.sentence[1]}</strong></mark>
+                                     <span>{coCite.sentence[2]}</span>
+                                     <mark><strong>{coCite.sentence[3]}</strong></mark>
+                                     <span>{coCite.sentence[4]}</span>
+                                     {/if}
+                                     </div>
+                                     {/each}
+                                     </div>
+                                     </details>
+                                     </div>
+                                     {/if}
+                                        {/each}
+
         <InfiniteScrollTest hasMore={sortedCoCites.length > visibleData.length}
                             threshold={100}
                             elementScroll={current_component.parentNode}
                             on:loadMore={() => {
           page++
-          visibleData = [...visibleData, ...sortedCoCites.slice(size * page, size * (page + 1) - 1)]
+          newBatch = sortedCoCites.slice(size * page, size * (page + 1) - 1)
           console.log({visibleData, page})
         }} />
         {visibleData.length} / {sortedCoCites.length}
