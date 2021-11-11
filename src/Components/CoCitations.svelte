@@ -62,14 +62,16 @@
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
-    visibleData = []
-    page = 0
-    blockSwitch = true
-    setTimeout(() => {
-      blockSwitch = false
-    }, 100)
-    currFile = app.workspace.getActiveFile()
-    console.log({ visibleData, newBatch })
+    if (!frozen) {
+      visibleData = []
+      page = 0
+      blockSwitch = true
+      setTimeout(() => {
+        blockSwitch = false
+      }, 100)
+      currFile = app.workspace.getActiveFile()
+      console.log({ visibleData, newBatch })
+    }
   })
 
   let ascOrder = false
