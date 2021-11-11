@@ -4,6 +4,7 @@
   import type AnalysisView from 'src/AnalysisView'
   import { ICON, LINKED, MEASURE, NODE, NOT_LINKED } from 'src/Constants'
   import type {
+    CoCitationMap,
     CoCitationRes,
     GraphAnalysisSettings,
     Subtype,
@@ -27,12 +28,23 @@
   import ExtensionIcon from './ExtensionIcon.svelte'
   import ImgThumbnail from './ImgThumbnail.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
+  import { TFile } from 'obsidian'
+  import InfiniteScrollTest from './InfiniteScrollTest.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
   export let currSubtype: Subtype
+  export let parentComponent
+
+  let size = 50
+  // let promiseSortedCoCites: Promise<any>
+  let currNode: string
+  let current_component: HTMLElement;
+  // let newBatch = []
+  // let visibleData = []
+
 
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path
@@ -45,33 +57,34 @@
     !currNode || !plugin.g
       ? null
       : plugin.g.algs['Co-Citations'](currNode)
-          .then((ccMap) => {
-            const greater = ascOrder ? 1 : -1
-            const lesser = ascOrder ? -1 : 1
-            let sortedCites = Object.keys(ccMap)
-              .map((to) => {
-                let { coCitations, measure, resolved } = ccMap[
-                  to
+        .then((ccMap) => {
+          const greater = ascOrder ? 1 : -1
+          const lesser = ascOrder ? -1 : 1
+          let sortedCites = Object.keys(ccMap)
+            .map((to) => {
+              let { coCitations, measure, resolved } = ccMap[
+                to
                 ] as CoCitationRes
-                return {
-                  measure,
-                  coCitations,
-                  linked: looserIsLinked(app, to, currNode, false),
-                  resolved,
-                  img:
-                    plugin.settings.showImgThumbnails && isImg(to)
-                      ? getImgBufferPromise(app, to)
-                      : null,
-                  to,
-                }
-              })
-              .sort((a, b) => (a.measure > b.measure ? greater : lesser))
-            return sortedCites
-          })
-          .then((res) => {
-            debug(settings, { res })
-            return res
-          })
+              return {
+                measure,
+                coCitations,
+                linked: looserIsLinked(app, to, currNode, false),
+                resolved,
+                to,
+              }
+            })
+            .sort((a, b) => (a.measure > b.measure ? greater : lesser))
+          return sortedCites
+        })
+        .then((res) => {
+          let page = 0
+          let visibleData = res.slice(0, size)
+          debug(settings, { res })
+          console.log({ visibleData })
+          return { sortedCoCites: res, page, visibleData }
+        })
+
+  // $: visibleData = [...visibleData, ...newBatch]
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
@@ -87,10 +100,10 @@
   {view}
 />
 
-<div class="GA-CCs">
+<div class="GA-CCs" bind:this={current_component}>
   {#if promiseSortedCoCites}
-    {#await promiseSortedCoCites then sortedCoCites}
-      {#each sortedCoCites as node}
+    {#await promiseSortedCoCites then {sortedCoCites, visibleData, page}}
+      {#each visibleData as node}
         {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
           <div class="GA-CC">
             <details>
@@ -127,8 +140,8 @@
                       >
                         {presentPath(node.to)}
                       </span>
-                      {#if node.img !== null}
-                        <ImgThumbnail img={node.img} />
+                      {#if plugin.settings.showImgThumbnails && isImg(node.to)}
+                        <ImgThumbnail img={getImgBufferPromise(app, node.to)} />
                       {/if}
                     {/if}
                   </span>
@@ -181,6 +194,17 @@
           </div>
         {/if}
       {/each}
+      {#key sortedCoCites}
+        <InfiniteScrollTest hasMore={sortedCoCites.length > visibleData.length}
+                            threshold={100}
+                            elementScroll={current_component.parentNode}
+                            on:loadMore={() => {
+          page++
+          visibleData = [...visibleData, ...sortedCoCites.slice(size * page, size * (page + 1) - 1)]
+          console.log({visibleData, page})
+        }} />
+        {visibleData.length} / {sortedCoCites.length}
+      {/key}
     {/await}
   {/if}
 </div>
