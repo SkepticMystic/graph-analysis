@@ -17,10 +17,13 @@
   let { resolvedLinks } = app.metadataCache
 
   let ascOrder = false
+  let frozen = false
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
-    currFile = app.workspace.getActiveFile()
+    if (!frozen) {
+      currFile = app.workspace.getActiveFile()
+    }
   })
 
   $: promiseSortedResults = getPromiseResults(
@@ -45,6 +48,8 @@
   anl="Community Detection"
   bind:currSubtype
   bind:ascOrder
+  bind:frozen
+  bind:currFile
 />
 
 <ResultsMapTable

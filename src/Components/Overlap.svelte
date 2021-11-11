@@ -14,10 +14,11 @@
   export let view: AnalysisView
   export let currSubtype: Subtype
 
+  let frozen = false
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
-    currFile = app.workspace.getActiveFile()
+    if (!frozen) currFile = app.workspace.getActiveFile()
   })
 
   let { resolvedLinks } = app.metadataCache
@@ -41,8 +42,10 @@
 <SubtypeOptions
   bind:currSubtype
   bind:noZero
-  anl="Similarity"
   bind:ascOrder
+  bind:frozen
+  bind:currFile
+  anl="Similarity"
   {plugin}
   {view}
 />
