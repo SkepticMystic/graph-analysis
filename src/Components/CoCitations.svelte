@@ -50,6 +50,8 @@
   $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
     currFile = app.workspace.getActiveFile()
+    visibleData = []
+    page = 0
   })
 
   let ascOrder = false
@@ -77,10 +79,8 @@
           return sortedCites
         })
         .then((res) => {
-          // let page = 0
-          // let visibleData = res.slice(0, size)
+          newBatch = res.slice(0, size)
           debug(settings, { res })
-          console.log({ visibleData })
           return res
           // return { sortedCoCites: res, page, visibleData }
         })
@@ -105,10 +105,6 @@
   {#if promiseSortedCoCites}
     {#await promiseSortedCoCites then sortedCoCites}
       {#key sortedCoCites}
-        {visibleData = []}
-        {page = 0}
-        {newBatch = sortedCoCites.slice(0, size)}
-        {console.log(visibleData)}
         {#each visibleData as node}
                                      {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
                                      <div class="GA-CC">
