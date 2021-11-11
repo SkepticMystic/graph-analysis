@@ -69,7 +69,7 @@
       blockSwitch = false
     }, 100)
     currFile = app.workspace.getActiveFile()
-    console.log({visibleData, newBatch})
+    console.log({ visibleData, newBatch })
   })
 
   let ascOrder = false
@@ -85,24 +85,24 @@
                 let { coCitations, measure, resolved } = ccMap[
                   to
                 ] as CoCitationRes
-              return {
-                measure,
-                coCitations,
-                linked: looserIsLinked(app, to, currNode, false),
-                resolved,
-                to,
-              }
-            })
-            .sort((a, b) => (a.measure > b.measure ? greater : lesser))
-          return sortedCites
-        })
-        .then((res) => {
-          newBatch = res.slice(0, size)
-          console.log('here')
-          debug(settings, { res })
-          return res
-          // return { sortedCoCites: res, page, visibleData }
-        })
+                return {
+                  measure,
+                  coCitations,
+                  linked: looserIsLinked(app, to, currNode, false),
+                  resolved,
+                  to,
+                }
+              })
+              .sort((a, b) => (a.measure > b.measure ? greater : lesser))
+            return sortedCites
+          })
+          .then((res) => {
+            newBatch = res.slice(0, size)
+            console.log('here')
+            debug(settings, { res })
+            return res
+            // return { sortedCoCites: res, page, visibleData }
+          })
 
   $: visibleData = [...visibleData, ...newBatch]
 
@@ -220,16 +220,18 @@
           {/if}
         {/each}
 
-        <InfiniteScroll hasMore={sortedCoCites.length > visibleData.length}
-                            threshold={100}
-                            elementScroll={current_component.parentNode}
-                            on:loadMore={() => {
-          if (!blockSwitch) {
-            page++
-            console.log('there')
-            newBatch = sortedCoCites.slice(size * page, size * (page + 1) - 1)
-          }
-        }} />
+        <InfiniteScroll
+          hasMore={sortedCoCites.length > visibleData.length}
+          threshold={100}
+          elementScroll={current_component.parentNode}
+          on:loadMore={() => {
+            if (!blockSwitch) {
+              page++
+              console.log('there')
+              newBatch = sortedCoCites.slice(size * page, size * (page + 1) - 1)
+            }
+          }}
+        />
         {visibleData.length} / {sortedCoCites.length}
       {/key}
     {/await}
