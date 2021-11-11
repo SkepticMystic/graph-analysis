@@ -104,6 +104,25 @@ export class SampleSettingTab extends PluginSettingTab {
       )
 
     new Setting(containerEl)
+      .setName('Exclusion Tags')
+      .setDesc(
+        "A comma-separated list of tags. Any note with any of these tags won't be included in the graph. Include the `#` in each tag"
+      )
+      .addText((tc) => {
+        tc.setValue(settings.exclusionTags.join(', '))
+        tc.inputEl.onblur = async () => {
+          const value = tc.inputEl.value
+          const splits = value.split(',').map((s) => s.trim())
+          if (!splits.every((t) => t.startsWith('#'))) {
+            new Notice("Every tag must start with '#'")
+            return
+          }
+          settings.exclusionTags = splits
+          await plugin.saveSettings()
+        }
+      })
+
+    new Setting(containerEl)
       .setName('Exclusion Regex')
       .setDesc(
         createFragment((el) => {

@@ -16,6 +16,7 @@ export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
   debugMode: false,
   superDebugMode: false,
   exclusionRegex: '',
+  exclusionTags: [],
 }
 
 export const DECIMALS = 4

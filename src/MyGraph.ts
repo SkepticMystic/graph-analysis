@@ -30,39 +30,47 @@ export default class MyGraph extends Graph {
     this.settings = settings
   }
 
-  nodeMapping: { [name: string]: number } = {}
-
   async initGraph(): Promise<MyGraph> {
     const { resolvedLinks, unresolvedLinks } = this.app.metadataCache
-    const { exclusionRegex } = this.settings
+    const { exclusionRegex, exclusionTags, allFileExtensions, addUnresolved } =
+      this.settings
     const regex = new RegExp(exclusionRegex, 'i')
     let i = 0
-    for (const source in resolvedLinks) {
-      if (exclusionRegex === '' || !regex.test(source)) {
-        if (source.endsWith(this.settings.allFileExtensions ? '' : 'md')) {
-          this.setNode(source, i)
-          i++
 
-          for (const dest in resolvedLinks[source]) {
-            if (exclusionRegex === '' || !regex.test(dest)) {
-              if (dest.endsWith(this.settings.allFileExtensions ? '' : 'md')) {
-                this.setEdge(source, dest)
-              }
-            }
+    const includeTag = (tags: TagCache[] | undefined) =>
+      exclusionTags.length === 0 ||
+      !tags ||
+      tags.findIndex((t) => exclusionTags.includes(t.tag)) === -1
+    const includeRegex = (node: string) =>
+      exclusionRegex === '' || !regex.test(node)
+    const includeExt = (node: string) =>
+      allFileExtensions || node.endsWith('md')
+
+    for (const source in resolvedLinks) {
+      const tags = this.app.metadataCache.getCache(source)?.tags
+      console.log({ source, tags })
+      if (includeTag(tags) && includeRegex(source) && includeExt(source)) {
+        this.setNode(source, i)
+        i++
+
+        for (const dest in resolvedLinks[source]) {
+          const tags = this.app.metadataCache.getCache(dest)?.tags
+          if (includeTag(tags) && includeRegex(dest) && includeExt(dest)) {
+            this.setEdge(source, dest)
           }
         }
       }
     }
 
-    if (this.settings.addUnresolved) {
+    if (addUnresolved) {
       for (const source in unresolvedLinks) {
-        if (exclusionRegex === '' || !regex.test(source)) {
+        if (includeRegex(source)) {
           this.setNode(source, i)
           i++
 
           for (const dest in unresolvedLinks[source]) {
             const destMD = dest + '.md'
-            if (exclusionRegex === '' || !regex.test(destMD)) {
+            if (includeRegex(destMD)) {
               this.setEdge(source, destMD, 'Unresolved')
             }
           }
