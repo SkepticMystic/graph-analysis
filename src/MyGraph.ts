@@ -48,7 +48,6 @@ export default class MyGraph extends Graph {
 
     for (const source in resolvedLinks) {
       const tags = this.app.metadataCache.getCache(source)?.tags
-      console.log({ source, tags })
       if (includeTag(tags) && includeRegex(source) && includeExt(source)) {
         this.setNode(source, i)
         i++
