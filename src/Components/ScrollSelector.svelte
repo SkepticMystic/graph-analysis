@@ -1,10 +1,13 @@
 <script lang="ts">
   import type AnalysisView from 'src/AnalysisView'
-  import { ICON, SUBTYPES } from 'src/Constants'
+  import { getSubtypes, ICON } from 'src/Constants'
   import type { Subtype } from 'src/Interfaces'
   import FaGlobeAfrica from 'svelte-icons/fa/FaGlobeAfrica.svelte'
+
   export let currSubtype: Subtype
   export let view: AnalysisView
+
+  const SUBTYPES = getSubtypes()
 </script>
 
 <div

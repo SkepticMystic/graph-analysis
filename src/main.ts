@@ -3,10 +3,10 @@ import { openView, wait } from 'obsidian-community-lib'
 import AnalysisView from 'src/AnalysisView'
 import {
   DEFAULT_SETTINGS,
+  getSubtypes,
   iconSVG,
   VIEW_TYPE_GRAPH_ANALYSIS,
 } from 'src/Constants'
-import { clusteringCoefficient, findTrianglesForNode } from 'src/GeneralGraphFn'
 import type { GraphAnalysisSettings } from 'src/Interfaces'
 import MyGraph from 'src/MyGraph'
 import { SampleSettingTab } from 'src/Settings'
@@ -45,29 +45,27 @@ export default class GraphAnalysisPlugin extends Plugin {
       name: 'Refresh Graph Analysis View',
       callback: async () => {
         await this.refreshGraph()
-        const openView = this.app.workspace.getLeavesOfType(
-          VIEW_TYPE_GRAPH_ANALYSIS
-        )[0].view as AnalysisView
-        openView.draw()
+        const currView = await this.getCurrentView()
+        await currView.draw(currView.currSubtype)
       },
     })
 
-    this.addCommand({
-      id: 'cluster-coeff',
-      name: 'cluster-coeff',
-      callback: async () => {
-        const currNode = this.app.workspace.getActiveFile().basename
-        const triangles = findTrianglesForNode(this.g, currNode)
-        const coef = clusteringCoefficient(this.g, currNode)
-        console.log({ triangles, coef })
-      },
+    getSubtypes().forEach((subtype) => {
+      this.addCommand({
+        id: `open-${subtype}`,
+        name: `Open ${subtype}`,
+        callback: async () => {
+          const currView = await this.getCurrentView()
+          await currView.draw(subtype.subtype)
+        },
+      })
     })
 
     this.addSettingTab(new SampleSettingTab(this.app, this))
 
     this.registerView(
       VIEW_TYPE_GRAPH_ANALYSIS,
-      (leaf: WorkspaceLeaf) => new AnalysisView(leaf, this)
+      (leaf: WorkspaceLeaf) => new AnalysisView(leaf, this, null)
     )
 
     this.app.workspace.onLayoutReady(async () => {
@@ -84,6 +82,19 @@ export default class GraphAnalysisPlugin extends Plugin {
   resolvedLinksComplete(noFiles: number) {
     const { resolvedLinks } = this.app.metadataCache
     return Object.keys(resolvedLinks).length === noFiles
+  }
+
+  getCurrentView = async (openIfNot = true) => {
+    const view = this.app.workspace.getLeavesOfType(
+      VIEW_TYPE_GRAPH_ANALYSIS
+    )?.[0]?.view as AnalysisView
+
+    if (view) return view
+    else if (openIfNot) {
+      await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
+      return this.app.workspace.getLeavesOfType(VIEW_TYPE_GRAPH_ANALYSIS)?.[0]
+        ?.view as AnalysisView
+    } else return null
   }
 
   async refreshGraph() {

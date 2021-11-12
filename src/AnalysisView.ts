@@ -9,9 +9,14 @@ export default class AnalysisView extends ItemView {
   currSubtype: Subtype
   private component: AnalysisComponent
 
-  constructor(leaf: WorkspaceLeaf, plugin: GraphAnalysisPlugin) {
+  constructor(
+    leaf: WorkspaceLeaf,
+    plugin: GraphAnalysisPlugin,
+    currSubtype: Subtype | null
+  ) {
     super(leaf)
     this.plugin = plugin
+    this.currSubtype = currSubtype
   }
 
   async onload(): Promise<void> {
@@ -29,15 +34,14 @@ export default class AnalysisView extends ItemView {
   icon = 'GA-ICON'
 
   async onOpen(): Promise<void> {
-    this.currSubtype = this.plugin.settings.defaultSubtypeType
-    await this.draw()
+    await this.draw(this.currSubtype ?? this.plugin.settings.defaultSubtypeType)
   }
 
   onClose(): Promise<void> {
     return Promise.resolve()
   }
 
-  async draw(): Promise<void> {
+  async draw(currSubtype: Subtype): Promise<void> {
     const { app, contentEl } = this
     const { settings } = this.plugin
 
@@ -53,7 +57,7 @@ export default class AnalysisView extends ItemView {
         plugin: this.plugin,
         settings,
         view: this,
-        currSubtype: this.currSubtype,
+        currSubtype,
       },
     })
   }

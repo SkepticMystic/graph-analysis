@@ -11,6 +11,7 @@ export interface ResolvedLinks {
 export type SubtypeDesc = {
   subtype: Subtype
   desc: string
+  global: boolean
 }
 
 export type Analyses =
