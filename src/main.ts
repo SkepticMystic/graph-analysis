@@ -91,9 +91,7 @@ export default class GraphAnalysisPlugin extends Plugin {
 
     if (view) return view
     else if (openIfNot) {
-      await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
-      return this.app.workspace.getLeavesOfType(VIEW_TYPE_GRAPH_ANALYSIS)?.[0]
-        ?.view as AnalysisView
+      return await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
     } else return null
   }
 
