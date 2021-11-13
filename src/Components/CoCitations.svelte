@@ -63,14 +63,13 @@
   $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
     if (!frozen) {
-      visibleData = []
-      page = 0
       blockSwitch = true
-      setTimeout(() => {
-        blockSwitch = false
-      }, 100)
-      currFile = app.workspace.getActiveFile()
-      console.log({ visibleData, newBatch })
+      newBatch = []
+      visibleData = []
+      promiseSortedCoCites = null
+      page = 0
+
+      setTimeout(() => currFile = app.workspace.getActiveFile(), 100)
     }
   })
 
@@ -100,8 +99,10 @@
           })
           .then((res) => {
             newBatch = res.slice(0, size)
-            console.log('here')
             debug(settings, { res })
+            setTimeout(() => {
+              blockSwitch = false
+            }, 100)
             return res
             // return { sortedCoCites: res, page, visibleData }
           })
@@ -229,8 +230,8 @@
           on:loadMore={() => {
             if (!blockSwitch) {
               page++
-              console.log('there')
               newBatch = sortedCoCites.slice(size * page, size * (page + 1) - 1)
+              console.log({newBatch})
             }
           }}
         />
