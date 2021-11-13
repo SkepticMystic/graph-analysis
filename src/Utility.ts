@@ -1,6 +1,15 @@
-import { App, EditorRange, MarkdownView, Menu, Notice, TFile } from 'obsidian'
+import {
+  App,
+  EditorRange,
+  MarkdownView,
+  Menu,
+  Notice,
+  TFile,
+  WorkspaceLeaf,
+} from 'obsidian'
 import {
   copy,
+  createNewMDNote,
   isInVault,
   isLinked,
   ResolvedLinks,
@@ -42,7 +51,7 @@ export const dropPath = (path: string) => {
 }
 
 export const dropExt = (path: string) =>
-  getExt(path) === '' ? path : path.split('.').slice(0, -1).join('.')
+  path.split('.').length === 1 ? path : path.split('.').slice(0, -1).join('.')
 export const getExt = (path: string) => path.split('.').last()
 
 export const classExt = (path: string) => `GA-${getExt(path)}`
@@ -305,3 +314,44 @@ export function getMaxKey(obj: Record<string, number>) {
 
 export const isImg = (path: string) =>
   IMG_EXTENSIONS.includes(path.split('.').last())
+
+export async function openOrSwitch(
+  app: App,
+  dest: string,
+  event: MouseEvent,
+  options: {
+    createNewFile: boolean
+  } = { createNewFile: true }
+): Promise<void> {
+  const { workspace } = app
+  let destFile = app.metadataCache.getFirstLinkpathDest(dest, '')
+
+  // If dest doesn't exist, make it
+  if (!destFile && options.createNewFile) {
+    destFile = await createNewMDNote(app, dest)
+  } else if (!destFile && !options.createNewFile) return
+
+  // Check if it's already open
+  const leavesWithDestAlreadyOpen: WorkspaceLeaf[] = []
+  workspace.iterateAllLeaves((leaf) => {
+    if (leaf.view instanceof MarkdownView) {
+      if (leaf.view?.file?.basename === dropExt(dest)) {
+        leavesWithDestAlreadyOpen.push(leaf)
+      }
+    }
+  })
+
+  // Rather switch to it if it is open
+  if (leavesWithDestAlreadyOpen.length > 0) {
+    workspace.setActiveLeaf(leavesWithDestAlreadyOpen[0])
+  } else {
+    // @ts-ignore
+    const mode = app.vault.getConfig('defaultViewMode') as string
+    const leaf =
+      event.ctrlKey || event.getModifierState('Meta')
+        ? workspace.splitActiveLeaf()
+        : workspace.getUnpinnedLeaf()
+
+    await leaf.openFile(destFile, { active: true, mode })
+  }
+}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { hoverPreview, isLinked, openOrSwitch } from 'obsidian-community-lib'
+  import { hoverPreview, isLinked } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { ICON, MEASURE, NODE } from 'src/Constants'
   import type {
@@ -16,6 +16,7 @@
     getImgBufferPromise,
     isImg,
     openMenu,
+    openOrSwitch,
     presentPath,
   } from 'src/Utility'
   import { onMount } from 'svelte'

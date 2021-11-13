@@ -1,11 +1,6 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import {
-    hoverPreview,
-    isInVault,
-    isLinked,
-    openOrSwitch,
-  } from 'obsidian-community-lib'
+  import { hoverPreview, isInVault, isLinked } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import {
     ANALYSIS_TYPES,
@@ -22,11 +17,11 @@
   import type GraphAnalysisPlugin from 'src/main'
   import {
     classExt,
-    dropExt,
     dropPath,
     getImgBufferPromise,
     isImg,
     openMenu,
+    openOrSwitch,
     presentPath,
   } from 'src/Utility'
   import { onMount } from 'svelte'
@@ -171,8 +166,7 @@
               <td
                 aria-label={node.extra.map(presentPath).join('\n')}
                 aria-label-position="left"
-                on:click={async (e) =>
-                  await openOrSwitch(app, dropExt(node.to), e)}
+                on:click={async (e) => await openOrSwitch(app, node.to, e)}
                 on:contextmenu={(e) => openMenu(e, app)}
                 on:mouseover={(e) => hoverPreview(e, view, dropPath(node.to))}
               >

@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import { openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { ICON, LINKED, MEASURE, NODE, NOT_LINKED } from 'src/Constants'
   import type {
@@ -20,6 +19,7 @@
     jumpToSelection,
     looserIsLinked,
     openMenu,
+    openOrSwitch,
     presentPath,
     roundNumber,
   } from 'src/Utility'
