@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.1](https://github.com/SkepticMystic/graph-analysis/compare/0.10.0...0.10.1) (2021-11-13)
+
+
+### Bug Fixes
+
+* :bug: Settings weren't loading ([b5b4a82](https://github.com/SkepticMystic/graph-analysis/commit/b5b4a82eee66b120a5997a352b1cb7499d69bd0b))
+
 ## [0.10.0](https://github.com/SkepticMystic/graph-analysis/compare/0.9.0...0.10.0) (2021-11-13)
 
 
