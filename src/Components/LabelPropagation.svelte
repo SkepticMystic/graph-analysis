@@ -3,7 +3,11 @@
   import { hoverPreview, isLinked, openOrSwitch } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
   import { ICON, MEASURE, NODE } from 'src/Constants'
-  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
+  import type {
+    Communities,
+    GraphAnalysisSettings,
+    Subtype,
+  } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     classExt,
@@ -16,6 +20,7 @@
   } from 'src/Utility'
   import { onMount } from 'svelte'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
+  import InfiniteScroll from 'svelte-infinite-scroll'
   import ExtensionIcon from './ExtensionIcon.svelte'
   import ImgThumbnail from './ImgThumbnail.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
@@ -26,13 +31,39 @@
   export let view: AnalysisView
   export let currSubtype: Subtype
 
+  interface ComponentResults {
+    label: string
+    comm: string[]
+  }
+
   let { resolvedLinks } = app.metadataCache
 
   let ascOrder = false
+  let size = 50
+  let current_component: HTMLElement
+  let newBatch: ComponentResults[] = []
+  let visibleData: ComponentResults[] = []
+  let page = 0
+  let blockSwitch = false
+
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
-    currFile = app.workspace.getActiveFile()
+    console.log({
+      promiseSortedResults,
+      visibleData,
+      newBatch,
+      page,
+      blockSwitch,
+    })
+    blockSwitch = true
+    setTimeout(() => {
+      blockSwitch = false
+      currFile = app.workspace.getActiveFile()
+    }, 100)
+    newBatch = []
+
+    // setTimeout(() => (), 100)
   })
 
   let its = 20
@@ -42,30 +73,42 @@
 
   $: promiseSortedResults = !plugin.g
     ? null
-    : plugin.g.algs[currSubtype]('', { iterations: its }).then((comms) => {
-        let sortedComms = Object.keys(comms)
-          .map((label) => {
-            let comm = comms[label] as unknown as string[]
-            return { label, comm }
+    : plugin.g.algs[currSubtype]('', { iterations: its })
+        .then((comms: Communities) => {
+          const greater = ascOrder ? 1 : -1
+          const lesser = ascOrder ? -1 : 1
+
+          const componentResults: ComponentResults[] = []
+          Object.keys(comms).forEach((label) => {
+            let comm = comms[label]
+            if (comm.length > 1) {
+              componentResults.push({
+                label,
+                comm,
+              })
+            }
           })
-          .sort((a, b) =>
-            a.comm.length > b.comm.length
-              ? ascOrder
-                ? 1
-                : -1
-              : ascOrder
-              ? -1
-              : 1
+          componentResults.sort((a, b) =>
+            a.comm.length > b.comm.length ? greater : lesser
           )
-        return sortedComms
-      })
+          return componentResults
+        })
+        .then((res) => {
+          newBatch = res.slice(0, size)
+          setTimeout(() => {
+            blockSwitch = false
+          }, 100)
+          return res
+        })
+
+  $: visibleData = [...visibleData, ...newBatch]
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
   })
 </script>
 
-<div class="GA-CCs">
+<div class="GA-CCs" bind:this={current_component}>
   <div>
     <span>
       <SubtypeOptions
@@ -84,9 +127,9 @@
     </span>
   </div>
   {#if promiseSortedResults}
-    {#await promiseSortedResults then sortedComms}
-      {#each sortedComms as comm}
-        {#if comm.comm.length > 1}
+    {#await promiseSortedResults then sortedResults}
+      {#key sortedResults}
+        {#each visibleData as comm}
           <div class="GA-CC">
             <details>
               <summary
@@ -98,6 +141,7 @@
                   {comm.comm.includes(currNode) ? 'currComm' : ''}"
                 >
                   <span>
+                    <!-- Unecessary span? -->
                     {presentPath(comm.label)}
                   </span>
                   <span class={MEASURE}>{comm.comm.length}</span>
@@ -121,7 +165,11 @@
                       </span>
                     {/if}
                     <ExtensionIcon path={member} />
-                    <span class="internal-link">{presentPath(member)}</span>
+                    <span
+                      class="internal-link {currNode === member
+                        ? 'currNode'
+                        : ''}">{presentPath(member)}</span
+                    >
                     {#if plugin.settings.showImgThumbnails && isImg(member)}
                       <ImgThumbnail img={getImgBufferPromise(app, member)} />
                     {/if}
@@ -130,8 +178,22 @@
               </div>
             </details>
           </div>
-        {/if}
-      {/each}
+        {/each}
+
+        <InfiniteScroll
+          hasMore={sortedResults.length > visibleData.length}
+          threshold={100}
+          elementScroll={current_component.parentNode}
+          on:loadMore={() => {
+            if (!blockSwitch) {
+              page++
+              newBatch = sortedResults.slice(size * page, size * (page + 1) - 1)
+              console.log({ newBatch })
+            }
+          }}
+        />
+        {visibleData.length} / {sortedResults.length}
+      {/key}
     {/await}
   {/if}
 </div>
@@ -192,5 +254,9 @@
 
   .currComm {
     color: var(--text-accent);
+  }
+
+  .currNode {
+    font-weight: bold;
   }
 </style>

@@ -151,18 +151,6 @@
   {view}
 />
 
-<!-- <ResultsMapTable
-  {app}
-  {plugin}
-  {view}
-  {noInfinity}
-  {noZero}
-  {currSubtype}
-  {frozen}
-  {ascOrder}
-  bind:currFile
-/> -->
-
 <table class="GA-table markdown-preview-view" bind:this={current_component}>
   <thead>
     <tr>
