@@ -37,7 +37,7 @@
   export let view: AnalysisView
   export let currSubtype: Subtype
 
-  const { anl } = ANALYSIS_TYPES.find((sub) => sub.subtype === currSubtype)
+  $: currSubtypeInfo = ANALYSIS_TYPES.find((sub) => sub.subtype === currSubtype)
   let frozen = false
   let ascOrder = false
   let { noInfinity, noZero } = settings
@@ -136,14 +136,19 @@
 </script>
 
 <SubtypeOptions
-  bind:currSubtype
+  bind:currSubtypeInfo
   bind:noZero
   bind:ascOrder
   bind:currFile
   bind:frozen
-  {anl}
+  {app}
   {plugin}
   {view}
+  bind:blockSwitch
+  bind:newBatch
+  bind:visibleData
+  bind:promiseSortedResults
+  bind:page
 />
 
 <table class="GA-table markdown-preview-view" bind:this={current_component}>

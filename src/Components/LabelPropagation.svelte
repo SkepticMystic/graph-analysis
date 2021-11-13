@@ -2,7 +2,7 @@
   import type { App } from 'obsidian'
   import { hoverPreview, isLinked } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
-  import { ICON, MEASURE, NODE } from 'src/Constants'
+  import { ANALYSIS_TYPES, ICON, MEASURE, NODE } from 'src/Constants'
   import type {
     Communities,
     GraphAnalysisSettings,
@@ -39,6 +39,9 @@
 
   let { resolvedLinks } = app.metadataCache
 
+  $: currSubtypeInfo = ANALYSIS_TYPES.find(
+    (sub) => sub.subtype === currSubtype
+  )
   let ascOrder = false
   let size = 50
   let current_component: HTMLElement
@@ -50,13 +53,6 @@
   let currFile = app.workspace.getActiveFile()
   $: currNode = currFile?.path
   app.workspace.on('active-leaf-change', () => {
-    console.log({
-      promiseSortedResults,
-      visibleData,
-      newBatch,
-      page,
-      blockSwitch,
-    })
     blockSwitch = true
     setTimeout(() => {
       blockSwitch = false
@@ -113,11 +109,16 @@
   <div>
     <span>
       <SubtypeOptions
-        bind:currSubtype
+        bind:currSubtypeInfo
         bind:ascOrder
-        anl="Community Detection"
+        bind:blockSwitch
+        bind:newBatch
+        bind:visibleData
+        bind:promiseSortedResults
+        bind:page
         {plugin}
         {view}
+        {app}
       />
       <label for="iterations">Iterations: </label>
       <select class="dropdown GA-DD" bind:value={its} name="iterations">

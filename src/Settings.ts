@@ -26,10 +26,8 @@ export class SampleSettingTab extends PluginSettingTab {
       .addDropdown((dd) => {
         dd.setValue(settings.defaultSubtypeType)
         const dict = {}
-        Object.values(ANALYSIS_TYPES).forEach((subtypeDescs) => {
-          subtypeDescs.forEach((subDesc) => {
-            dict[subDesc.subtype] = subDesc.subtype
-          })
+        ANALYSIS_TYPES.forEach((subInfo) => {
+          dict[subInfo.subtype] = subInfo.subtype
         })
         dd.addOptions(dict).onChange(async (option) => {
           settings.defaultSubtypeType = option as Subtype

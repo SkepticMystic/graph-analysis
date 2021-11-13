@@ -1,8 +1,7 @@
 <script lang="ts">
-  import type { TFile } from 'obsidian'
+  import type { App, TFile } from 'obsidian'
   import type AnalysisView from 'src/AnalysisView'
-  import { ANALYSIS_TYPES } from 'src/Constants'
-  import type { Analyses, Subtype } from 'src/Interfaces'
+  import type { SubtypeInfo } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import FaCreativeCommonsZero from 'svelte-icons/fa/FaCreativeCommonsZero.svelte'
   import FaFire from 'svelte-icons/fa/FaFire.svelte'
@@ -13,20 +12,23 @@
   import MdExposureZero from 'svelte-icons/md/MdExposureZero.svelte'
   import InfoIcon from './InfoIcon.svelte'
 
-  export let anl: Analyses
-  export let currSubtype: Subtype
+  export let currSubtypeInfo: SubtypeInfo
   export let noZero: boolean = undefined
   export let ascOrder: boolean = undefined
   export let currFile: TFile = undefined
   export let frozen: boolean = undefined
   export let plugin: GraphAnalysisPlugin
+  export let app: App
   export let view: AnalysisView
+  export let blockSwitch: boolean
+  export let newBatch: any[]
+  export let visibleData: any[]
+  export let promiseSortedResults: Promise<any[]>
+  export let page: number
 </script>
 
 <span class="GA-Subtype-Options">
-  <InfoIcon
-    desc={ANALYSIS_TYPES.find((sub) => sub.subtype === currSubtype).desc}
-  />
+  <InfoIcon desc={currSubtypeInfo.desc} />
 
   {#if noZero !== undefined}
     <span
@@ -64,8 +66,21 @@
       aria-label={frozen ? `Frozen on: ${currFile.basename}` : 'Unfrozen'}
       on:click={() => {
         frozen = !frozen
-        if (!frozen) {
-          currFile = view.app.workspace.getActiveFile()
+        if (!frozen && !currSubtypeInfo.global) {
+          blockSwitch = true
+          newBatch = []
+          visibleData = []
+          promiseSortedResults = null
+          page = 0
+
+          setTimeout(() => (currFile = app.workspace.getActiveFile()), 100)
+        } else if (!frozen && currSubtypeInfo.global) {
+          blockSwitch = true
+          setTimeout(() => {
+            blockSwitch = false
+            currFile = app.workspace.getActiveFile()
+          }, 100)
+          newBatch = []
         }
       }}
     >
@@ -83,7 +98,7 @@
     aria-label="Refresh Index"
     on:click={async () => {
       await plugin.refreshGraph()
-      await view.draw(currSubtype)
+      await view.draw(currSubtypeInfo.subtype)
     }}
   >
     <span class="icon">

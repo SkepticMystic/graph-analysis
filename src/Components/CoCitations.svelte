@@ -1,7 +1,14 @@
 <script lang="ts">
   import type { App } from 'obsidian'
   import type AnalysisView from 'src/AnalysisView'
-  import { ICON, LINKED, MEASURE, NODE, NOT_LINKED } from 'src/Constants'
+  import {
+    ANALYSIS_TYPES,
+    ICON,
+    LINKED,
+    MEASURE,
+    NODE,
+    NOT_LINKED,
+  } from 'src/Constants'
   import type {
     CoCitation,
     CoCitationRes,
@@ -35,6 +42,8 @@
   export let settings: GraphAnalysisSettings
   export let view: AnalysisView
   export let currSubtype: Subtype
+
+  $: currSubtypeInfo = ANALYSIS_TYPES.find((sub) => sub.subtype === currSubtype)
 
   interface CoCiteComp {
     measure: number
@@ -114,13 +123,18 @@
 </script>
 
 <SubtypeOptions
-  anl="Co-Citations"
   bind:ascOrder
   bind:frozen
   bind:currFile
-  {currSubtype}
+  {currSubtypeInfo}
+  {app}
   {plugin}
   {view}
+  bind:blockSwitch
+  bind:newBatch
+  bind:visibleData
+  bind:promiseSortedResults
+  bind:page
 />
 
 <div class="GA-CCs" bind:this={current_component}>
