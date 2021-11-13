@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/SkepticMystic/graph-analysis/compare/0.9.0...0.10.0) (2021-11-13)
+
+
+### Features
+
+* :sparkles: Add `.GA-${ext}` to nodes for styling ([85cbb79](https://github.com/SkepticMystic/graph-analysis/commit/85cbb79a51d56bc37120c93560ef547c305f3db6))
+* :sparkles: Commands to open specific alg type ([8801c6c](https://github.com/SkepticMystic/graph-analysis/commit/8801c6c9c3a77b91b3e74b1b48192a09cd01c2b8))
+* :sparkles: Exclude notes by tag ([6448a84](https://github.com/SkepticMystic/graph-analysis/commit/6448a8445b22b93f670c384138e39579d3258d02))
+* :sparkles: Freeze AnalysisView on currentFile ([69e9ad3](https://github.com/SkepticMystic/graph-analysis/commit/69e9ad378c2b4e32bf93033e83248f4fabac6a8b))
+* :sparkles: InfiniteScroll working on table algs ([0de2260](https://github.com/SkepticMystic/graph-analysis/commit/0de2260c9ce0ab6bf3e99b419ebdacbeea09c3ce))
+* :sparkles: Options to show img thumbnails or not ([e8ae368](https://github.com/SkepticMystic/graph-analysis/commit/e8ae368014b3b1ebf30e8d1d50c1781dfa51826c))
+* Actually managed to get infinite scrolling to work in cocites! ([e3371ba](https://github.com/SkepticMystic/graph-analysis/commit/e3371bae7da9c648d6981c411b6697eb3490f26b))
+* **labelProp:** :sparkles: Infinite scroll working! ([7b5983d](https://github.com/SkepticMystic/graph-analysis/commit/7b5983dbc7538072ec62d0dee18082d13a7d125b))
+* More trying to get infinite scrolling to work ([19e6679](https://github.com/SkepticMystic/graph-analysis/commit/19e6679120ed75a708c769da89afbc178795778e))
+* started work on infinite scrolling in co-citations ([ce00f58](https://github.com/SkepticMystic/graph-analysis/commit/ce00f58e7690a53f2f66c3c3dd85c2de0b6bad42))
+* Trying to show image thumbnails in co-cites ([7ee2711](https://github.com/SkepticMystic/graph-analysis/commit/7ee2711ea91c938b0225b9684c19c47c5c7d8b76))
+
+
+### Bug Fixes
+
+* :bug: openOrSwitch to imgs ([a54b548](https://github.com/SkepticMystic/graph-analysis/commit/a54b5481cabc2077e127ed779c89e5173a2945fb))
+* **coCites:** :bug: Freeze ([b892351](https://github.com/SkepticMystic/graph-analysis/commit/b8923518c83d7f563f8b19ee7b0f603b478c9dca))
+* Old co-citations linger when switching notes ([c14df99](https://github.com/SkepticMystic/graph-analysis/commit/c14df99432341eee77a0bac797d9f84d6d408763))
+* Sometimes infinite scrolling adds the wrong data ([0b37633](https://github.com/SkepticMystic/graph-analysis/commit/0b3763365a3d786c4db58aec00c2ccc3368ccb08))
+
 ## [0.9.0](https://github.com/SkepticMystic/graph-analysis/compare/0.8.0...0.9.0) (2021-11-10)
 
 
