@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { TFile } from 'obsidian'
   import type AnalysisView from 'src/AnalysisView'
-  import { getSubtypes } from 'src/Constants'
+  import { ANALYSIS_TYPES } from 'src/Constants'
   import type { Analyses, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import FaCreativeCommonsZero from 'svelte-icons/fa/FaCreativeCommonsZero.svelte'
@@ -21,12 +21,12 @@
   export let frozen: boolean = undefined
   export let plugin: GraphAnalysisPlugin
   export let view: AnalysisView
-
-  const SUBTYPES = getSubtypes()
 </script>
 
 <span class="GA-Subtype-Options">
-  <InfoIcon desc={SUBTYPES.find((sub) => sub.subtype === currSubtype).desc} />
+  <InfoIcon
+    desc={ANALYSIS_TYPES.find((sub) => sub.subtype === currSubtype).desc}
+  />
 
   {#if noZero !== undefined}
     <span

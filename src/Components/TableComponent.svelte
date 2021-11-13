@@ -1,5 +1,5 @@
-<!-- <script lang="ts">
-  import type { App, TFile } from 'obsidian'
+<script lang="ts">
+  import type { App } from 'obsidian'
   import {
     hoverPreview,
     isInVault,
@@ -7,8 +7,18 @@
     openOrSwitch,
   } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
-  import { ICON, LINKED, MEASURE, NOT_LINKED } from 'src/Constants'
-  import type { ResultMap, Subtype } from 'src/Interfaces'
+  import {
+    ANALYSIS_TYPES,
+    ICON,
+    LINKED,
+    MEASURE,
+    NOT_LINKED,
+  } from 'src/Constants'
+  import type {
+    GraphAnalysisSettings,
+    ResultMap,
+    Subtype,
+  } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     classExt,
@@ -24,16 +34,19 @@
   import InfiniteScroll from 'svelte-infinite-scroll'
   import ExtensionIcon from './ExtensionIcon.svelte'
   import ImgThumbnail from './ImgThumbnail.svelte'
+  import SubtypeOptions from './SubtypeOptions.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
+  export let settings: GraphAnalysisSettings
   export let view: AnalysisView
   export let currSubtype: Subtype
-  export let noZero: boolean
-  export let noInfinity: boolean
-  export let frozen: boolean
-  export let ascOrder: boolean
-  export let currFile: TFile
+
+  const { anl } = ANALYSIS_TYPES.find((sub) => sub.subtype === currSubtype)
+  let frozen = false
+  let ascOrder = false
+  let { noInfinity, noZero } = settings
+  let currFile = app.workspace.getActiveFile()
 
   interface ComponentResults {
     measure: number
@@ -127,6 +140,29 @@
   })
 </script>
 
+<SubtypeOptions
+  bind:currSubtype
+  bind:noZero
+  bind:ascOrder
+  bind:currFile
+  bind:frozen
+  {anl}
+  {plugin}
+  {view}
+/>
+
+<!-- <ResultsMapTable
+  {app}
+  {plugin}
+  {view}
+  {noInfinity}
+  {noZero}
+  {currSubtype}
+  {frozen}
+  {ascOrder}
+  bind:currFile
+/> -->
+
 <table class="GA-table markdown-preview-view" bind:this={current_component}>
   <thead>
     <tr>
@@ -139,9 +175,10 @@
       {#key sortedResults}
         {#each visibleData as node}
           {#if node.to !== currNode && node !== undefined}
+            <!-- svelte-ignore a11y-unknown-aria-attribute -->
             <tr
               class="{node.linked ? LINKED : NOT_LINKED} 
-          {classExt(node.to)}"
+            {classExt(node.to)}"
             >
               <td
                 aria-label={node.extra.map(presentPath).join('\n')}
@@ -212,4 +249,4 @@
   .GA-node {
     overflow: hidden;
   }
-</style> -->
+</style>

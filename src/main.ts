@@ -2,8 +2,8 @@ import { addIcon, Notice, Plugin, WorkspaceLeaf } from 'obsidian'
 import { openView, wait } from 'obsidian-community-lib'
 import AnalysisView from 'src/AnalysisView'
 import {
+  ANALYSIS_TYPES,
   DEFAULT_SETTINGS,
-  getSubtypes,
   iconSVG,
   VIEW_TYPE_GRAPH_ANALYSIS,
 } from 'src/Constants'
@@ -50,13 +50,13 @@ export default class GraphAnalysisPlugin extends Plugin {
       },
     })
 
-    getSubtypes().forEach((subtype) => {
+    ANALYSIS_TYPES.forEach((sub) => {
       this.addCommand({
-        id: `open-${subtype}`,
-        name: `Open ${subtype}`,
+        id: `open-${sub.subtype}`,
+        name: `Open ${sub.subtype}`,
         callback: async () => {
           const currView = await this.getCurrentView()
-          await currView.draw(subtype.subtype)
+          await currView.draw(sub.subtype)
         },
       })
     })

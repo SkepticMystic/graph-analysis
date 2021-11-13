@@ -1,9 +1,4 @@
-import type {
-  Analyses,
-  GraphAnalysisSettings,
-  Subtype,
-  SubtypeDesc,
-} from 'src/Interfaces'
+import type { GraphAnalysisSettings, SubtypeInfo } from 'src/Interfaces'
 
 export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
   noInfinity: true,
@@ -31,56 +26,53 @@ export const NODE = 'GA-node'
 
 export const ICON = 'GA-icon'
 
-export const getSubtypes = () => {
-  return Object.values(ANALYSIS_TYPES)
-    .map((subtypeDescArr) =>
-      subtypeDescArr.map((subtypeDesc) => {
-        const { subtype, global, desc } = subtypeDesc
-        return { subtype, global, desc }
-      })
-    )
-    .flat()
-}
+export const ANALYSIS_TYPES: SubtypeInfo[] = [
+  {
+    anl: 'Co-Citations',
+    subtype: 'Co-Citations',
+    desc: 'See which of your notes are referenced together most often.',
+    global: false,
+  },
 
-export const ANALYSIS_TYPES: {
-  [anl in Analyses]: SubtypeDesc[]
-} = {
-  'Co-Citations': [
-    {
-      subtype: 'Co-Citations',
-      desc: 'See which of your notes are referenced together most often.',
-      global: false,
-    },
-  ],
-  'Link Prediction': [
-    {
-      subtype: 'Adamic Adar',
-      desc: '<No description given yet>',
-      global: false,
-    },
-    {
-      subtype: 'Common Neighbours',
-      desc: 'Tells you how many notes are linked to the current (active) note, and the note in the table.\nHover over a cell in the table to see a list of common neighbours',
-      global: false,
-    },
-  ],
-  Similarity: [
-    { subtype: 'Jaccard', desc: '<No description given yet>', global: false },
-    { subtype: 'Overlap', desc: '<No description given yet>', global: false },
-  ],
-  'Community Detection': [
-    {
-      subtype: 'Label Propagation',
-      desc: "Start by giving each node a unique label (its own name). Then, look at each node's neighbours, and change it's label to the most common among it's neighbours. Repeat this process `iterations` number of times. Show the nodes grouped by the last label they had.\n\n'🔗' means that this note is linked to the group name.",
-      global: true,
-    },
-    {
-      subtype: 'Clustering Coefficient',
-      desc: 'Gives the ratio of the number of triangles that `u` is a part of, to the number of triangles it possibly could have been a part of.\n\n**Interpretation**: The probability that this nodes _neighbours_ are connected.',
-      global: true,
-    },
-  ],
-}
+  {
+    anl: 'Link Prediction',
+    subtype: 'Adamic Adar',
+    desc: '<No description given yet>',
+    global: false,
+  },
+  {
+    anl: 'Link Prediction',
+    subtype: 'Common Neighbours',
+    desc: 'Tells you how many notes are linked to the current (active) note, and the note in the table.\nHover over a cell in the table to see a list of common neighbours',
+    global: false,
+  },
+
+  {
+    anl: 'Similarity',
+    subtype: 'Jaccard',
+    desc: '<No description given yet>',
+    global: false,
+  },
+  {
+    anl: 'Similarity',
+    subtype: 'Overlap',
+    desc: '<No description given yet>',
+    global: false,
+  },
+
+  {
+    anl: 'Community Detection',
+    subtype: 'Label Propagation',
+    desc: "Start by giving each node a unique label (its own name). Then, look at each node's neighbours, and change it's label to the most common among it's neighbours. Repeat this process `iterations` number of times. Show the nodes grouped by the last label they had.\n\n'🔗' means that this note is linked to the group name.",
+    global: true,
+  },
+  {
+    anl: 'Community Detection',
+    subtype: 'Clustering Coefficient',
+    desc: 'Gives the ratio of the number of triangles that `u` is a part of, to the number of triangles it possibly could have been a part of.\n\n**Interpretation**: The probability that this nodes _neighbours_ are connected.',
+    global: true,
+  },
+]
 
 export const IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp']
 

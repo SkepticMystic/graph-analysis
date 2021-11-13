@@ -1,10 +1,8 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import type { App } from 'obsidian'
   import type AnalysisView from 'src/AnalysisView'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import { getPromiseResults } from 'src/Utility'
-  import { onMount } from 'svelte'
   import ResultsMapTable from './ResultsMapTable.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
 
@@ -15,30 +13,9 @@
   export let currSubtype: Subtype
 
   let frozen = false
-  let currFile = app.workspace.getActiveFile()
-  $: currNode = currFile?.path
-  app.workspace.on('active-leaf-change', () => {
-    if (!frozen) {
-      currFile = app.workspace.getActiveFile()
-    }
-  })
-
-  let { resolvedLinks } = app.metadataCache
   let ascOrder = false
-  $: promiseSortedResults = getPromiseResults(
-    app,
-    plugin,
-    currNode,
-    currSubtype,
-    resolvedLinks,
-    ascOrder
-  )
-
-  onMount(() => {
-    currFile = app.workspace.getActiveFile()
-  })
-
   let { noInfinity, noZero } = settings
+  let currFile = app.workspace.getActiveFile()
 </script>
 
 <SubtypeOptions
@@ -54,9 +31,12 @@
 
 <ResultsMapTable
   {app}
+  {plugin}
   {view}
-  {promiseSortedResults}
-  {currNode}
   {noInfinity}
   {noZero}
-/>
+  {currSubtype}
+  {frozen}
+  {ascOrder}
+  bind:currFile
+/> -->

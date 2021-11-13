@@ -1,16 +1,12 @@
 <script lang="ts">
   import type { App } from 'obsidian'
-  import ScrollSelector from './ScrollSelector.svelte'
   import type AnalysisView from 'src/AnalysisView'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
-  import AdamicAdar from './AdamicAdar.svelte'
-  import CommonNeighbours from './CommonNeighbours.svelte'
-  import Jaccard from './Jaccard.svelte'
-  import LabelPropagation from './LabelPropagation.svelte'
-  import Overlap from './Overlap.svelte'
-  import ClusteringCoefficient from './ClusteringCoefficient.svelte'
   import CoCitations from './CoCitations.svelte'
+  import LabelPropagation from './LabelPropagation.svelte'
+  import ScrollSelector from './ScrollSelector.svelte'
+  import TableComponent from './TableComponent.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -30,13 +26,13 @@
 <ScrollSelector bind:currSubtype {view} />
 
 {#if currSubtype === 'Adamic Adar'}
-  <AdamicAdar {...props} />
+  <TableComponent {...props} />
   <!-- ✔️ -->
 {:else if currSubtype === 'Common Neighbours'}
-  <CommonNeighbours {...props} />
+  <TableComponent {...props} />
   <!-- ✔️ -->
 {:else if currSubtype === 'Jaccard'}
-  <Jaccard {...props} />
+  <TableComponent {...props} />
   <!-- ✔️ -->
 {:else if currSubtype === 'Co-Citations'}
   <CoCitations {...props} />
@@ -45,8 +41,8 @@
   <LabelPropagation {...props} />
   <!-- ✔️ -->
 {:else if currSubtype === 'Overlap'}
-  <Overlap {...props} />
+  <TableComponent {...props} />
 {:else if currSubtype === 'Clustering Coefficient'}
-  <ClusteringCoefficient {...props} />
+  <TableComponent {...props} />
   <!-- ✔️ -->
 {/if}

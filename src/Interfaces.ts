@@ -8,10 +8,11 @@ export interface ResolvedLinks {
   }
 }
 
-export type SubtypeDesc = {
+export type SubtypeInfo = {
   subtype: Subtype
-  desc: string
   global: boolean
+  desc: string
+  anl: Analyses
 }
 
 export type Analyses =

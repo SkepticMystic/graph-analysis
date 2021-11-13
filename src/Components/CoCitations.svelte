@@ -25,11 +25,10 @@
   } from 'src/Utility'
   import { onMount } from 'svelte'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
+  import InfiniteScroll from 'svelte-infinite-scroll'
   import ExtensionIcon from './ExtensionIcon.svelte'
   import ImgThumbnail from './ImgThumbnail.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
-  import { TFile } from 'obsidian'
-  import InfiniteScroll from 'svelte-infinite-scroll'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -37,25 +36,21 @@
   export let view: AnalysisView
   export let currSubtype: Subtype
 
+  interface CoCiteComp {
+    measure: number
+    coCitations: CoCitation[]
+    linked: boolean
+    resolved: boolean
+    to: string
+  }
+
   let frozen = false
   let size = 50
 
   let currNode: string
   let current_component: HTMLElement
-  let newBatch: {
-    measure: number
-    coCitations: CoCitation[]
-    linked: boolean
-    resolved: boolean
-    to: string
-  }[] = []
-  let visibleData: {
-    measure: number
-    coCitations: CoCitation[]
-    linked: boolean
-    resolved: boolean
-    to: string
-  }[] = []
+  let newBatch: CoCiteComp[] = []
+  let visibleData: CoCiteComp[] = []
   let page = 0
   let blockSwitch = false
 
@@ -66,35 +61,39 @@
       blockSwitch = true
       newBatch = []
       visibleData = []
-      promiseSortedCoCites = null
+      promiseSortedResults = null
       page = 0
 
-      setTimeout(() => currFile = app.workspace.getActiveFile(), 100)
+      setTimeout(() => (currFile = app.workspace.getActiveFile()), 100)
     }
   })
 
   let ascOrder = false
-  $: promiseSortedCoCites =
+  $: promiseSortedResults =
     !currNode || !plugin.g
       ? null
       : plugin.g.algs['Co-Citations'](currNode)
           .then((ccMap) => {
             const greater = ascOrder ? 1 : -1
             const lesser = ascOrder ? -1 : 1
-            let sortedCites = Object.keys(ccMap)
-              .map((to) => {
-                let { coCitations, measure, resolved } = ccMap[
-                  to
-                ] as CoCitationRes
-                return {
+            const sortedCites: CoCiteComp[] = []
+            Object.keys(ccMap).forEach((to) => {
+              let { coCitations, measure, resolved } = ccMap[
+                to
+              ] as CoCitationRes
+              if (measure !== 0 && measure !== Infinity) {
+                sortedCites.push({
                   measure,
                   coCitations,
                   linked: looserIsLinked(app, to, currNode, false),
                   resolved,
                   to,
-                }
-              })
-              .sort((a, b) => (a.measure > b.measure ? greater : lesser))
+                })
+              }
+            })
+            sortedCites.sort((a, b) =>
+              a.measure > b.measure ? greater : lesser
+            )
             return sortedCites
           })
           .then((res) => {
@@ -104,14 +103,13 @@
               blockSwitch = false
             }, 100)
             return res
-            // return { sortedCoCites: res, page, visibleData }
           })
 
   $: visibleData = [...visibleData, ...newBatch]
 
   onMount(() => {
     currFile = app.workspace.getActiveFile()
-    debug(settings, { promiseSortedCoCites })
+    debug(settings, { promiseSortedResults })
   })
 </script>
 
@@ -126,11 +124,11 @@
 />
 
 <div class="GA-CCs" bind:this={current_component}>
-  {#if promiseSortedCoCites}
-    {#await promiseSortedCoCites then sortedCoCites}
-      {#key sortedCoCites}
+  {#if promiseSortedResults}
+    {#await promiseSortedResults then sortedResults}
+      {#key sortedResults}
         {#each visibleData as node}
-          {#if node.to !== currNode && node !== undefined && node.measure !== Infinity && node.measure !== 0}
+          {#if node.to !== currNode && node !== undefined}
             <div class="GA-CC">
               <details>
                 <summary>
@@ -224,18 +222,18 @@
         {/each}
 
         <InfiniteScroll
-          hasMore={sortedCoCites.length > visibleData.length}
+          hasMore={sortedResults.length > visibleData.length}
           threshold={100}
           elementScroll={current_component.parentNode}
           on:loadMore={() => {
             if (!blockSwitch) {
               page++
-              newBatch = sortedCoCites.slice(size * page, size * (page + 1) - 1)
-              console.log({newBatch})
+              newBatch = sortedResults.slice(size * page, size * (page + 1) - 1)
+              console.log({ newBatch })
             }
           }}
         />
-        {visibleData.length} / {sortedCoCites.length}
+        {visibleData.length} / {sortedResults.length}
       {/key}
     {/await}
   {/if}

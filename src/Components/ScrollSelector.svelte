@@ -1,13 +1,11 @@
 <script lang="ts">
   import type AnalysisView from 'src/AnalysisView'
-  import { getSubtypes, ICON } from 'src/Constants'
+  import { ANALYSIS_TYPES, ICON } from 'src/Constants'
   import type { Subtype } from 'src/Interfaces'
   import FaGlobeAfrica from 'svelte-icons/fa/FaGlobeAfrica.svelte'
 
   export let currSubtype: Subtype
   export let view: AnalysisView
-
-  const SUBTYPES = getSubtypes()
 </script>
 
 <div
@@ -17,22 +15,22 @@
   }}
 >
   <div class="container">
-    {#each SUBTYPES as subtype}
+    {#each ANALYSIS_TYPES as sub}
       <button
-        class="item GA-Button {currSubtype === subtype.subtype
+        class="item GA-Button {currSubtype === sub.subtype
           ? 'currSubtype'
           : ''}"
         on:click={() => {
-          currSubtype = subtype.subtype
-          view.currSubtype = subtype.subtype
+          currSubtype = sub.subtype
+          view.currSubtype = sub.subtype
         }}
       >
-        {#if subtype.global}
+        {#if sub.global}
           <span class={ICON}>
             <FaGlobeAfrica />
           </span>
         {/if}
-        {subtype.subtype}
+        {sub.subtype}
       </button>
     {/each}
   </div>
