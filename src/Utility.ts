@@ -203,7 +203,6 @@ export function openMenu(
 }
 
 export function jumpToSelection(app: App, line: number, sentence: string) {
-  console.log({ line, sentence })
   const view = app.workspace.getActiveViewOfType(MarkdownView)
   // Make sure the user is editing a Markdown file.
   if (view && view.getMode() === 'source') {
@@ -231,6 +230,7 @@ export function jumpToSelection(app: App, line: number, sentence: string) {
       to: editor.offsetToPos(markEnd),
     }
 
+    editor.setSelection(markSel.from, markSel.to)
     editor.scrollIntoView(markSel)
 
     const doc = editor.cm.getDoc()
