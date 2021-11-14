@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.2](https://github.com/SkepticMystic/graph-analysis/compare/0.10.1...0.10.2) (2021-11-14)
+
+
+### Features
+
+* **coCites:** :sparkles: Select coCite.sentence when clicking it (fix [#38](https://github.com/SkepticMystic/graph-analysis/issues/38)) ([043d0b2](https://github.com/SkepticMystic/graph-analysis/commit/043d0b20927adaa7e43ba784a0bb20259f34cca5))
+
 ### [0.10.1](https://github.com/SkepticMystic/graph-analysis/compare/0.10.0...0.10.1) (2021-11-13)
 
 
