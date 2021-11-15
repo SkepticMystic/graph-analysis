@@ -109,9 +109,9 @@ export class SampleSettingTab extends PluginSettingTab {
       .addText((tc) => {
         tc.setValue(settings.exclusionTags.join(', '))
         tc.inputEl.onblur = async () => {
-          const value = tc.inputEl.value
+          const { value } = tc.inputEl
           const splits = value.split(',').map((s) => s.trim())
-          if (!splits.every((t) => t.startsWith('#'))) {
+          if (value !== '' && !splits.every((t) => t.startsWith('#'))) {
             new Notice("Every tag must start with '#'")
             return
           }
