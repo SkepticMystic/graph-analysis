@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.3](https://github.com/SkepticMystic/graph-analysis/compare/0.10.2...0.10.3) (2021-11-15)
+
+
+### Bug Fixes
+
+* :bug: ExclusionTags, allow empty value (Fix [#39](https://github.com/SkepticMystic/graph-analysis/issues/39)) ([4d6004d](https://github.com/SkepticMystic/graph-analysis/commit/4d6004d8669b6dda9a4eec92b1f80000939ad6ed))
+
 ### [0.10.2](https://github.com/SkepticMystic/graph-analysis/compare/0.10.1...0.10.2) (2021-11-14)
 
 
