@@ -1,10 +1,13 @@
 <script lang="ts">
+  import type { SubtypeInfo } from 'src/Interfaces'
   import FaRegQuestionCircle from 'svelte-icons/fa/FaRegQuestionCircle.svelte'
 
-  export let desc: string
+  export let currSubtypeInfo: SubtypeInfo
+
+  const { anl, desc } = currSubtypeInfo
 </script>
 
-<div class="icon" aria-label={desc}>
+<div class="icon" aria-label={`Type: ${anl}\n\n${desc}`}>
   <FaRegQuestionCircle />
 </div>
 

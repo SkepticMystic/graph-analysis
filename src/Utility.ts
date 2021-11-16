@@ -19,6 +19,7 @@ import { DECIMALS, IMG_EXTENSIONS, LINKED, NOT_LINKED } from 'src/Constants'
 import type {
   ComponentResults,
   GraphAnalysisSettings,
+  ResultMap,
   Subtype,
 } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
@@ -263,36 +264,37 @@ export function getPromiseResults(
 
   const greater = ascOrder ? 1 : -1
   const lesser = ascOrder ? -1 : 1
-  const resultsPromise = plugin.g.algs[subtype](currNode).then((results) =>
-    plugin.g
-      .nodes()
-      .map((to) => {
-        const { measure, extra } = results[to] as {
-          measure: number
-          extra: any
-        }
-        const resolved = !to.endsWith('.md') || isInVault(app, to)
-        return {
-          measure,
-          linked: isLinked(resolvedLinks, currNode, to, false),
-          to,
-          resolved,
-          extra,
-          img:
-            plugin.settings.showImgThumbnails && isImg(to)
-              ? getImgBufferPromise(app, to)
-              : null,
-        }
-      })
-      .sort((a, b) => {
-        return a.measure === b.measure
-          ? a.extra?.length > b.extra?.length
+  const resultsPromise = plugin.g.algs[subtype](currNode).then(
+    (results: ResultMap) =>
+      plugin.g
+        .nodes()
+        .map((to) => {
+          const { measure, extra } = results[to] as {
+            measure: number
+            extra: any
+          }
+          const resolved = !to.endsWith('.md') || isInVault(app, to)
+          return {
+            measure,
+            linked: isLinked(resolvedLinks, currNode, to, false),
+            to,
+            resolved,
+            extra,
+            img:
+              plugin.settings.showImgThumbnails && isImg(to)
+                ? getImgBufferPromise(app, to)
+                : null,
+          }
+        })
+        .sort((a, b) => {
+          return a.measure === b.measure
+            ? a.extra?.length > b.extra?.length
+              ? greater
+              : lesser
+            : a.measure > b.measure
             ? greater
             : lesser
-          : a.measure > b.measure
-          ? greater
-          : lesser
-      })
+        })
   )
   return resultsPromise
 }

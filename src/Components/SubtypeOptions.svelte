@@ -28,7 +28,7 @@
 </script>
 
 <span class="GA-Subtype-Options">
-  <InfoIcon desc={currSubtypeInfo.desc} />
+  <InfoIcon {currSubtypeInfo} />
 
   {#if noZero !== undefined}
     <span

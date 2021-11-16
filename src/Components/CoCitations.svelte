@@ -11,6 +11,7 @@
   } from 'src/Constants'
   import type {
     CoCitation,
+    CoCitationMap,
     CoCitationRes,
     GraphAnalysisSettings,
     Subtype,
@@ -82,7 +83,7 @@
     !currNode || !plugin.g
       ? null
       : plugin.g.algs['Co-Citations'](currNode)
-          .then((ccMap) => {
+          .then((ccMap: CoCitationMap) => {
             const greater = ascOrder ? 1 : -1
             const lesser = ascOrder ? -1 : 1
             const sortedCites: CoCiteComp[] = []

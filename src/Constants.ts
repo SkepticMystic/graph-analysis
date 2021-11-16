@@ -70,7 +70,7 @@ export const ANALYSIS_TYPES: SubtypeInfo[] = [
     anl: 'Community Detection',
     subtype: 'Louvain',
     desc: 'Show the community that the current note is in',
-    global: true,
+    global: false,
   },
   {
     anl: 'Community Detection',
