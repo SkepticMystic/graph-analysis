@@ -8,6 +8,7 @@
   import LabelPropagation from './LabelPropagation.svelte'
   import ScrollSelector from './ScrollSelector.svelte'
   import TableComponent from './TableComponent.svelte'
+  import HITS from './HITS.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -48,5 +49,8 @@
   <!-- ✔️ -->
 {:else if currSubtype === 'Louvain'}
   <Louvain {...props} />
+  <!-- ✔️ -->
+{:else if currSubtype === 'HITS'}
+  <HITS {...props} />
   <!-- ✔️ -->
 {/if}

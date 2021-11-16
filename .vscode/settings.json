@@ -3,6 +3,7 @@
         "coCites",
         "commDetection",
         "similarity",
-        "labelProp"
+        "labelProp",
+        "HITS"
     ]
 }

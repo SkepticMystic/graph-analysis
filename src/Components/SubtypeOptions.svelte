@@ -11,9 +11,12 @@
   import IoMdRefresh from 'svelte-icons/io/IoMdRefresh.svelte'
   import MdExposureZero from 'svelte-icons/md/MdExposureZero.svelte'
   import InfoIcon from './InfoIcon.svelte'
+  import GoSignOut from 'svelte-icons/go/GoSignOut.svelte'
+  import GoSignIn from 'svelte-icons/go/GoSignIn.svelte'
 
   export let currSubtypeInfo: SubtypeInfo
   export let noZero: boolean = undefined
+  export let sortBy: boolean = undefined
   export let ascOrder: boolean = undefined
   export let currFile: TFile = undefined
   export let frozen: boolean = undefined
@@ -34,7 +37,16 @@
     <span
       class="GA-Option-span"
       aria-label={noZero ? 'Show Zeros' : 'Hide Zeros'}
-      on:click={() => (noZero = !noZero)}
+      on:click={() => {
+        noZero = !noZero
+        if (!frozen) {
+          blockSwitch = true
+          newBatch = []
+          visibleData = []
+          promiseSortedResults = null
+          page = 0
+        }
+      }}
     >
       <span class="icon">
         {#if noZero}
@@ -49,7 +61,16 @@
     <span
       class="GA-Option-span"
       aria-label={ascOrder ? 'Ascending' : 'Descending'}
-      on:click={() => (ascOrder = !ascOrder)}
+      on:click={() => {
+        ascOrder = !ascOrder
+        if (!frozen) {
+          blockSwitch = true
+          newBatch = []
+          visibleData = []
+          promiseSortedResults = null
+          page = 0
+        }
+      }}
     >
       <span class="icon">
         {#if ascOrder}
@@ -89,6 +110,30 @@
           <FaRegSnowflake />
         {:else}
           <FaFire />
+        {/if}
+      </span>
+    </span>
+  {/if}
+  {#if sortBy !== undefined}
+    <span
+      class="GA-Option-span"
+      aria-label="Sort By: {sortBy ? 'Authority' : 'Hub'}"
+      on:click={() => {
+        sortBy = !sortBy
+        if (!frozen) {
+          blockSwitch = true
+          newBatch = []
+          visibleData = []
+          promiseSortedResults = null
+          page = 0
+        }
+      }}
+    >
+      <span class="icon">
+        {#if sortBy}
+          <GoSignIn />
+        {:else}
+          <GoSignOut />
         {/if}
       </span>
     </span>

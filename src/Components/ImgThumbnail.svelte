@@ -21,14 +21,6 @@
 
 <style>
   .GA-img img {
-    justify-content: center;
-    justify-items: center;
-    align-items: center;
-    align-content: center;
-    justify-self: center;
-    align-self: center;
-  }
-  .GA-img img {
     max-width: 25%;
     max-height: 25%;
   }

@@ -33,7 +33,12 @@ export const ANALYSIS_TYPES: SubtypeInfo[] = [
     desc: 'See which of your notes are referenced together most often.',
     global: false,
   },
-
+  {
+    anl: 'Centrality',
+    subtype: 'HITS',
+    desc: 'An authority has lots of links coming in\nA hub has lots of links going out.',
+    global: true,
+  },
   {
     anl: 'Link Prediction',
     subtype: 'Adamic Adar',

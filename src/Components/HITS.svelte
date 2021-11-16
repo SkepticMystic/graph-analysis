@@ -2,8 +2,18 @@
   import type { App } from 'obsidian'
   import { hoverPreview, isInVault, isLinked } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
-  import { ANALYSIS_TYPES, ICON, LINKED, NOT_LINKED } from 'src/Constants'
-  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
+  import {
+    ANALYSIS_TYPES,
+    ICON,
+    LINKED,
+    MEASURE,
+    NOT_LINKED,
+  } from 'src/Constants'
+  import type {
+    GraphAnalysisSettings,
+    HITSResult,
+    Subtype,
+  } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     classExt,
@@ -13,6 +23,7 @@
     openMenu,
     openOrSwitch,
     presentPath,
+    roundNumber,
   } from 'src/Utility'
   import { onMount } from 'svelte'
   import FaLink from 'svelte-icons/fa/FaLink.svelte'
@@ -28,12 +39,15 @@
   export let currSubtype: Subtype
 
   $: currSubtypeInfo = ANALYSIS_TYPES.find((sub) => sub.subtype === currSubtype)
-  let frozen = false
+
+  let sortBy = true
+  let ascOrder = false
+  let { noInfinity, noZero } = settings
   let currFile = app.workspace.getActiveFile()
 
-  let resolution = 10
   interface ComponentResults {
-    linked: boolean
+    authority: number
+    hub: number
     to: string
     resolved: boolean
     img: Promise<ArrayBuffer> | null
@@ -47,53 +61,64 @@
   let page = 0
   let blockSwitch = false
 
-  let { resolvedLinks } = app.metadataCache
-
   app.workspace.on('active-leaf-change', () => {
-    if (!frozen) {
-      blockSwitch = true
-      newBatch = []
-      visibleData = []
-      promiseSortedResults = null
-      page = 0
-
-      setTimeout(() => (currFile = app.workspace.getActiveFile()), 100)
-    }
+    blockSwitch = true
+    setTimeout(() => {
+      blockSwitch = false
+      currFile = app.workspace.getActiveFile()
+    }, 100)
+    newBatch = []
   })
 
-  onMount(() => {
-    currNode = currFile?.path
-  })
+  onMount(() => {})
 
-  $: promiseSortedResults =
-    !plugin.g || !currNode
-      ? null
-      : plugin.g.algs['Louvain'](currNode, { resolution })
-          .then((results: string[]) => {
-            const componentResults: ComponentResults[] = []
-            results.forEach((to) => {
+  $: promiseSortedResults = !plugin.g
+    ? null
+    : plugin.g.algs['HITS']('')
+        .then((results: HITSResult) => {
+          console.log('hits')
+          const componentResults: ComponentResults[] = []
+
+          plugin.g.forEachNode((to) => {
+            const authority = roundNumber(results.authorities[to])
+            const hub = roundNumber(results.hubs[to])
+            if (!(authority === 0 && hub === 0)) {
               const resolved = !to.endsWith('.md') || isInVault(app, to)
-              const linked = isLinked(resolvedLinks, currNode, to, false)
+
               const img =
                 plugin.settings.showImgThumbnails && isImg(to)
                   ? getImgBufferPromise(app, to)
                   : null
+
               componentResults.push({
-                linked,
+                authority,
+                hub,
                 to,
                 resolved,
                 img,
               })
-            })
-            return componentResults
+            }
           })
-          .then((res) => {
-            newBatch = res.slice(0, size)
-            setTimeout(() => {
-              blockSwitch = false
-            }, 100)
-            return res
+          const greater = ascOrder ? 1 : -1
+          const lesser = ascOrder ? -1 : 1
+          componentResults.sort((a, b) => {
+            return sortBy
+              ? a.authority > b.authority
+                ? greater
+                : lesser
+              : a.hub > b.hub
+              ? greater
+              : lesser
           })
+          return componentResults
+        })
+        .then((res) => {
+          newBatch = res.slice(0, size)
+          setTimeout(() => {
+            blockSwitch = false
+          }, 100)
+          return res
+        })
 
   $: visibleData = [...visibleData, ...newBatch]
 
@@ -104,8 +129,10 @@
 
 <SubtypeOptions
   bind:currSubtypeInfo
+  bind:noZero
+  bind:ascOrder
+  bind:sortBy
   bind:currFile
-  bind:frozen
   {app}
   {plugin}
   {view}
@@ -116,62 +143,45 @@
   bind:page
 />
 
-<label for="resolution">Resolution: </label>
-<input
-  name="resolution"
-  type="range"
-  min="1"
-  max="20"
-  value={resolution}
-  on:change={(e) => {
-    const value = Number.parseInt(e.target.value)
-
-    if (!frozen) {
-      blockSwitch = true
-      newBatch = []
-      visibleData = []
-      promiseSortedResults = null
-      page = 0
-    }
-    console.log({ value })
-    resolution = value
-  }}
-/>
-
-<div class="GA-Results" bind:this={current_component}>
+<table class="GA-table markdown-preview-view" bind:this={current_component}>
+  <thead>
+    <tr>
+      <th scope="col">Note</th>
+      <th scope="col">Authority</th>
+      <th scope="col">Hub</th>
+    </tr>
+  </thead>
   {#if promiseSortedResults}
     {#await promiseSortedResults then sortedResults}
       {#key sortedResults}
         {#each visibleData as node}
-          {#if node.to !== currNode && node !== undefined}
-            <div
+          {#if node !== undefined}
+            <!-- svelte-ignore a11y-unknown-aria-attribute -->
+            <tr
               class="
-                {node.linked ? LINKED : NOT_LINKED} 
               {classExt(node.to)}"
-              on:click={async (e) => await openOrSwitch(app, node.to, e)}
             >
-              <span
+              <td
+                on:click={async (e) => await openOrSwitch(app, node.to, e)}
                 on:contextmenu={(e) => openMenu(e, app)}
                 on:mouseover={(e) => hoverPreview(e, view, dropPath(node.to))}
               >
-                {#if node.linked}
-                  <span class={ICON}>
-                    <FaLink />
-                  </span>
-                {/if}
-
                 <ExtensionIcon path={node.to} />
 
                 <span
-                  class="internal-link {node.resolved ? '' : 'is-unresolved'}"
+                  class="internal-link 
+                  {node.resolved ? '' : 'is-unresolved'} 
+                    {currNode === node.to ? 'currNode' : ''}"
                 >
                   {presentPath(node.to)}
                 </span>
                 {#if isImg(node.to)}
                   <ImgThumbnail img={node.img} />
                 {/if}
-              </span>
-            </div>
+              </td>
+              <td class={MEASURE}>{node.authority}</td>
+              <td class={MEASURE}>{node.hub}</td>
+            </tr>
           {/if}
         {/each}
 
@@ -191,17 +201,32 @@
       {/key}
     {/await}
   {/if}
-</div>
+</table>
 
 <style>
-  .GA-Results > div {
-    padding: 0px 5px;
+  table.GA-table {
+    border-collapse: collapse;
   }
+  table.GA-table,
+  table.GA-table tr,
+  table.GA-table td {
+    border: 1px solid var(--background-modifier-border);
+  }
+
+  table.GA-table td {
+    padding: 2px;
+    /* font-size: var(--font-size-secondary); */
+  }
+
   .is-unresolved {
     color: var(--text-muted);
   }
 
   .GA-node {
     overflow: hidden;
+  }
+
+  .currNode {
+    font-weight: bold;
   }
 </style>

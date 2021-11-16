@@ -36,6 +36,7 @@
     "@tsconfig/svelte": "^2.0.1",
     "graphology": "^0.23.1",
     "graphology-communities-louvain": "^1.5.3",
+    "graphology-metrics": "^1.18.2",
     "lodash.isequal": "^4.5.0",
     "obsidian-community-lib": "1.2.0",
     "sbd": "^1.0.19",

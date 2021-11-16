@@ -1,5 +1,6 @@
 import Graph from 'graphology'
 import louvain from 'graphology-communities-louvain'
+import hits from 'graphology-metrics/centrality/hits'
 
 import type {
   App,
@@ -21,6 +22,7 @@ import type {
   CoCitationMap,
   Communities,
   GraphAnalysisSettings,
+  HITSResult,
   ResultMap,
   Subtype,
 } from 'src/Interfaces'
@@ -99,7 +101,7 @@ export default class MyGraph extends Graph {
 
   algs: {
     [subtype in Subtype]: AnalysisAlg<
-      ResultMap | CoCitationMap | Communities | string[]
+      ResultMap | CoCitationMap | Communities | string[] | HITSResult
     >
   } = {
     Jaccard: async (a: string): Promise<ResultMap> => {
@@ -114,6 +116,10 @@ export default class MyGraph extends Graph {
         results[to] = { measure, extra: Nab }
       })
       return results
+    },
+
+    HITS: async (a: string) => {
+      return hits(this)
     },
 
     Overlap: async (a: string): Promise<ResultMap> => {

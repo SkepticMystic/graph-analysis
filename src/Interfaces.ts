@@ -15,12 +15,14 @@ export type SubtypeInfo = {
 }
 
 export type Analyses =
+  | 'Centrality'
   | 'Link Prediction'
   | 'Similarity'
   | 'Co-Citations'
   | 'Community Detection'
 
 export type Subtype =
+  | 'HITS'
   | 'Adamic Adar'
   | 'Common Neighbours'
   | 'Jaccard'
@@ -35,6 +37,12 @@ export interface Communities {
 }
 export interface ResultMap {
   [to: string]: { measure: number; extra: string[] }
+}
+
+export type HITSResult = {
+  converged: boolean
+  authorities: { [node: string]: number }
+  hubs: { [node: string]: number }
 }
 
 export interface ComponentResults {
