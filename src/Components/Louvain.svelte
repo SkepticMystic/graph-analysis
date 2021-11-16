@@ -1,22 +1,17 @@
-<!-- <script lang="ts">
-  import type { App, TFile } from 'obsidian'
-  import {
-    hoverPreview,
-    isInVault,
-    isLinked,
-    openOrSwitch,
-  } from 'obsidian-community-lib'
+<script lang="ts">
+  import type { App } from 'obsidian'
+  import { hoverPreview, isInVault, isLinked } from 'obsidian-community-lib'
   import type AnalysisView from 'src/AnalysisView'
-  import { ICON, LINKED, MEASURE, NOT_LINKED } from 'src/Constants'
-  import type { ResultMap, Subtype } from 'src/Interfaces'
+  import { ANALYSIS_TYPES, ICON, LINKED, NOT_LINKED } from 'src/Constants'
+  import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
   import {
     classExt,
-    dropExt,
     dropPath,
     getImgBufferPromise,
     isImg,
     openMenu,
+    openOrSwitch,
     presentPath,
   } from 'src/Utility'
   import { onMount } from 'svelte'
@@ -24,23 +19,24 @@
   import InfiniteScroll from 'svelte-infinite-scroll'
   import ExtensionIcon from './ExtensionIcon.svelte'
   import ImgThumbnail from './ImgThumbnail.svelte'
+  import SubtypeOptions from './SubtypeOptions.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
+  export let settings: GraphAnalysisSettings
   export let view: AnalysisView
   export let currSubtype: Subtype
-  export let noZero: boolean
-  export let noInfinity: boolean
-  export let frozen: boolean
-  export let ascOrder: boolean
-  export let currFile: TFile
+
+  $: currSubtypeInfo = ANALYSIS_TYPES.find((sub) => sub.subtype === currSubtype)
+  let frozen = false
+  let ascOrder = false
+  let { noInfinity, noZero } = settings
+  let currFile = app.workspace.getActiveFile()
 
   interface ComponentResults {
-    measure: number
     linked: boolean
     to: string
     resolved: boolean
-    extra: string[]
     img: Promise<ArrayBuffer> | null
   }
 
@@ -73,42 +69,22 @@
   $: promiseSortedResults =
     !plugin.g || !currNode
       ? null
-      : plugin.g.algs[currSubtype](currNode)
-          .then((results: ResultMap) => {
-            const greater = ascOrder ? 1 : -1
-            const lesser = ascOrder ? -1 : 1
+      : plugin.g.algs['Louvain'](currNode)
+          .then((results: string[]) => {
             const componentResults: ComponentResults[] = []
-
-            plugin.g.nodes().forEach((to) => {
-              const { measure, extra } = (results as ResultMap)[to]
-              if (
-                !(noInfinity && measure === Infinity) &&
-                !(noZero && measure === 0)
-              ) {
-                const resolved = !to.endsWith('.md') || isInVault(app, to)
-                const linked = isLinked(resolvedLinks, currNode, to, false)
-                const img =
-                  plugin.settings.showImgThumbnails && isImg(to)
-                    ? getImgBufferPromise(app, to)
-                    : null
-                componentResults.push({
-                  measure,
-                  linked,
-                  to,
-                  resolved,
-                  extra,
-                  img,
-                })
-              }
-            })
-            componentResults.sort((a, b) => {
-              return a.measure === b.measure
-                ? a.extra?.length > b.extra?.length
-                  ? greater
-                  : lesser
-                : a.measure > b.measure
-                ? greater
-                : lesser
+            results.forEach((to) => {
+              const resolved = !to.endsWith('.md') || isInVault(app, to)
+              const linked = isLinked(resolvedLinks, currNode, to, false)
+              const img =
+                plugin.settings.showImgThumbnails && isImg(to)
+                  ? getImgBufferPromise(app, to)
+                  : null
+              componentResults.push({
+                linked,
+                to,
+                resolved,
+                img,
+              })
             })
             return componentResults
           })
@@ -127,27 +103,35 @@
   })
 </script>
 
-<table class="GA-table markdown-preview-view" bind:this={current_component}>
-  <thead>
-    <tr>
-      <th scope="col">Note</th>
-      <th scope="col">Value</th>
-    </tr>
-  </thead>
+<SubtypeOptions
+  bind:currSubtypeInfo
+  bind:noZero
+  bind:ascOrder
+  bind:currFile
+  bind:frozen
+  {app}
+  {plugin}
+  {view}
+  bind:blockSwitch
+  bind:newBatch
+  bind:visibleData
+  bind:promiseSortedResults
+  bind:page
+/>
+
+<div bind:this={current_component}>
   {#if promiseSortedResults}
     {#await promiseSortedResults then sortedResults}
       {#key sortedResults}
         {#each visibleData as node}
           {#if node.to !== currNode && node !== undefined}
-            <tr
-              class="{node.linked ? LINKED : NOT_LINKED} 
-          {classExt(node.to)}"
+            <div
+              class="
+                {node.linked ? LINKED : NOT_LINKED} 
+              {classExt(node.to)}"
             >
-              <td
-                aria-label={node.extra.map(presentPath).join('\n')}
-                aria-label-position="left"
-                on:click={async (e) =>
-                  await openOrSwitch(app, dropExt(node.to), e)}
+              <span
+                on:click={async (e) => await openOrSwitch(app, node.to, e)}
                 on:contextmenu={(e) => openMenu(e, app)}
                 on:mouseover={(e) => hoverPreview(e, view, dropPath(node.to))}
               >
@@ -167,9 +151,8 @@
                 {#if isImg(node.to)}
                   <ImgThumbnail img={node.img} />
                 {/if}
-              </td>
-              <td class={MEASURE}>{node.measure}</td>
-            </tr>
+              </span>
+            </div>
           {/if}
         {/each}
 
@@ -189,22 +172,9 @@
       {/key}
     {/await}
   {/if}
-</table>
+</div>
 
 <style>
-  table.GA-table {
-    border-collapse: collapse;
-  }
-  table.GA-table,
-  table.GA-table tr,
-  table.GA-table td {
-    border: 1px solid var(--background-modifier-border);
-  }
-
-  table.GA-table td {
-    padding: 2px;
-  }
-
   .is-unresolved {
     color: var(--text-muted);
   }
@@ -212,4 +182,4 @@
   .GA-node {
     overflow: hidden;
   }
-</style> -->
+</style>

@@ -1,4 +1,6 @@
 import Graph from 'graphology'
+import louvain from 'graphology-communities-louvain'
+
 import type {
   App,
   CacheItem,
@@ -8,7 +10,11 @@ import type {
 } from 'obsidian'
 import { getAllTags, getLinkpath } from 'obsidian'
 import tokenizer from 'sbd'
-import { clusteringCoefficient, intersection } from 'src/GeneralGraphFn'
+import {
+  clusteringCoefficient,
+  gatherCommunities,
+  intersection,
+} from 'src/GeneralGraphFn'
 import type {
   AnalysisAlg,
   CoCitation,
@@ -92,7 +98,9 @@ export default class MyGraph extends Graph {
   }
 
   algs: {
-    [subtype in Subtype]: AnalysisAlg<ResultMap | CoCitationMap | Communities>
+    [subtype in Subtype]: AnalysisAlg<
+      ResultMap | CoCitationMap | Communities | string[]
+    >
   } = {
     Jaccard: async (a: string): Promise<ResultMap> => {
       const Na = this.neighbors(a)
@@ -512,16 +520,22 @@ export default class MyGraph extends Graph {
       }
 
       // Create the communities
-      const communities: Communities = {}
-      Object.entries(labeledNodes).forEach((labeledNode: [string, string]) => {
-        const [node, label] = labeledNode
-        if (communities[label] === undefined) {
-          communities[label] = [node]
-        } else {
-          communities[label].push(node)
+      return gatherCommunities(labeledNodes)
+    },
+
+    Louvain: async (
+      a: string,
+      options: { resolution: number } = { resolution: 10 }
+    ): Promise<string[]> => {
+      const labelledNodes = louvain(this, options)
+      const labelOfA = labelledNodes[a]
+      const currComm: string[] = []
+      this.forEachNode((node) => {
+        if (labelledNodes[node] === labelOfA) {
+          currComm.push(node)
         }
       })
-      return communities
+      return currComm
     },
 
     'Clustering Coefficient': async (a: string): Promise<ResultMap> => {

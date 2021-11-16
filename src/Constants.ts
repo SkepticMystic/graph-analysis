@@ -68,6 +68,12 @@ export const ANALYSIS_TYPES: SubtypeInfo[] = [
   },
   {
     anl: 'Community Detection',
+    subtype: 'Louvain',
+    desc: 'Show the community that the current note is in',
+    global: true,
+  },
+  {
+    anl: 'Community Detection',
     subtype: 'Clustering Coefficient',
     desc: 'Gives the ratio of the number of triangles that `u` is a part of, to the number of triangles it possibly could have been a part of.\n\n**Interpretation**: The probability that this nodes _neighbours_ are connected.',
     global: true,

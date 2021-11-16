@@ -39,9 +39,7 @@
 
   let { resolvedLinks } = app.metadataCache
 
-  $: currSubtypeInfo = ANALYSIS_TYPES.find(
-    (sub) => sub.subtype === currSubtype
-  )
+  $: currSubtypeInfo = ANALYSIS_TYPES.find((sub) => sub.subtype === currSubtype)
   let ascOrder = false
   let size = 50
   let current_component: HTMLElement

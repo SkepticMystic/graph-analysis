@@ -1,4 +1,3 @@
-import type { Graph } from 'graphlib'
 import type { EditorPosition, EditorSelection } from 'obsidian'
 import type MyGraph from 'src/MyGraph'
 
@@ -27,6 +26,7 @@ export type Subtype =
   | 'Jaccard'
   | 'Co-Citations'
   | 'Label Propagation'
+  | 'Louvain'
   | 'Overlap'
   | 'Clustering Coefficient'
 
@@ -78,12 +78,6 @@ export interface GraphAnalysisSettings {
   exclusionRegex: string
   exclusionTags: string[]
 }
-
-export type AnalysisForAll = (
-  alg: AnalysisAlg<number[]>,
-  g: Graph,
-  currNode: string
-) => MyGraph
 
 declare module 'obsidian' {
   interface App {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { App } from 'obsidian'
+  import Louvain from './Louvain.svelte'
   import type AnalysisView from 'src/AnalysisView'
   import type { GraphAnalysisSettings, Subtype } from 'src/Interfaces'
   import type GraphAnalysisPlugin from 'src/main'
@@ -44,5 +45,8 @@
   <TableComponent {...props} />
 {:else if currSubtype === 'Clustering Coefficient'}
   <TableComponent {...props} />
+  <!-- ✔️ -->
+{:else if currSubtype === 'Louvain'}
+  <Louvain {...props} />
   <!-- ✔️ -->
 {/if}
