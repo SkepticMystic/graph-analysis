@@ -33,6 +33,7 @@
   let { noInfinity, noZero } = settings
   let currFile = app.workspace.getActiveFile()
 
+  let resolution = 10
   interface ComponentResults {
     linked: boolean
     to: string
@@ -69,7 +70,7 @@
   $: promiseSortedResults =
     !plugin.g || !currNode
       ? null
-      : plugin.g.algs['Louvain'](currNode)
+      : plugin.g.algs['Louvain'](currNode, { resolution })
           .then((results: string[]) => {
             const componentResults: ComponentResults[] = []
             results.forEach((to) => {
@@ -119,7 +120,29 @@
   bind:page
 />
 
-<div bind:this={current_component}>
+<label for="resolution">Resolution: </label>
+<input
+  name="resolution"
+  type="range"
+  min="1"
+  max="20"
+  value={resolution}
+  on:change={(e) => {
+    const value = Number.parseInt(e.target.value)
+
+    if (!frozen) {
+      blockSwitch = true
+      newBatch = []
+      visibleData = []
+      promiseSortedResults = null
+      page = 0
+    }
+    console.log({ value })
+    resolution = value
+  }}
+/>
+
+<div class="GA-Results" bind:this={current_component}>
   {#if promiseSortedResults}
     {#await promiseSortedResults then sortedResults}
       {#key sortedResults}
@@ -129,9 +152,9 @@
               class="
                 {node.linked ? LINKED : NOT_LINKED} 
               {classExt(node.to)}"
+              on:click={async (e) => await openOrSwitch(app, node.to, e)}
             >
               <span
-                on:click={async (e) => await openOrSwitch(app, node.to, e)}
                 on:contextmenu={(e) => openMenu(e, app)}
                 on:mouseover={(e) => hoverPreview(e, view, dropPath(node.to))}
               >
@@ -175,6 +198,9 @@
 </div>
 
 <style>
+  .GA-Results > div {
+    padding: 0px 5px;
+  }
   .is-unresolved {
     color: var(--text-muted);
   }

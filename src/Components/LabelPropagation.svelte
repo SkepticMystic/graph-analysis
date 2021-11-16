@@ -57,8 +57,6 @@
       currFile = app.workspace.getActiveFile()
     }, 100)
     newBatch = []
-
-    // setTimeout(() => (), 100)
   })
 
   let its = 20
@@ -118,12 +116,28 @@
         {view}
         {app}
       />
+
       <label for="iterations">Iterations: </label>
-      <select class="dropdown GA-DD" bind:value={its} name="iterations">
-        {#each iterationsArr as it}
-          <option>{it}</option>
-        {/each}
-      </select>
+      <input
+        name="iterations"
+        type="range"
+        min="1"
+        max="30"
+        value={its}
+        on:change={(e) => {
+          const value = Number.parseInt(e.target.value)
+          blockSwitch = true
+          visibleData = []
+          promiseSortedResults = null
+          page = 0
+          setTimeout(() => {
+            blockSwitch = false
+          }, 100)
+          newBatch = []
+
+          its = value
+        }}
+      />
     </span>
   </div>
   {#if promiseSortedResults}
