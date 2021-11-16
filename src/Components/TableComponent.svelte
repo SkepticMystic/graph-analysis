@@ -87,7 +87,7 @@
             const lesser = ascOrder ? -1 : 1
             const componentResults: ComponentResults[] = []
 
-            plugin.g.nodes().forEach((to) => {
+            plugin.g.forEachNode((to) => {
               const { measure, extra } = (results as ResultMap)[to]
               if (
                 !(noInfinity && measure === Infinity) &&
@@ -227,6 +227,7 @@
 
   table.GA-table td {
     padding: 2px;
+    /* font-size: var(--font-size-secondary); */
   }
 
   .is-unresolved {

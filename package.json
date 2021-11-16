@@ -36,6 +36,7 @@
   "dependencies": {
     "@tsconfig/svelte": "^2.0.1",
     "graphlib": "^2.1.8",
+    "graphology": "^0.23.1",
     "lodash.isequal": "^4.5.0",
     "obsidian-community-lib": "1.2.0",
     "sbd": "^1.0.19",

@@ -1,4 +1,4 @@
-import { Graph } from 'graphlib'
+import Graph from 'graphology'
 import type {
   App,
   CacheItem,
@@ -49,13 +49,19 @@ export default class MyGraph extends Graph {
     for (const source in resolvedLinks) {
       const tags = this.app.metadataCache.getCache(source)?.tags
       if (includeTag(tags) && includeRegex(source) && includeExt(source)) {
-        this.setNode(source, i)
-        i++
+        if (!this.hasNode(source)) {
+          this.addNode(source, { i })
+          i++
+        }
 
         for (const dest in resolvedLinks[source]) {
           const tags = this.app.metadataCache.getCache(dest)?.tags
           if (includeTag(tags) && includeRegex(dest) && includeExt(dest)) {
-            this.setEdge(source, dest)
+            if (!this.hasNode(dest)) {
+              this.addNode(dest, { i })
+              i++
+            }
+            this.addEdge(source, dest, { resolved: true })
           }
         }
       }
@@ -64,13 +70,19 @@ export default class MyGraph extends Graph {
     if (addUnresolved) {
       for (const source in unresolvedLinks) {
         if (includeRegex(source)) {
-          this.setNode(source, i)
-          i++
+          if (!this.hasNode(source)) {
+            this.addNode(source, { i })
+            i++
+          }
 
           for (const dest in unresolvedLinks[source]) {
             const destMD = dest + '.md'
             if (includeRegex(destMD)) {
-              this.setEdge(source, destMD, 'Unresolved')
+              if (!this.hasNode(destMD)) {
+                this.addNode(destMD, { i })
+                i++
+              }
+              this.addEdge(source, destMD, { resolved: false })
             }
           }
         }
@@ -83,10 +95,10 @@ export default class MyGraph extends Graph {
     [subtype in Subtype]: AnalysisAlg<ResultMap | CoCitationMap | Communities>
   } = {
     Jaccard: async (a: string): Promise<ResultMap> => {
-      const Na = (this.neighbors(a) as string[]) ?? []
+      const Na = this.neighbors(a)
       const results: ResultMap = {}
-      this.nodes().forEach((to) => {
-        const Nb = (this.neighbors(to) as string[]) ?? []
+      this.forEachNode((to) => {
+        const Nb = this.neighbors(to)
         const Nab = intersection(Na, Nb)
         const denom = Na.length + Nb.length - Nab.length
         let measure = denom !== 0 ? roundNumber(Nab.length / denom) : Infinity
@@ -97,10 +109,10 @@ export default class MyGraph extends Graph {
     },
 
     Overlap: async (a: string): Promise<ResultMap> => {
-      const Na = (this.neighbors(a) as string[]) ?? []
       const results: ResultMap = {}
-      this.nodes().forEach((to) => {
-        const Nb = (this.neighbors(to) as string[]) ?? []
+      const Na = this.neighbors(a)
+      this.forEachNode((to) => {
+        const Nb = this.neighbors(to)
         const Nab = intersection(Na, Nb)
         let measure =
           Na.length !== 0 && Nb.length !== 0
@@ -114,37 +126,32 @@ export default class MyGraph extends Graph {
     },
 
     'Adamic Adar': async (a: string): Promise<ResultMap> => {
-      const Na = this.neighbors(a) as string[]
-      const Nofb = this.neighbors('b.md')
       const results: ResultMap = {}
-      // Find all edges containing a
-      const edges = this.edges().filter((e) => e.v === a || e.w === a)
-      console.log({ Na, Nofb })
-      this.nodes().forEach((to) => {
-        const Nb = this.neighbors(to) as string[]
-        const Nab = intersection(Na, Nb)
+      const Na = this.neighbors(a)
 
+      this.forEachNode((to) => {
+        const Nb = this.neighbors(to)
+        const Nab = intersection(Na, Nb)
+        let measure = Infinity
         if (Nab.length) {
           const neighbours: number[] = Nab.map(
-            (node) => (this.successors(node) as string[]).length
+            (n) => this.outNeighbors(n).length
           )
-          const measure = roundNumber(
+          measure = roundNumber(
             sum(neighbours.map((neighbour) => 1 / Math.log(neighbour)))
           )
-          results[to] = { measure, extra: Nab }
-        } else {
-          results[to] = { measure: Infinity, extra: Nab }
         }
+        results[to] = { measure, extra: Nab }
       })
       return results
     },
 
     'Common Neighbours': async (a: string): Promise<ResultMap> => {
-      const Na = this.neighbors(a) as string[]
+      const Na = this.neighbors(a)
       const results: ResultMap = {}
 
-      this.nodes().forEach((to) => {
-        const Nb = (this.neighbors(to) ?? []) as string[]
+      this.forEachNode((to) => {
+        const Nb = this.neighbors(to)
         const Nab = intersection(Na, Nb)
         const measure = Nab.length
         results[to] = { measure, extra: Nab }
@@ -155,12 +162,14 @@ export default class MyGraph extends Graph {
     'Co-Citations': async (a: string): Promise<CoCitationMap> => {
       const mdCache = this.app.metadataCache
       const results: CoCitationMap = {}
-      const pres = this.predecessors(a) as string[]
+      const { settings } = this
 
-      for (const preI in pres) {
-        const pre = pres[preI]
+      // const pres = this.inNeighbors(a)
+      // for (const preI in pres) {
+      //   const pre = pres[preI]
+      this.forEachInNeighbor(a, async (pre) => {
         const file = mdCache.getFirstLinkpathDest(pre, '')
-        if (!file) continue
+        if (!file) return
 
         const cache = mdCache.getFileCache(file)
 
@@ -177,7 +186,7 @@ export default class MyGraph extends Graph {
           if (!linkFile) return false
 
           const extensionQ =
-            this.settings.allFileExtensions || linkFile.extension === 'md'
+            settings.allFileExtensions || linkFile.extension === 'md'
           return linkFile.path === a && extensionQ
         })
 
@@ -256,7 +265,7 @@ export default class MyGraph extends Graph {
         const minScore = 1 / Math.pow(2, 4 + maxHeadingLevel - minHeadingLevel)
 
         const coCiteCandidates: CacheItem[] = [...allLinks]
-        if (cache.tags && this.settings.coTags) {
+        if (cache.tags && settings.coTags) {
           coCiteCandidates.push(...cache.tags)
         }
         coCiteCandidates.forEach((item) => {
@@ -272,7 +281,7 @@ export default class MyGraph extends Graph {
             // If you don't want to check all extensions AND the extension is not .md, return
             // The negation is, if you want to check all files, OR the extension is .md, then don't return yet
             else if (
-              !this.settings.allFileExtensions &&
+              !settings.allFileExtensions &&
               linkFile.extension !== 'md'
             ) {
               return
@@ -418,7 +427,7 @@ export default class MyGraph extends Graph {
           })
         })
 
-        if (this.settings.coTags) {
+        if (settings.coTags) {
           getAllTags(cache).forEach((tag) => {
             if (!(tag in preCocitations)) {
               // Tag defined in YAML. Gets the lowest score (has no particular position)
@@ -447,7 +456,7 @@ export default class MyGraph extends Graph {
             name = file.path
           } else if (key[0] === '#') {
             name = key
-          } else if (this.settings.addUnresolved) {
+          } else if (settings.addUnresolved) {
             name = key + '.md'
             resolved = false
           } else {
@@ -465,7 +474,7 @@ export default class MyGraph extends Graph {
             }
           }
         }
-      }
+      })
 
       results[a] = { measure: 0, coCitations: [], resolved: false }
       for (const key in results) {
@@ -481,15 +490,14 @@ export default class MyGraph extends Graph {
       options: { iterations: number }
     ): Promise<Communities> => {
       let labeledNodes: { [node: string]: string } = {}
-      this.nodes().forEach((node, i) => {
+      this.forEachNode((node) => {
         labeledNodes[node] = node
       })
 
       for (let i = 0; i < options.iterations; i++) {
         const newLabeledNodes: { [node: string]: string } = {}
-        this.nodes().forEach((node) => {
-          const neighbours = this.neighbors(node) as string[]
-
+        this.forEachNode((node) => {
+          const neighbours = this.neighbors(node)
           if (neighbours.length) {
             const neighbourLabels = neighbours.map(
               // Take the label from the not-yet-updated-labels
@@ -519,7 +527,7 @@ export default class MyGraph extends Graph {
     'Clustering Coefficient': async (a: string): Promise<ResultMap> => {
       const results: ResultMap = {}
 
-      this.nodes().forEach((to: string) => {
+      this.forEachNode((to: string) => {
         const { coeff, triangles } = clusteringCoefficient(this, to)
         results[to] = {
           measure: roundNumber(coeff),
@@ -549,10 +557,5 @@ export default class MyGraph extends Graph {
     //     }
     //     return results
     // },
-  }
-  updateEdgeLabel(from: string, to: string, key: string, newValue: any) {
-    const newLabel = this.edge(from, to)
-    newLabel[key] = newValue
-    this.setEdge(from, to, newLabel)
   }
 }
