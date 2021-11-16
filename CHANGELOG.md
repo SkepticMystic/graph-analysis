@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.0](https://github.com/SkepticMystic/graph-analysis/compare/0.11.0...0.12.0) (2021-11-16)
+
+
+### Features
+
+* **HITS:** :sparkles: HITS Algorithm! ([46a7b91](https://github.com/SkepticMystic/graph-analysis/commit/46a7b91f035c5992bc6c8849fef829355636054c))
+
 ## [0.11.0](https://github.com/SkepticMystic/graph-analysis/compare/0.10.3...0.11.0) (2021-11-16)
 
 
