@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.11.0](https://github.com/SkepticMystic/graph-analysis/compare/0.10.3...0.11.0) (2021-11-16)
+
+
+### Features
+
+* :sparkles: Sliders on labelProp and Louvain! ([6ee2223](https://github.com/SkepticMystic/graph-analysis/commit/6ee22233f0e0e4e725fd12494f6a5753e531dac8))
+* :sparkles: Tell the type of analysis in the info-tooltip ([67166c6](https://github.com/SkepticMystic/graph-analysis/commit/67166c607e06041817d77e93cedbe71cc500b2e2))
+* **commDetection:** :sparkles: Louvain commDetection! ([1ba9a41](https://github.com/SkepticMystic/graph-analysis/commit/1ba9a41220cab5cf36f66ef2d9c71b964f6a3df2))
+
 ### [0.10.3](https://github.com/SkepticMystic/graph-analysis/compare/0.10.2...0.10.3) (2021-11-15)
 
 
