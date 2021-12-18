@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0](https://github.com/SkepticMystic/graph-analysis/compare/0.12.0...0.13.0) (2021-12-18)
+
+
+### Features
+
+* **NLP:** :sparkles: 3 new Natural Language Processing algorithms!!! ([84fd96f](https://github.com/SkepticMystic/graph-analysis/commit/84fd96f03a53aaa433947b7b6123fe41b9bacaa6))
+
 ## [0.12.0](https://github.com/SkepticMystic/graph-analysis/compare/0.11.0...0.12.0) (2021-11-16)
 
 
