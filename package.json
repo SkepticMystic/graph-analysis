@@ -43,6 +43,8 @@
     "standard-version": "^9.3.2",
     "svelte": "3.35.0",
     "svelte-icons": "^2.1.0",
-    "svelte-infinite-scroll": "^2.0.0"
+    "svelte-infinite-scroll": "^2.0.0",
+    "wink-nlp": "^1.10.0",
+    "wink-nlp-utils": "^2.0.7"
   }
 }

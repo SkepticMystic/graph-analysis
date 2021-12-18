@@ -3,6 +3,7 @@
   import { ANALYSIS_TYPES, ICON } from 'src/Constants'
   import type { Subtype } from 'src/Interfaces'
   import FaGlobeAfrica from 'svelte-icons/fa/FaGlobeAfrica.svelte'
+  import IoIosChatbubbles from 'svelte-icons/io/IoIosChatbubbles.svelte'
 
   export let currSubtype: Subtype
   export let view: AnalysisView
@@ -28,6 +29,11 @@
         {#if sub.global}
           <span class={ICON}>
             <FaGlobeAfrica />
+          </span>
+        {/if}
+        {#if sub.nlp}
+          <span class={ICON}>
+            <IoIosChatbubbles />
           </span>
         {/if}
         {sub.subtype}

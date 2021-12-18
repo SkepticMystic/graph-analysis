@@ -1,5 +1,6 @@
 import type { EditorPosition, EditorSelection } from 'obsidian'
 import type MyGraph from 'src/MyGraph'
+import type { WinkMethods, Document, Bow } from 'wink-nlp'
 
 export interface ResolvedLinks {
   [from: string]: {
@@ -12,6 +13,7 @@ export type SubtypeInfo = {
   global: boolean
   desc: string
   anl: Analyses
+  nlp: boolean
 }
 
 export type Analyses =
@@ -20,6 +22,7 @@ export type Analyses =
   | 'Similarity'
   | 'Co-Citations'
   | 'Community Detection'
+  | 'NLP'
 
 export type Subtype =
   | 'HITS'
@@ -31,6 +34,9 @@ export type Subtype =
   | 'Louvain'
   | 'Overlap'
   | 'Clustering Coefficient'
+  | 'BoW'
+  | 'Tversky'
+  | 'Otsuka-Chiai'
 
 export interface Communities {
   [group: string]: string[]
@@ -100,6 +106,16 @@ declare module 'obsidian' {
             ): Promise<void>
             update(key: string, value: string, file: TFile): Promise<void>
           }
+        }
+        nlp: {
+          Docs: { [path: string]: Document }
+          model: WinkMethods
+          getDocFromFile: (file: TFile) => Promise<Document>
+          getNoStopBoW: (doc: Document, type?: 'tokens' | 'entities') => Bow
+          getNoStopSet: (
+            doc: Document,
+            type?: 'tokens' | 'entities'
+          ) => Set<string>
         }
       }
     }

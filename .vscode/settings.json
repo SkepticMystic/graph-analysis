@@ -4,6 +4,7 @@
         "commDetection",
         "similarity",
         "labelProp",
-        "HITS"
+        "HITS",
+        "NLP"
     ]
 }

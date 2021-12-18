@@ -46,6 +46,12 @@
   <TableComponent {...props} />
 {:else if currSubtype === 'Clustering Coefficient'}
   <TableComponent {...props} />
+{:else if currSubtype === 'BoW'}
+  <TableComponent {...props} />
+{:else if currSubtype === 'Otsuka-Chiai'}
+  <TableComponent {...props} />
+{:else if currSubtype === 'Tversky'}
+  <TableComponent {...props} />
   <!-- ✔️ -->
 {:else if currSubtype === 'Louvain'}
   <Louvain {...props} />

@@ -2,10 +2,11 @@ import Graph from 'graphology'
 import louvain from 'graphology-communities-louvain'
 import hits from 'graphology-metrics/centrality/hits'
 
-import type {
+import {
   App,
   CacheItem,
   HeadingCache,
+  Notice,
   ReferenceCache,
   TagCache,
 } from 'obsidian'
@@ -27,6 +28,7 @@ import type {
   Subtype,
 } from 'src/Interfaces'
 import { getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
+import * as similarity from 'wink-nlp/utilities/similarity'
 
 export default class MyGraph extends Graph {
   app: App
@@ -552,6 +554,87 @@ export default class MyGraph extends Graph {
         results[to] = {
           measure: roundNumber(coeff),
           extra: triangles.map((group) => group.join(', ')),
+        }
+      })
+      return results
+    },
+
+    BoW: async (a: string): Promise<ResultMap> => {
+      const results: ResultMap = {}
+      const nlp = this.app.plugins.plugins.nlp
+      const { model } = nlp ?? {}
+      if (!model) {
+        new Notice('The NLP plugin must be installed.')
+        return results
+      }
+      const { Docs } = nlp
+      const sourceBoW = nlp.getNoStopBoW(Docs[a])
+
+      this.forEachNode(async (to: string) => {
+        const targetDoc = Docs[to]
+        if (!targetDoc) {
+          results[to] = { measure: 0, extra: [] }
+        }
+        const targetBoW = nlp.getNoStopBoW(Docs[to])
+
+        const measure = similarity.bow.cosine(sourceBoW, targetBoW)
+        results[to] = {
+          measure,
+          extra: [],
+        }
+      })
+      return results
+    },
+
+    Tversky: async (a: string): Promise<ResultMap> => {
+      const results: ResultMap = {}
+      const nlp = this.app.plugins.plugins.nlp
+      const { model } = nlp ?? {}
+      if (!model) {
+        new Notice('The NLP plugin must be installed.')
+        return results
+      }
+      const { Docs } = nlp
+      const sourceSet = nlp.getNoStopSet(Docs[a])
+
+      this.forEachNode(async (to: string) => {
+        const targetDoc = Docs[to]
+        if (!targetDoc) {
+          results[to] = { measure: 0, extra: [] }
+        }
+        const targetSet = nlp.getNoStopSet(Docs[to])
+
+        const measure = similarity.set.tversky(sourceSet, targetSet)
+        results[to] = {
+          measure,
+          extra: [],
+        }
+      })
+      return results
+    },
+
+    'Otsuka-Chiai': async (a: string): Promise<ResultMap> => {
+      const results: ResultMap = {}
+      const nlp = this.app.plugins.plugins.nlp
+      const { model } = nlp ?? {}
+      if (!model) {
+        new Notice('The NLP plugin must be installed.')
+        return results
+      }
+      const { Docs } = nlp
+      const sourceSet = nlp.getNoStopSet(Docs[a])
+
+      this.forEachNode(async (to: string) => {
+        const targetDoc = Docs[to]
+        if (!targetDoc) {
+          results[to] = { measure: 0, extra: [] }
+        }
+        const targetSet = nlp.getNoStopSet(Docs[to])
+
+        const measure = similarity.set.oo(sourceSet, targetSet)
+        results[to] = {
+          measure,
+          extra: [],
         }
       })
       return results
