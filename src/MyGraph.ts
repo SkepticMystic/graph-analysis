@@ -24,6 +24,7 @@ import type {
   Communities,
   GraphAnalysisSettings,
   HITSResult,
+  NLPPlugin,
   ResultMap,
   Subtype,
 } from 'src/Interfaces'
@@ -561,12 +562,9 @@ export default class MyGraph extends Graph {
 
     BoW: async (a: string): Promise<ResultMap> => {
       const results: ResultMap = {}
-      const nlp = this.app.plugins.plugins.nlp
-      const { model } = nlp ?? {}
-      if (!model) {
-        new Notice('The NLP plugin must be installed.')
-        return results
-      }
+      const nlp = getNLPPlugin(this.app)
+      if (!nlp) return results
+
       const { Docs } = nlp
       const sourceBoW = nlp.getNoStopBoW(Docs[a])
 
@@ -588,12 +586,9 @@ export default class MyGraph extends Graph {
 
     Tversky: async (a: string): Promise<ResultMap> => {
       const results: ResultMap = {}
-      const nlp = this.app.plugins.plugins.nlp
-      const { model } = nlp ?? {}
-      if (!model) {
-        new Notice('The NLP plugin must be installed.')
-        return results
-      }
+      const nlp = getNLPPlugin(this.app)
+      if (!nlp) return results
+
       const { Docs } = nlp
       const sourceSet = nlp.getNoStopSet(Docs[a])
 
@@ -615,12 +610,9 @@ export default class MyGraph extends Graph {
 
     'Otsuka-Chiai': async (a: string): Promise<ResultMap> => {
       const results: ResultMap = {}
-      const nlp = this.app.plugins.plugins.nlp
-      const { model } = nlp ?? {}
-      if (!model) {
-        new Notice('The NLP plugin must be installed.')
-        return results
-      }
+      const nlp = getNLPPlugin(this.app)
+      if (!nlp) return results
+      
       const { Docs } = nlp
       const sourceSet = nlp.getNoStopSet(Docs[a])
 
@@ -661,4 +653,17 @@ export default class MyGraph extends Graph {
     //     return results
     // },
   }
+}
+
+function getNLPPlugin(app: App): NLPPlugin | null {
+  const { nlp } = app.plugins.plugins
+  if (!nlp) {
+    new Notice(
+      'The NLP plugin must be installed & enabled to use the 💬 algorithms.'
+    )
+    return null
+  } else if (!nlp?.settings?.refreshDocsOnLoad) {
+    new Notice('In the NLP plugin, enable the setting "Refresh Docs on load".')
+    return null
+  } else return nlp
 }

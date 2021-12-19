@@ -1,6 +1,5 @@
-import type { EditorPosition, EditorSelection } from 'obsidian'
-import type MyGraph from 'src/MyGraph'
-import type { WinkMethods, Document, Bow } from 'wink-nlp'
+import type { TFile } from 'obsidian'
+import type { Bow, Document, WinkMethods } from 'wink-nlp'
 
 export interface ResolvedLinks {
   [from: string]: {
@@ -93,6 +92,15 @@ export interface GraphAnalysisSettings {
   exclusionTags: string[]
 }
 
+export interface NLPPlugin {
+  Docs: { [path: string]: Document }
+  model: WinkMethods
+  getDocFromFile: (file: TFile) => Promise<Document>
+  getNoStopBoW: (doc: Document, type?: 'tokens' | 'entities') => Bow
+  getNoStopSet: (doc: Document, type?: 'tokens' | 'entities') => Set<string>
+  settings: { refreshDocsOnLoad: boolean }
+}
+
 declare module 'obsidian' {
   interface App {
     plugins: {
@@ -107,16 +115,7 @@ declare module 'obsidian' {
             update(key: string, value: string, file: TFile): Promise<void>
           }
         }
-        nlp: {
-          Docs: { [path: string]: Document }
-          model: WinkMethods
-          getDocFromFile: (file: TFile) => Promise<Document>
-          getNoStopBoW: (doc: Document, type?: 'tokens' | 'entities') => Bow
-          getNoStopSet: (
-            doc: Document,
-            type?: 'tokens' | 'entities'
-          ) => Set<string>
-        }
+        nlp: NLPPlugin
       }
     }
   }
