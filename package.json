@@ -45,6 +45,7 @@
     "svelte-icons": "^2.1.0",
     "svelte-infinite-scroll": "^2.0.0",
     "wink-nlp": "^1.10.0",
-    "wink-nlp-utils": "^2.0.7"
+    "wink-nlp-utils": "^2.0.7",
+    "wink-sentiment": "^5.0.2"
   }
 }

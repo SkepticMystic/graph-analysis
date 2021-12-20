@@ -50,7 +50,9 @@
   <TableComponent {...props} />
 {:else if currSubtype === 'Otsuka-Chiai'}
   <TableComponent {...props} />
-{:else if currSubtype === 'Tversky'}
+  <!-- {:else if currSubtype === 'Tversky'}
+  <TableComponent {...props} /> -->
+{:else if currSubtype === 'Sentiment'}
   <TableComponent {...props} />
   <!-- ✔️ -->
 {:else if currSubtype === 'Louvain'}

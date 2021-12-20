@@ -99,9 +99,16 @@ export const ANALYSIS_TYPES: SubtypeInfo[] = [
     global: false,
     nlp: true,
   },
+  // {
+  //   anl: 'NLP',
+  //   subtype: 'Tversky',
+  //   desc: '',
+  //   global: false,
+  //   nlp: true,
+  // },
   {
     anl: 'NLP',
-    subtype: 'Tversky',
+    subtype: 'Otsuka-Chiai',
     desc: '',
     global: false,
     nlp: true,

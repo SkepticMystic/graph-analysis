@@ -34,7 +34,7 @@ export type Subtype =
   | 'Overlap'
   | 'Clustering Coefficient'
   | 'BoW'
-  | 'Tversky'
+  // | 'Tversky'
   | 'Otsuka-Chiai'
 
 export interface Communities {

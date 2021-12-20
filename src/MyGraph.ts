@@ -584,7 +584,31 @@ export default class MyGraph extends Graph {
       return results
     },
 
-    Tversky: async (a: string): Promise<ResultMap> => {
+    // Tversky: async (a: string): Promise<ResultMap> => {
+    //   const results: ResultMap = {}
+    //   const nlp = getNLPPlugin(this.app)
+    //   if (!nlp) return results
+
+    //   const { Docs } = nlp
+    //   const sourceSet = nlp.getNoStopSet(Docs[a])
+
+    //   this.forEachNode(async (to: string) => {
+    //     const targetDoc = Docs[to]
+    //     if (!targetDoc) {
+    //       results[to] = { measure: 0, extra: [] }
+    //     }
+    //     const targetSet = nlp.getNoStopSet(Docs[to])
+
+    //     const measure = similarity.set.tversky(sourceSet, targetSet)
+    //     results[to] = {
+    //       measure,
+    //       extra: [],
+    //     }
+    //   })
+    //   return results
+    // },
+
+    'Otsuka-Chiai': async (a: string): Promise<ResultMap> => {
       const results: ResultMap = {}
       const nlp = getNLPPlugin(this.app)
       if (!nlp) return results
