@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.13.2](https://github.com/SkepticMystic/graph-analysis/compare/0.13.1...0.13.2) (2021-12-20)
+
+
+### Features
+
+* **NLP:** :sparkles: Sentiment analysis global alg! ([8c5d49a](https://github.com/SkepticMystic/graph-analysis/commit/8c5d49a40214e983c28556a1905a70c77e9d351a))
+
+
+### Bug Fixes
+
+* :bug: Don't refresh a global alg ([0eb5d42](https://github.com/SkepticMystic/graph-analysis/commit/0eb5d4259b79c9e855b831f888e32e3c8e74bdb3))
+* :bug: Show currNode for global algs ([d0695ed](https://github.com/SkepticMystic/graph-analysis/commit/d0695eded684766eeedd65f0974551729fdb7b44))
+
 ### [0.13.1](https://github.com/SkepticMystic/graph-analysis/compare/0.13.0...0.13.1) (2021-12-19)
 
 ## [0.13.0](https://github.com/SkepticMystic/graph-analysis/compare/0.12.0...0.13.0) (2021-12-18)
