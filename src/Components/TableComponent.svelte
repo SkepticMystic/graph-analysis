@@ -63,7 +63,7 @@
   let { resolvedLinks } = app.metadataCache
 
   app.workspace.on('active-leaf-change', () => {
-    if (!frozen) {
+    if (!frozen && !currSubtypeInfo.global) {
       blockSwitch = true
       newBatch = []
       visibleData = []
