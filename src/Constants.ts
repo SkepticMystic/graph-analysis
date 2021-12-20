@@ -115,9 +115,9 @@ export const ANALYSIS_TYPES: SubtypeInfo[] = [
   },
   {
     anl: 'NLP',
-    subtype: 'Otsuka-Chiai',
+    subtype: 'Sentiment',
     desc: '',
-    global: false,
+    global: true,
     nlp: true,
   },
 ]

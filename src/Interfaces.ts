@@ -36,6 +36,7 @@ export type Subtype =
   | 'BoW'
   // | 'Tversky'
   | 'Otsuka-Chiai'
+  | 'Sentiment'
 
 export interface Communities {
   [group: string]: string[]
@@ -98,6 +99,10 @@ export interface NLPPlugin {
   getDocFromFile: (file: TFile) => Promise<Document>
   getNoStopBoW: (doc: Document, type?: 'tokens' | 'entities') => Bow
   getNoStopSet: (doc: Document, type?: 'tokens' | 'entities') => Set<string>
+  getAvgSentimentFromDoc: (
+    doc: Document,
+    opts?: { perSentence?: boolean; normalised?: boolean }
+  ) => number
   settings: { refreshDocsOnLoad: boolean }
 }
 

@@ -623,7 +623,7 @@ export default class MyGraph extends Graph {
         }
         const targetSet = nlp.getNoStopSet(Docs[to])
 
-        const measure = similarity.set.tversky(sourceSet, targetSet)
+        const measure = similarity.set.oo(sourceSet, targetSet)
         results[to] = {
           measure,
           extra: [],
@@ -632,26 +632,20 @@ export default class MyGraph extends Graph {
       return results
     },
 
-    'Otsuka-Chiai': async (a: string): Promise<ResultMap> => {
+    Sentiment: async (a: string): Promise<ResultMap> => {
       const results: ResultMap = {}
       const nlp = getNLPPlugin(this.app)
       if (!nlp) return results
-      
+
       const { Docs } = nlp
-      const sourceSet = nlp.getNoStopSet(Docs[a])
-
-      this.forEachNode(async (to: string) => {
-        const targetDoc = Docs[to]
-        if (!targetDoc) {
-          results[to] = { measure: 0, extra: [] }
+      this.forEachNode((node) => {
+        const doc = Docs[node]
+        if (!doc) {
+          results[node] = { measure: 0, extra: [] }
+          return
         }
-        const targetSet = nlp.getNoStopSet(Docs[to])
-
-        const measure = similarity.set.oo(sourceSet, targetSet)
-        results[to] = {
-          measure,
-          extra: [],
-        }
+        const measure = nlp.getAvgSentimentFromDoc(doc)
+        results[node] = { measure, extra: [] }
       })
       return results
     },
