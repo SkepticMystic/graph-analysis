@@ -162,7 +162,7 @@
     {#await promiseSortedResults then sortedResults}
       {#key sortedResults}
         {#each visibleData as node}
-          {#if node.to !== currNode && node !== undefined}
+          {#if (currSubtypeInfo.global || node.to !== currNode) && node !== undefined}
             <!-- svelte-ignore a11y-unknown-aria-attribute -->
             <tr
               class="{node.linked ? LINKED : NOT_LINKED} 
