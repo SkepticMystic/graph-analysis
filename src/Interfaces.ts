@@ -26,7 +26,7 @@ export type Analyses =
 export type Subtype =
   | 'HITS'
   | 'Adamic Adar'
-  | 'Common Neighbours'
+  // | 'Common Neighbours'
   | 'Jaccard'
   | 'Co-Citations'
   | 'Label Propagation'
@@ -104,6 +104,7 @@ export interface NLPPlugin {
     opts?: { perSentence?: boolean; normalised?: boolean }
   ) => number
   settings: { refreshDocsOnLoad: boolean }
+  worker: Worker
 }
 
 declare module 'obsidian' {

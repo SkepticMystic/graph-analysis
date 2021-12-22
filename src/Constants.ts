@@ -48,13 +48,13 @@ export const ANALYSIS_TYPES: SubtypeInfo[] = [
     global: false,
     nlp: false,
   },
-  {
-    anl: 'Link Prediction',
-    subtype: 'Common Neighbours',
-    desc: 'Tells you how many notes are linked to the current (active) note, and the note in the table.\nHover over a cell in the table to see a list of common neighbours',
-    global: false,
-    nlp: false,
-  },
+  // {
+  //   anl: 'Link Prediction',
+  //   subtype: 'Common Neighbours',
+  //   desc: 'Tells you how many notes are linked to the current (active) note, and the note in the table.\nHover over a cell in the table to see a list of common neighbours',
+  //   global: false,
+  //   nlp: false,
+  // },
 
   {
     anl: 'Similarity',

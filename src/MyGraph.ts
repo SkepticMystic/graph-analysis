@@ -163,18 +163,18 @@ export default class MyGraph extends Graph {
       return results
     },
 
-    'Common Neighbours': async (a: string): Promise<ResultMap> => {
-      const Na = this.neighbors(a)
-      const results: ResultMap = {}
+    // 'Common Neighbours': async (a: string): Promise<ResultMap> => {
+    //   const Na = this.neighbors(a)
+    //   const results: ResultMap = {}
 
-      this.forEachNode((to) => {
-        const Nb = this.neighbors(to)
-        const Nab = intersection(Na, Nb)
-        const measure = Nab.length
-        results[to] = { measure, extra: Nab }
-      })
-      return results
-    },
+    //   this.forEachNode((to) => {
+    //     const Nb = this.neighbors(to)
+    //     const Nab = intersection(Na, Nb)
+    //     const measure = Nab.length
+    //     results[to] = { measure, extra: Nab }
+    //   })
+    //   return results
+    // },
 
     'Co-Citations': async (a: string): Promise<CoCitationMap> => {
       const mdCache = this.app.metadataCache
