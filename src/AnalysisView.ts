@@ -5,9 +5,9 @@ import type GraphAnalysisPlugin from 'src/main'
 import AnalysisComponent from './Components/AnalysisComponent.svelte'
 
 export default class AnalysisView extends ItemView {
-  private plugin: GraphAnalysisPlugin
+  plugin: GraphAnalysisPlugin
   currSubtype: Subtype
-  private component: AnalysisComponent
+  component: AnalysisComponent
 
   constructor(
     leaf: WorkspaceLeaf,

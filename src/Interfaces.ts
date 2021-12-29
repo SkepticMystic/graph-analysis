@@ -91,6 +91,7 @@ export interface GraphAnalysisSettings {
   superDebugMode: boolean
   exclusionRegex: string
   exclusionTags: string[]
+  algsToShow: Subtype[]
 }
 
 export interface NLPPlugin {

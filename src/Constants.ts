@@ -12,6 +12,14 @@ export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
   superDebugMode: false,
   exclusionRegex: '',
   exclusionTags: [],
+  algsToShow: [
+    'Adamic Adar',
+    'Jaccard',
+    'Otsuka-Chiai',
+    'Sentiment',
+    'Co-Citations',
+    'Label Propagation',
+  ],
 }
 
 export const DECIMALS = 4

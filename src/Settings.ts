@@ -2,6 +2,7 @@ import { App, Notice, PluginSettingTab, Setting } from 'obsidian'
 import { ANALYSIS_TYPES } from 'src/Constants'
 import type { Subtype } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
+import Checkboxes from './Components/Checkboxes.svelte'
 
 export class SampleSettingTab extends PluginSettingTab {
   plugin: GraphAnalysisPlugin
@@ -26,14 +27,23 @@ export class SampleSettingTab extends PluginSettingTab {
       .addDropdown((dd) => {
         dd.setValue(settings.defaultSubtypeType)
         const dict = {}
-        ANALYSIS_TYPES.forEach((subInfo) => {
-          dict[subInfo.subtype] = subInfo.subtype
+        settings.algsToShow.forEach((subtype) => {
+          dict[subtype] = subtype
         })
         dd.addOptions(dict).onChange(async (option) => {
           settings.defaultSubtypeType = option as Subtype
           await plugin.saveSettings()
         })
       })
+
+    new Checkboxes({
+      target: containerEl,
+      props: {
+        options: ANALYSIS_TYPES.map((type) => type.subtype),
+        plugin,
+        settingName: 'algsToShow',
+      },
+    })
 
     new Setting(containerEl)
       .setName('Exclude Infinity')
