@@ -67,7 +67,7 @@ export const ANALYSIS_TYPES: SubtypeInfo[] = [
   {
     anl: 'Similarity',
     subtype: 'Jaccard',
-    desc: "Based on the structure of your graph, this alg predicts which notes are most similar to the current note.\n\n'🔗' means that this note is linked to the group name.",
+    desc: "Based on the structure of your graph, this alg predicts which notes are most similar to the current note.\n\nIt shows the ratio of the numbers of neighbours two notes have in common, to the total number of neighbours they each have.\n\n'🔗' means that this note is linked to the group name.",
     global: false,
     nlp: false,
   },
