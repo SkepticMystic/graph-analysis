@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.1](https://github.com/SkepticMystic/graph-analysis/compare/0.14.0...0.14.1) (2022-01-03)
+
+
+### Features
+
+* :sparkles: Option to hide/show each alg (not all are shown by default anymore) ([242f8f9](https://github.com/SkepticMystic/graph-analysis/commit/242f8f9c5b924d04be6394edb210f22347a61e9b))
+
 ## [0.14.0](https://github.com/SkepticMystic/graph-analysis/compare/0.13.2...0.14.0) (2021-12-20)
 
 ### [0.13.2](https://github.com/SkepticMystic/graph-analysis/compare/0.13.1...0.13.2) (2021-12-20)
