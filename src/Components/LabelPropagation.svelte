@@ -145,8 +145,9 @@
       {#key sortedResults}
         {#each visibleData as comm}
           <div class="GA-CC">
-            <details>
+            <details class="tree-item-self">
               <summary
+                class="tree-item-inner"
                 on:contextmenu={(e) =>
                   openMenu(e, app, { toCopy: comm.comm.join('\n') })}
               >
