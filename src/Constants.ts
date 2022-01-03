@@ -16,7 +16,6 @@ export const DEFAULT_SETTINGS: GraphAnalysisSettings = {
     'Adamic Adar',
     'Jaccard',
     'Otsuka-Chiai',
-    'Sentiment',
     'Co-Citations',
     'Label Propagation',
   ],

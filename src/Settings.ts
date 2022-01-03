@@ -36,6 +36,7 @@ export class SampleSettingTab extends PluginSettingTab {
         })
       })
 
+    containerEl.createEl('h3', { text: 'Algorithms to Show' })
     new Checkboxes({
       target: containerEl,
       props: {
