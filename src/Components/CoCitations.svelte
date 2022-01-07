@@ -84,6 +84,11 @@
       ? null
       : plugin.g.algs['Co-Citations'](currNode)
           .then((ccMap: CoCitationMap) => {
+            Object.values(ccMap).forEach((value: CoCitationRes) => {
+              value.coCitations = value.coCitations.sort((a, b) =>
+                a.measure > b.measure ? -1 : 1
+              );
+            });
             const greater = ascOrder ? 1 : -1
             const lesser = ascOrder ? -1 : 1
             const sortedCites: CoCiteComp[] = []

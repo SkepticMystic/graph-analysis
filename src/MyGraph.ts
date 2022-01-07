@@ -20,7 +20,7 @@ import {
 import type {
   AnalysisAlg,
   CoCitation,
-  CoCitationMap,
+  CoCitationMap, CoCitationRes,
   Communities,
   GraphAnalysisSettings,
   HITSResult,
@@ -178,7 +178,7 @@ export default class MyGraph extends Graph {
 
     'Co-Citations': async (a: string): Promise<CoCitationMap> => {
       const mdCache = this.app.metadataCache
-      const results: CoCitationMap = {}
+      const results = {} as CoCitationMap
       const { settings } = this
 
       // const pres = this.inNeighbors(a)
@@ -487,18 +487,13 @@ export default class MyGraph extends Graph {
             results[name] = {
               measure: cocitation[0],
               coCitations: cocitation[1],
-              resolved,
-            }
+              resolved
+            };
           }
         }
       })
+      results[a] = { measure: 0, coCitations: [], resolved: true };
 
-      results[a] = { measure: 0, coCitations: [], resolved: false }
-      for (const key in results) {
-        results[key].coCitations = results[key].coCitations.sort((a, b) =>
-          a.measure > b.measure ? -1 : 1
-        )
-      }
       return results
     },
 
