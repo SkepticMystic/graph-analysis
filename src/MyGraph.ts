@@ -5,7 +5,7 @@ import hits from 'graphology-metrics/centrality/hits'
 import {
   App,
   CacheItem,
-  HeadingCache,
+  HeadingCache, ListItemCache,
   Notice,
   ReferenceCache,
   TagCache,
@@ -28,7 +28,7 @@ import type {
   ResultMap,
   Subtype,
 } from 'src/Interfaces'
-import { findSentence, getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
+import { addPreCocitation, findSentence, getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
 import * as similarity from 'wink-nlp/utilities/similarity'
 
 export default class MyGraph extends Graph {
@@ -222,6 +222,13 @@ export default class MyGraph extends Graph {
 
           })
 
+        const ownListItems: ListItemCache[] =
+          cache.listItems.filter((listItem) => {
+            return ownLinks.find((link) =>
+              link.position.start.line >= listItem.position.start.line &&
+              link.position.end.line <= listItem.position.end.line)
+            })
+
         // Find the section the link is in
         const ownSections = ownLinks.map((link) =>
           cache.sections.find(
@@ -308,6 +315,7 @@ export default class MyGraph extends Graph {
           // Check if the link is on the same line
           let hasOwnLine = false
           ownSentences.forEach((lineSentence) => {
+            // On the same line
             if (item.position.start.line === lineSentence.line) {
               const [itemSentence, itemSentenceStart, itemSentenceEnd] = findSentence(lineSentence.sentences, item)
               const ownLink = lineSentence.link
@@ -338,6 +346,8 @@ export default class MyGraph extends Graph {
 
               let measure = 1 / 2
               const sentenceDist = Math.abs(itemSentence - lineSentence.linkSentence)
+
+              // Granularity of sentence distance scores
               if (sentenceDist === 0) {
                 measure = 1
               }
@@ -371,6 +381,63 @@ export default class MyGraph extends Graph {
             lineContent.slice(item.position.end.col, lineContent.length),
           ]
 
+          // Check if in an outline hierarchy
+          const listItem: ListItemCache =
+            cache.listItems.find((listItem) =>
+                item.position.start.line >= listItem.position.start.line &&
+                item.position.end.line <= listItem.position.end.line
+            )
+          let foundHierarchy = false
+          if (listItem) {
+            ownListItems.forEach((ownListItem) => {
+              // Shared parent is good!
+              if (ownListItem.parent === listItem.parent) {
+                addPreCocitation(preCocitations, linkPath, 0.4, sentence, pre, item.position.start.line)
+                foundHierarchy = true
+                return
+              }
+
+              // If one of the appearances is further down the hierachy,
+              //   but in the same one,
+              //   that is also nice! But has to be done in both directions
+              // First, up from ownListItem
+              const findInHierarchy = function(from: ListItemCache, to: ListItemCache): boolean {
+                let iterListItem: ListItemCache = from
+                let distance = 1
+                // Negative parents denote top-level list items
+                while (iterListItem.parent > 0) {
+                  if (iterListItem.parent === to.position.start.line) {
+                    let measure = 0.3
+                    if (distance === 1) {
+                      measure = 0.6
+                    }
+                    else if (distance === 2) {
+                      measure = 0.5
+                    }
+                    else if (distance === 3) {
+                      measure = 0.4
+                    }
+                    else if (distance === 4) {
+                      measure = 0.35
+                    }
+                    addPreCocitation(preCocitations, linkPath, measure, sentence, pre, item.position.start.line)
+                    return true
+                  }
+                  distance += 1
+                  // Move to the parent
+                  iterListItem = cache.listItems.find((litem) =>
+                    iterListItem.parent === litem.position.start.line)
+                }
+                return false
+              }
+              if (findInHierarchy(ownListItem, listItem) || findInHierarchy(listItem, ownListItem)) {
+                foundHierarchy = true
+              }
+            })
+          }
+          if (foundHierarchy) return
+
+
           // Check if it is in the same paragraph
           const sameParagraph = ownSections.find(
             (section) =>
@@ -378,16 +445,7 @@ export default class MyGraph extends Graph {
               section.position.end.line >= item.position.end.line
           )
           if (sameParagraph) {
-            preCocitations[linkPath][0] = Math.max(
-              preCocitations[linkPath][0],
-              1 / 4
-            )
-            preCocitations[linkPath][1].push({
-              sentence: sentence,
-              measure: 1 / 4,
-              source: pre,
-              line: item.position.start.line,
-            })
+            addPreCocitation(preCocitations, linkPath, 1 / 4, sentence, pre, item.position.start.line)
             return
           }
 
@@ -405,30 +463,12 @@ export default class MyGraph extends Graph {
             // Then, maxHeadingLevel - bestLevel = 0, so we get 1/(2^2)=1/4. If the link appears only under
             // less specific headings, the weight will decrease.
             const score = 1 / Math.pow(2, 3 + maxHeadingLevel - bestLevel)
-            preCocitations[linkPath][0] = Math.max(
-              preCocitations[linkPath][0],
-              score
-            )
-            preCocitations[linkPath][1].push({
-              measure: score,
-              sentence: sentence,
-              source: pre,
-              line: item.position.start.line,
-            })
+            addPreCocitation(preCocitations, linkPath, score, sentence, pre, item.position.start.line)
             return
           }
 
           // The links appear together in the same document, but not under a shared heading
-          preCocitations[linkPath][0] = Math.max(
-            preCocitations[linkPath][0],
-            minScore
-          )
-          preCocitations[linkPath][1].push({
-            measure: minScore,
-            sentence: sentence,
-            source: pre,
-            line: item.position.start.line,
-          })
+          addPreCocitation(preCocitations, linkPath, minScore, sentence, pre, item.position.start.line)
         })
 
         if (settings.coTags) {

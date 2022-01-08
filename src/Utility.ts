@@ -23,6 +23,7 @@ import type {
   Subtype,
 } from 'src/Interfaces'
 import type GraphAnalysisPlugin from 'src/main'
+import { CoCitation } from 'src/Interfaces'
 
 export const sum = (arr: number[]) => {
   if (arr.length === 0) {
@@ -371,4 +372,22 @@ export function findSentence(sentences: [string], link: CacheItem): [number, num
     count += 1
   }
   return [-1, 0, aggrSentenceLength]
+}
+
+export function addPreCocitation(preCocitations: { [name: string]: [number, CoCitation[]] },
+                                 linkPath: string,
+                                 measure: number,
+                                 sentence: string[],
+                                 source: string,
+                                 line: number) {
+  preCocitations[linkPath][0] = Math.max(
+    preCocitations[linkPath][0],
+    measure
+  )
+  preCocitations[linkPath][1].push({
+    sentence,
+    measure,
+    source,
+    line,
+  })
 }
