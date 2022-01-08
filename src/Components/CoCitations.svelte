@@ -37,6 +37,7 @@
   import ExtensionIcon from './ExtensionIcon.svelte'
   import ImgThumbnail from './ImgThumbnail.svelte'
   import SubtypeOptions from './SubtypeOptions.svelte'
+  import RenderedMarkdown from './RenderedMarkdown.svelte'
 
   export let app: App
   export let plugin: GraphAnalysisPlugin
@@ -83,42 +84,42 @@
     !currNode || !plugin.g
       ? null
       : plugin.g.algs['Co-Citations'](currNode)
-          .then((ccMap: CoCitationMap) => {
-            Object.values(ccMap).forEach((value: CoCitationRes) => {
-              value.coCitations = value.coCitations.sort((a, b) =>
-                a.measure > b.measure ? -1 : 1
-              );
-            });
-            const greater = ascOrder ? 1 : -1
-            const lesser = ascOrder ? -1 : 1
-            const sortedCites: CoCiteComp[] = []
-            Object.keys(ccMap).forEach((to) => {
-              let { coCitations, measure, resolved } = ccMap[
-                to
-              ] as CoCitationRes
-              if (measure !== 0 && measure !== Infinity) {
-                sortedCites.push({
-                  measure,
-                  coCitations,
-                  linked: looserIsLinked(app, to, currNode, false),
-                  resolved,
-                  to,
-                })
-              }
-            })
-            sortedCites.sort((a, b) =>
-              a.measure > b.measure ? greater : lesser
+        .then((ccMap: CoCitationMap) => {
+          Object.values(ccMap).forEach((value: CoCitationRes) => {
+            value.coCitations = value.coCitations.sort((a, b) =>
+              a.measure > b.measure ? -1 : 1,
             )
-            return sortedCites
           })
-          .then((res) => {
-            newBatch = res.slice(0, size)
-            debug(settings, { res })
-            setTimeout(() => {
-              blockSwitch = false
-            }, 100)
-            return res
+          const greater = ascOrder ? 1 : -1
+          const lesser = ascOrder ? -1 : 1
+          const sortedCites: CoCiteComp[] = []
+          Object.keys(ccMap).forEach((to) => {
+            let { coCitations, measure, resolved } = ccMap[
+              to
+              ] as CoCitationRes
+            if (measure !== 0 && measure !== Infinity) {
+              sortedCites.push({
+                measure,
+                coCitations,
+                linked: looserIsLinked(app, to, currNode, false),
+                resolved,
+                to,
+              })
+            }
           })
+          sortedCites.sort((a, b) =>
+            a.measure > b.measure ? greater : lesser,
+          )
+          return sortedCites
+        })
+        .then((res) => {
+          newBatch = res.slice(0, size)
+          debug(settings, { res })
+          setTimeout(() => {
+            blockSwitch = false
+          }, 100)
+          return res
+        })
 
   $: visibleData = [...visibleData, ...newBatch]
 
@@ -211,29 +212,23 @@
                         {roundNumber(coCite.measure, 3)}
                       </span>
                     </div>
-                    <div
-                      class="CC-sentence"
-                      on:click={async (e) => {
-                        await openOrSwitch(app, coCite.source, e)
-                        jumpToSelection(
-                          app,
-                          coCite.line,
-                          coCite.sentence.join('')
-                        )
-                      }}
-                    >
-                      {#if coCite.sentence.length === 3}
-                        <span>{coCite.sentence[0]}</span>
-                        <mark><strong>{coCite.sentence[1]}</strong></mark>
-                        <span>{coCite.sentence[2]}</span>
-                      {:else}
-                        <span>{coCite.sentence[0]}</span>
-                        <mark><strong>{coCite.sentence[1]}</strong></mark>
-                        <span>{coCite.sentence[2]}</span>
-                        <mark><strong>{coCite.sentence[3]}</strong></mark>
-                        <span>{coCite.sentence[4]}</span>
-                      {/if}
-                    </div>
+                    <RenderedMarkdown
+                      sentence={coCite.sentence}
+                      sourcePath={coCite.source}
+                      app={app}
+                      line={coCite.line}
+                    />
+                      <!--{#if coCite.sentence.length === 3}-->
+                      <!--  <span>{coCite.sentence[0]}</span>-->
+                      <!--  <mark><strong>{coCite.sentence[1]}</strong></mark>-->
+                      <!--  <span>{coCite.sentence[2]}</span>-->
+                      <!--{:else}-->
+                      <!--  <span>{coCite.sentence[0]}</span>-->
+                      <!--  <mark><strong>{coCite.sentence[1]}</strong></mark>-->
+                      <!--  <span>{coCite.sentence[2]}</span>-->
+                      <!--  <mark><strong>{coCite.sentence[3]}</strong></mark>-->
+                      <!--  <span>{coCite.sentence[4]}</span>-->
+                      <!--{/if}-->
                   {/each}
                 </div>
               </details>
@@ -306,16 +301,10 @@
     font-weight: 600;
   }
 
-  .CC-sentence {
-    padding-left: 40px;
-    color: var(--text-muted);
-  }
+
   .top-row > span + span {
     float: right;
   }
 
-  mark {
-    color: var(--text-normal);
-    background-color: var(--text-highlight-bg);
-  }
+
 </style>

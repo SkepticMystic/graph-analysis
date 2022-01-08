@@ -103,3 +103,14 @@ body.is-mobile .GA-details::before {
   border-radius: 10px;
   background-color: var(--scrollbar-thumb-bg);
 }
+
+div.CC-sentence > ul,
+div.CC-sentence > p {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+mark.CC-mark {
+  color: var(--text-normal);
+  background-color: var(--text-highlight-bg);
+}
