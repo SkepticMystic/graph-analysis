@@ -23,12 +23,12 @@ import type {
   CoCitationMap, CoCitationRes,
   Communities,
   GraphAnalysisSettings,
-  HITSResult,
+  HITSResult, LineSentences,
   NLPPlugin,
   ResultMap,
   Subtype,
 } from 'src/Interfaces'
-import { getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
+import { findSentence, getCounts, getMaxKey, roundNumber, sum } from 'src/Utility'
 import * as similarity from 'wink-nlp/utilities/similarity'
 
 export default class MyGraph extends Graph {
@@ -211,28 +211,15 @@ export default class MyGraph extends Graph {
         const lines = cachedRead.split('\n')
 
         // Find the sentence the link is in
-        const ownSentences: [number, number, number, ReferenceCache][] =
+        const ownSentences: LineSentences[] =
           ownLinks.map((link) => {
             let line = lines[link.position.end.line]
             const sentences = tokenizer.sentences(line, {
               preserve_whitespace: true,
             })
-            let aggrSentenceLength = 0
-            let res: [number, number, number, ReferenceCache] = null
-            sentences.forEach((sentence: string) => {
-              if (res) return
-              aggrSentenceLength += sentence.length
-              // Edge case that does not work: If alias has end of sentences.
-              if (link.position.end.col <= aggrSentenceLength) {
-                res = [
-                  link.position.end.line,
-                  aggrSentenceLength - sentence.length,
-                  aggrSentenceLength,
-                  link,
-                ]
-              }
-            })
-            return res
+            let [linkSentence, linkSentenceStart, linkSentenceEnd] = findSentence(sentences, link)
+            return {sentences, link, line: link.position.end.line, linkSentence, linkSentenceStart, linkSentenceEnd}
+
           })
 
         // Find the section the link is in
@@ -320,8 +307,10 @@ export default class MyGraph extends Graph {
           const lineContent = lines[item.position.start.line]
           // Check if the link is on the same line
           let hasOwnLine = false
-          ownSentences.forEach(([line, start, end, ownLink]) => {
-            if (item.position.start.line === line) {
+          ownSentences.forEach((lineSentence) => {
+            if (item.position.start.line === lineSentence.line) {
+              const [itemSentence, itemSentenceStart, itemSentenceEnd] = findSentence(lineSentence.sentences, item)
+              const ownLink = lineSentence.link
               const m1Start = Math.min(
                 item.position.start.col,
                 ownLink.position.start.col
@@ -338,41 +327,39 @@ export default class MyGraph extends Graph {
                 item.position.end.col,
                 ownLink.position.end.col
               )
-              // Break sentence up between the two links
-              const sentence = [
-                lineContent.slice(0, m1Start),
+              // Break sentence up between the two links. Used for rendering
+              const slicedSentence = [
+                lineContent.slice(Math.min(itemSentenceStart, lineSentence.linkSentenceStart), m1Start),
                 lineContent.slice(m1Start, m1End),
                 lineContent.slice(m1End, m2Start),
                 lineContent.slice(m2Start, m2End),
-                lineContent.slice(m2End, lineContent.length),
+                lineContent.slice(m2End, Math.max(itemSentenceEnd, lineSentence.linkSentenceEnd)),
               ]
-              // Give a higher score if it is also in the same sentence
-              if (
-                item.position.start.col >= start &&
-                item.position.end.col <= end
-              ) {
-                // If it's in the same sentence, remove the other sentences
-                sentence[0] = sentence[0].slice(start, sentence[0].length)
-                sentence[4] = lineContent.slice(m2End, end)
-                preCocitations[linkPath][0] = 1
-                preCocitations[linkPath][1].push({
-                  sentence: sentence,
-                  measure: 1,
-                  source: pre,
-                  line: item.position.start.line,
-                })
-              } else {
-                preCocitations[linkPath][0] = Math.max(
-                  preCocitations[linkPath][0],
-                  1 / 2
-                )
-                preCocitations[linkPath][1].push({
-                  sentence: sentence,
-                  measure: 1 / 2,
-                  source: pre,
-                  line: item.position.start.line,
-                })
+
+              let measure = 1 / 2
+              const sentenceDist = Math.abs(itemSentence - lineSentence.linkSentence)
+              if (sentenceDist === 0) {
+                measure = 1
               }
+              else if (sentenceDist === 1) {
+                measure = 0.85
+              }
+              else if (sentenceDist === 2) {
+                measure = 0.7
+              }
+              else if (sentenceDist === 3) {
+                measure = 0.6
+              }
+
+              preCocitations[linkPath][0] = Math.max(measure, preCocitations[linkPath][0])
+              preCocitations[linkPath][1].push({
+                sentence: slicedSentence,
+                measure,
+                source: pre,
+                line: lineSentence.line,
+              })
+
+              // We have to run this for every OwnSentence since there might be multiple on the same line
               hasOwnLine = true
             }
           })

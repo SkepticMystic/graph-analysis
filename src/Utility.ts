@@ -1,9 +1,9 @@
 import {
-  App,
-  EditorRange,
+  App, CacheItem,
+  EditorRange, LinkCache,
   MarkdownView,
   Menu,
-  Notice,
+  Notice, ReferenceCache,
   TFile,
   WorkspaceLeaf,
 } from 'obsidian'
@@ -18,7 +18,7 @@ import type AnalysisView from 'src/AnalysisView'
 import { DECIMALS, IMG_EXTENSIONS, LINKED, NOT_LINKED } from 'src/Constants'
 import type {
   ComponentResults,
-  GraphAnalysisSettings,
+  GraphAnalysisSettings, LineSentences,
   ResultMap,
   Subtype,
 } from 'src/Interfaces'
@@ -356,4 +356,19 @@ export async function openOrSwitch(
 
     await leaf.openFile(destFile, { active: true, mode })
   }
+}
+
+export function findSentence(sentences: [string], link: CacheItem): [number, number, number] {
+  let aggrSentenceLength = 0
+  let count = 0
+  for (const sentence of sentences) {
+    const nextLength = aggrSentenceLength + sentence.length
+    // Edge case that does not work: If alias has end of sentences.
+    if (link.position.end.col <= nextLength) {
+      return [count, aggrSentenceLength, nextLength]
+    }
+    aggrSentenceLength = nextLength
+    count += 1
+  }
+  return [-1, 0, aggrSentenceLength]
 }

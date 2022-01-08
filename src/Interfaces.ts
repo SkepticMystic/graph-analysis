@@ -1,5 +1,6 @@
 import type { TFile } from 'obsidian'
 import type { Bow, Document, WinkMethods } from 'wink-nlp'
+import { ReferenceCache } from 'obsidian'
 
 export interface ResolvedLinks {
   [from: string]: {
@@ -75,6 +76,15 @@ export interface CoCitationRes {
 
 export interface CoCitationMap {
   [linkName: string]: CoCitationRes
+}
+
+export interface LineSentences {
+  line: number
+  linkSentence: number
+  linkSentenceStart: number
+  linkSentenceEnd: number
+  sentences: [string]
+  link: ReferenceCache
 }
 
 export type AnalysisAlg<T> = (a: string, options?: {}) => Promise<T>
