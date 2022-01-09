@@ -108,14 +108,15 @@
             }
           })
           sortedCites.sort((a, b) => {
-
-            if (a.to === "30-10-2021") {
+            if (a.to === "World Economic Forum.md" && b.measure === 0.85 ||
+              b.to === "World Economic Forum.md" && a.measure === 0.85) {
               console.log(a.measure > b.measure ? greater :
                 a.measure !== b.measure || a.to > b.to ? lesser : greater)
-              console.log({b})
+              console.log({a}, {b})
             }
             return a.measure > b.measure ? greater :
-                a.measure !== b.measure || a.to > b.to ? lesser : greater
+                a.measure !== b.measure ||
+                presentPath(a.to).toLowerCase() > presentPath(b.to).toLowerCase() ? lesser : greater
             }
           )
           return sortedCites
@@ -226,17 +227,6 @@
                       app={app}
                       line={coCite.line}
                     />
-                      <!--{#if coCite.sentence.length === 3}-->
-                      <!--  <span>{coCite.sentence[0]}</span>-->
-                      <!--  <mark><strong>{coCite.sentence[1]}</strong></mark>-->
-                      <!--  <span>{coCite.sentence[2]}</span>-->
-                      <!--{:else}-->
-                      <!--  <span>{coCite.sentence[0]}</span>-->
-                      <!--  <mark><strong>{coCite.sentence[1]}</strong></mark>-->
-                      <!--  <span>{coCite.sentence[2]}</span>-->
-                      <!--  <mark><strong>{coCite.sentence[3]}</strong></mark>-->
-                      <!--  <span>{coCite.sentence[4]}</span>-->
-                      <!--{/if}-->
                   {/each}
                 </div>
               </details>
@@ -252,7 +242,6 @@
             if (!blockSwitch) {
               page++
               newBatch = sortedResults.slice(size * page, size * (page + 1) - 1)
-              console.log({ newBatch })
             }
           }}
         />
