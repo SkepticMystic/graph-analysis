@@ -108,7 +108,8 @@
             }
           })
           sortedCites.sort((a, b) =>
-            a.measure > b.measure ? greater : lesser,
+            a.measure > b.measure ? greater :
+              a.measure !== b.measure || a.to > b.to ? lesser : greater,
           )
           return sortedCites
         })
