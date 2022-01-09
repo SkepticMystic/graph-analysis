@@ -107,9 +107,16 @@
               })
             }
           })
-          sortedCites.sort((a, b) =>
-            a.measure > b.measure ? greater :
-              a.measure !== b.measure || a.to > b.to ? lesser : greater,
+          sortedCites.sort((a, b) => {
+
+            if (a.to === "30-10-2021") {
+              console.log(a.measure > b.measure ? greater :
+                a.measure !== b.measure || a.to > b.to ? lesser : greater)
+              console.log({b})
+            }
+            return a.measure > b.measure ? greater :
+                a.measure !== b.measure || a.to > b.to ? lesser : greater
+            }
           )
           return sortedCites
         })

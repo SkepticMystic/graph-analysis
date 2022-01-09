@@ -222,12 +222,12 @@ export default class MyGraph extends Graph {
 
           })
 
-        const ownListItems: ListItemCache[] =
+        const ownListItems: ListItemCache[] = cache.listItems ?
           cache.listItems.filter((listItem) => {
             return ownLinks.find((link) =>
               link.position.start.line >= listItem.position.start.line &&
               link.position.end.line <= listItem.position.end.line)
-            })
+            }) : []
 
         // Find the section the link is in
         const ownSections = ownLinks.map((link) =>
@@ -383,7 +383,7 @@ export default class MyGraph extends Graph {
 
           // Check if in an outline hierarchy
           const listItem: ListItemCache =
-            cache.listItems.find((listItem) =>
+            cache?.listItems?.find((listItem) =>
                 item.position.start.line >= listItem.position.start.line &&
                 item.position.end.line <= listItem.position.end.line
             )
