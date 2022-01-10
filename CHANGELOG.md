@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.15.2](https://github.com/SkepticMystic/graph-analysis/compare/0.15.1...0.15.2) (2022-01-10)
+
+
+### Bug Fixes
+
+* Invalid Markdown rendering in co-cites for child bullets ([4827e85](https://github.com/SkepticMystic/graph-analysis/commit/4827e8597d32f3c772596ed8980ed75da737fe96))
+
 ### [0.15.1](https://github.com/SkepticMystic/graph-analysis/compare/0.15.0...0.15.1) (2022-01-10)
 
 
