@@ -14,6 +14,7 @@
   if (sentence.length === 5) {
     renderedSentence = renderedSentence + "==" + sentence[3] + "==" + sentence[4]
   }
+  renderedSentence = renderedSentence.trim()
 
   let el: HTMLElement;
   onMount(async () => {
