@@ -22,6 +22,12 @@
     for(let markedEl:HTMLElement of el.getElementsByTagName("mark")) {
       markedEl.classList.add("CC-mark")
     }
+    for(let markedEl:HTMLElement of el.getElementsByTagName("ol")) {
+      markedEl.classList.add("CC-edit")
+    }
+    for(let markedEl:HTMLElement of el.getElementsByTagName("hr")) {
+      markedEl.classList.add("CC-hr")
+    }
   })
 </script>
 
