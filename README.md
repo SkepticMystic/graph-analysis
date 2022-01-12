@@ -59,6 +59,10 @@ An example why this is useful is given by @HEmile:
 
 ![](https://i.imgur.com/udPkuV3.png)
 
+#### Video Tutorial
+This video gives a longer and in depth overview for why Co-Citations is so useful!
+[![Watch the video](https://yt-embed.herokuapp.com/embed?v=rK6JVDrGERA)](https://youtu.be/rK6JVDrGERA)
+
 ### Similarity
 
 Similarity is a measure of how similar two notes are based on their
