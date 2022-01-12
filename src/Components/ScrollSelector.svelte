@@ -9,42 +9,44 @@
   export let view: AnalysisView
 </script>
 
-{#key view.plugin.settings.algsToShow}
-  <div
-    class="scrollContainer"
-    on:mouseover={function () {
-      this.ariaLabel = '`Shift + Scroll` to scroll sideways'
-    }}
-  >
-    <div class="container">
-      {#each ANALYSIS_TYPES as sub}
-        {#if view.plugin.settings.algsToShow.includes(sub.subtype)}
-          <button
-            class="item GA-Button {currSubtype === sub.subtype
-              ? 'currSubtype'
-              : ''}"
-            on:click={() => {
-              currSubtype = sub.subtype
-              view.currSubtype = sub.subtype
-            }}
-          >
-            {#if sub.global}
-              <span class={ICON}>
-                <FaGlobeAfrica />
-              </span>
-            {/if}
-            {#if sub.nlp}
-              <span class={ICON}>
-                <IoIosChatbubbles />
-              </span>
-            {/if}
-            {sub.subtype}
-          </button>
-        {/if}
-      {/each}
+{#if view.plugin.settings.algsToShow.length > 1}
+  {#key view.plugin.settings.algsToShow}
+    <div
+      class="scrollContainer"
+      on:mouseover={function () {
+        this.ariaLabel = '`Shift + Scroll` to scroll sideways'
+      }}
+    >
+      <div class="container">
+        {#each ANALYSIS_TYPES as sub}
+          {#if view.plugin.settings.algsToShow.includes(sub.subtype)}
+            <button
+              class="item GA-Button {currSubtype === sub.subtype
+                ? 'currSubtype'
+                : ''}"
+              on:click={() => {
+                currSubtype = sub.subtype
+                view.currSubtype = sub.subtype
+              }}
+            >
+              {#if sub.global}
+                <span class={ICON}>
+                  <FaGlobeAfrica />
+                </span>
+              {/if}
+              {#if sub.nlp}
+                <span class={ICON}>
+                  <IoIosChatbubbles />
+                </span>
+              {/if}
+              {sub.subtype}
+            </button>
+          {/if}
+        {/each}
+      </div>
     </div>
-  </div>
-{/key}
+  {/key}
+{/if}
 
 <style>
   .container {

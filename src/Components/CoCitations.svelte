@@ -86,8 +86,9 @@
       : plugin.g.algs['Co-Citations'](currNode)
         .then((ccMap: CoCitationMap) => {
           Object.values(ccMap).forEach((value: CoCitationRes) => {
-            value.coCitations = value.coCitations.sort((a, b) =>
-              a.measure > b.measure ? -1 : 1,
+            value.coCitations = value.coCitations.sort((a, b) => {
+              return a.measure > b.measure ? -1 : 1
+              },
             )
           })
           const greater = ascOrder ? 1 : -1
@@ -108,12 +109,6 @@
             }
           })
           sortedCites.sort((a, b) => {
-            if (a.to === "World Economic Forum.md" && b.measure === 0.85 ||
-              b.to === "World Economic Forum.md" && a.measure === 0.85) {
-              console.log(a.measure > b.measure ? greater :
-                a.measure !== b.measure || a.to > b.to ? lesser : greater)
-              console.log({a}, {b})
-            }
             return a.measure > b.measure ? greater :
                 a.measure !== b.measure ||
                 presentPath(a.to).toLowerCase() > presentPath(b.to).toLowerCase() ? lesser : greater
