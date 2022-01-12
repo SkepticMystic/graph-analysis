@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.15.3](https://github.com/SkepticMystic/graph-analysis/compare/0.15.2...0.15.3) (2022-01-12)
+
+
+### Features
+
+* Now hides algorithm selector if only 1 alg is active ([5391a47](https://github.com/SkepticMystic/graph-analysis/commit/5391a47971df2490de635465abbfb8c65d93922c))
+
+
+### Bug Fixes
+
+* Better styling of ordered lists and footnotes ([79e9ca1](https://github.com/SkepticMystic/graph-analysis/commit/79e9ca162ac80f31e1764a7d35cef32fbba5e277))
+
 ### [0.15.2](https://github.com/SkepticMystic/graph-analysis/compare/0.15.1...0.15.2) (2022-01-10)
 
 
