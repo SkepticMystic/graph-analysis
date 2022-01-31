@@ -1,7 +1,7 @@
 {
 	"id": "graph-analysis",
 	"name": "Graph Analysis",
-	"version": "0.15.3",
+	"version": "0.15.4",
 	"minAppVersion": "0.12.10",
 	"description": "Analyse your Obsidian graph.",
 	"author": "SkepticMystic",
