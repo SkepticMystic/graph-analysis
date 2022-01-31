@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.15.3](https://github.com/SkepticMystic/graph-analysis/compare/0.15.2...0.15.3) (2022-01-12)
+
+
+### Features
+
+* Now hides algorithm selector if only 1 alg is active ([5391a47](https://github.com/SkepticMystic/graph-analysis/commit/5391a47971df2490de635465abbfb8c65d93922c))
+
+
+### Bug Fixes
+
+* Better styling of ordered lists and footnotes ([79e9ca1](https://github.com/SkepticMystic/graph-analysis/commit/79e9ca162ac80f31e1764a7d35cef32fbba5e277))
+
+### [0.15.2](https://github.com/SkepticMystic/graph-analysis/compare/0.15.1...0.15.2) (2022-01-10)
+
+
+### Bug Fixes
+
+* Invalid Markdown rendering in co-cites for child bullets ([4827e85](https://github.com/SkepticMystic/graph-analysis/commit/4827e8597d32f3c772596ed8980ed75da737fe96))
+
+### [0.15.1](https://github.com/SkepticMystic/graph-analysis/compare/0.15.0...0.15.1) (2022-01-10)
+
+
+### Features
+
+* Added outliner support to co-citations ([0eef53b](https://github.com/SkepticMystic/graph-analysis/commit/0eef53b9db1611160b3bc6a6b0ec61bcfca9568c))
+* Increased granularity for co-citations on the same line ([cfca1d5](https://github.com/SkepticMystic/graph-analysis/commit/cfca1d53e8e4d7674db1b8f536ff0bf540bf3f31))
+* Sort equal-measure co-citations alphabetically ([62b351a](https://github.com/SkepticMystic/graph-analysis/commit/62b351a57184a8b7335960728c334aaaaec4f620))
+* Text previews in Co-Citations now render markdown ([5d1153b](https://github.com/SkepticMystic/graph-analysis/commit/5d1153b366da6d19aed2a3ba2b1901fe0695081e))
+
+
+### Bug Fixes
+
+* Bug in filles without outlines ([00c4061](https://github.com/SkepticMystic/graph-analysis/commit/00c406168c81b366d51a8e4ea16fd105bcc40001))
+* Bugs in sorting results of co-citation ([2012a91](https://github.com/SkepticMystic/graph-analysis/commit/2012a9191347dc724005b7e4ae579c84eba0400a))
+* Results within co-citations entries were not properly sorted ([318666b](https://github.com/SkepticMystic/graph-analysis/commit/318666b0fa6c9bd2839f9e21e82ba73b92c30c67))
+
 ## [0.15.0](https://github.com/SkepticMystic/graph-analysis/compare/0.14.1...0.15.0) (2022-01-03)
 
 ### [0.14.1](https://github.com/SkepticMystic/graph-analysis/compare/0.14.0...0.14.1) (2022-01-03)

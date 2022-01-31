@@ -12,12 +12,19 @@
     renderedSentence =
       renderedSentence + '==' + sentence[3] + '==' + sentence[4]
   }
+  renderedSentence = renderedSentence.trim()
 
   let el: HTMLElement
   onMount(async () => {
     MarkdownRenderer.renderMarkdown(renderedSentence, el, sourcePath, null)
     for (let markedEl of el.getElementsByTagName('mark')) {
       markedEl.classList.add('CC-mark')
+    }
+    for(let markedEl:HTMLElement of el.getElementsByTagName("ol")) {
+      markedEl.classList.add("CC-edit")
+    }
+    for(let markedEl:HTMLElement of el.getElementsByTagName("hr")) {
+      markedEl.classList.add("CC-hr")
     }
   })
 </script>

@@ -86,8 +86,9 @@
       : plugin.g.algs['Co-Citations'](currNode)
         .then((ccMap: CoCitationMap) => {
           Object.values(ccMap).forEach((value: CoCitationRes) => {
-            value.coCitations = value.coCitations.sort((a, b) =>
-              a.measure > b.measure ? -1 : 1,
+            value.coCitations = value.coCitations.sort((a, b) => {
+              return a.measure > b.measure ? -1 : 1
+              },
             )
           })
           const greater = ascOrder ? 1 : -1
@@ -107,8 +108,11 @@
               })
             }
           })
-          sortedCites.sort((a, b) =>
-            a.measure > b.measure ? greater : lesser,
+          sortedCites.sort((a, b) => {
+            return a.measure > b.measure ? greater :
+                a.measure !== b.measure ||
+                presentPath(a.to).toLowerCase() > presentPath(b.to).toLowerCase() ? lesser : greater
+            }
           )
           return sortedCites
         })
@@ -218,17 +222,6 @@
                       app={app}
                       line={coCite.line}
                     />
-                      <!--{#if coCite.sentence.length === 3}-->
-                      <!--  <span>{coCite.sentence[0]}</span>-->
-                      <!--  <mark><strong>{coCite.sentence[1]}</strong></mark>-->
-                      <!--  <span>{coCite.sentence[2]}</span>-->
-                      <!--{:else}-->
-                      <!--  <span>{coCite.sentence[0]}</span>-->
-                      <!--  <mark><strong>{coCite.sentence[1]}</strong></mark>-->
-                      <!--  <span>{coCite.sentence[2]}</span>-->
-                      <!--  <mark><strong>{coCite.sentence[3]}</strong></mark>-->
-                      <!--  <span>{coCite.sentence[4]}</span>-->
-                      <!--{/if}-->
                   {/each}
                 </div>
               </details>
@@ -244,7 +237,6 @@
             if (!blockSwitch) {
               page++
               newBatch = sortedResults.slice(size * page, size * (page + 1) - 1)
-              console.log({ newBatch })
             }
           }}
         />

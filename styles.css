@@ -105,6 +105,7 @@ body.is-mobile .GA-details::before {
 }
 
 div.CC-sentence > ul,
+div.CC-sentence > ol,
 div.CC-sentence > p {
   margin-block-start: 0;
   margin-block-end: 0;
@@ -113,4 +114,13 @@ div.CC-sentence > p {
 mark.CC-mark {
   color: var(--text-normal);
   background-color: var(--text-highlight-bg);
+}
+.CC-edit {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.CC-hr {
+  margin-block-start: 0.3em;
+  margin-block-end: 0.3em;
 }
