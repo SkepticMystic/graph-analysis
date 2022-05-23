@@ -17,7 +17,7 @@ e.g.
 
 ## Analysis Types
 
-Graph Analysis currently has 3 different analysis types:
+Graph Analysis currently has 4 different analysis types:
 
 1. Similarity
 2. Link Prediction
