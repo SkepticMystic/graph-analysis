@@ -1,5 +1,5 @@
-import { addIcon, Notice, Plugin, WorkspaceLeaf } from 'obsidian'
-import { openView, wait } from 'obsidian-community-lib'
+import { addIcon, App, Notice, Plugin, View, WorkspaceLeaf } from 'obsidian'
+import { wait } from 'obsidian-community-lib'
 import AnalysisView from 'src/AnalysisView'
 import {
   ANALYSIS_TYPES,
@@ -11,6 +11,32 @@ import type { GraphAnalysisSettings } from 'src/Interfaces'
 import MyGraph from 'src/MyGraph'
 import { SampleSettingTab } from 'src/Settings'
 import { debug } from './Utility'
+
+// Obsidian 1.7+ may return null from getRightLeaf/getLeftLeaf; fall back to a center leaf.
+async function openView(
+  app: App,
+  viewType: string,
+  viewClass: new (...args: any[]) => View,
+  side: 'left' | 'right' = 'right',
+): Promise<View | null> {
+  let leaf: WorkspaceLeaf | null = null
+  for (leaf of app.workspace.getLeavesOfType(viewType)) {
+    if (leaf.view instanceof viewClass) {
+      return leaf.view
+    }
+    await leaf.setViewState({ type: 'empty' })
+    break
+  }
+  leaf =
+    leaf ??
+    (side === 'right'
+      ? app.workspace.getRightLeaf(false)
+      : app.workspace.getLeftLeaf(false)) ??
+    app.workspace.getLeaf(true)
+  if (!leaf) return null
+  await leaf.setViewState({ type: viewType, active: true })
+  return leaf.view
+}
 
 export default class GraphAnalysisPlugin extends Plugin {
   settings: GraphAnalysisSettings
@@ -81,7 +107,8 @@ export default class GraphAnalysisPlugin extends Plugin {
 
   resolvedLinksComplete(noFiles: number) {
     const { resolvedLinks } = this.app.metadataCache
-    return Object.keys(resolvedLinks).length === noFiles
+    // resolvedLinks omits notes with no outgoing links, so strict equality never satisfies.
+    return Object.keys(resolvedLinks).length >= noFiles
   }
 
   getCurrentView = async (openIfNot = true) => {
@@ -91,7 +118,11 @@ export default class GraphAnalysisPlugin extends Plugin {
 
     if (view) return view
     else if (openIfNot) {
-      return await openView(this.app, VIEW_TYPE_GRAPH_ANALYSIS, AnalysisView)
+      return (await openView(
+        this.app,
+        VIEW_TYPE_GRAPH_ANALYSIS,
+        AnalysisView
+      )) as AnalysisView | null
     } else return null
   }
 
