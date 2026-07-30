@@ -107,7 +107,7 @@ export default class GraphAnalysisPlugin extends Plugin {
     } catch (error) {
       console.log(error)
       new Notice(
-        'An error occured with Graph Analysis, please check the console.'
+        'An error occurred with Graph Analysis, please check the console.'
       )
     }
   }
