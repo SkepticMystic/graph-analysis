@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.15.5](https://github.com/jwhco/graph-analysis/releases/tag/0.15.5) (2026-03-16)
+
 ### [0.15.4](https://github.com/SkepticMystic/graph-analysis/compare/0.15.3...0.15.4) (2022-01-31)
 
 ### [0.15.3](https://github.com/SkepticMystic/graph-analysis/compare/0.15.2...0.15.3) (2022-01-12)

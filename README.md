@@ -1,4 +1,14 @@
-# Graph Analysis
+# Graph Analysis (Plugin for Obsidian Note-Taking)
+
+## Official
+
+- [SkepticMystic Graph Analysis Obsidian Plugin](https://github.com/SkepticMystic/graph-analysis), (GitHub)
+  - [Issues](https://github.com/SkepticMystic/graph-analysis/issues),
+  - [Discussion](https://github.com/SkepticMystic/graph-analysis/discussions),
+  - [Releases](https://github.com/SkepticMystic/graph-analysis/releases),
+- For the [Obsidian Note-Taking](https://obsidian.md/) application,
+
+## Overview
 
 Graph analysis adds the **analysis view** to Obsidian which implements a set of
 algorithms that computes useful relations between the notes in your vault! Our
